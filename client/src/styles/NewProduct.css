@@ -1,0 +1,59 @@
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    /* Caja del modal */
+    .modal {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      width: 400px;
+      max-width: 90%;
+      text-align: center;
+      z-index: 1001;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 8px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .modal .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+    }
+
+    .modal button {
+      border: none;
+      background: none;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 6px 12px;
+    }
+
+    .modal button.create {
+      color: #1a73e8; /* Azul estilo Google */
+    }
+
+    .modal button.cancel {
+      color: gray;
+    }

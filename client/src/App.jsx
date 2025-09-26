@@ -1,7 +1,8 @@
 import reactLogo from './assets/react.svg'
 import logo from './assets/logo.png';
 import './App.css'
-
+import ProductSection from "./components/ProductSection";
+import NewProduct from "./components/NewProduct";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -24,32 +25,9 @@ function App() {
             <p className='products-text'>Productos</p>
             <p className='products-count'>21 productos</p>
             </div>
-            <div className='button-container'>
-              <button className='add-button'>Agregar categoría</button>
-              <button className='add-button'>Agregar producto</button>
-            </div>
           </div>
-          <div className='input-container'>
-            <input type='text'></input>
-            <button>Buscar</button>
-          </div>
-          <div className='categories-container'>
-            <div className='categories-header'>Nombre</div>
-            <div className='category'>
-              <div className='category-left'>
-                <i class="material-icons">folder</i>
-                <span>PM-01 - Prótesis de cadera</span>
-              </div>
-              <i class="material-icons more-icon">more_vert</i>
-            </div>
-            <div className='category'>
-              <div className='category-left'>
-                <i class="material-icons">folder</i>
-                <span>PM-02 - Clavos endomedulares de acero</span>
-              </div>
-              <i class="material-icons more-icon">more_vert</i>
-            </div>            
-          </div>
+          <ProductSection />
+          {/*<NewProduct/>*/}
         </>);
 }
 
