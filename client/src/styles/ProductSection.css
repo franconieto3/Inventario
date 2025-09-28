@@ -49,6 +49,9 @@
   margin-left: 15px;
 }
 
+.add-button:hover{
+    cursor: pointer;
+}
 /* Listado de productos */
 
 .product-list{

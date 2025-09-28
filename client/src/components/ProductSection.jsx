@@ -1,6 +1,7 @@
 // Componentes
 import React from "react";
 import ProductItem from "./ProductItem";
+import NewProduct from "./NewProduct";
 
 //Estilos
 import "../styles/ProductSection.css"
@@ -11,13 +12,33 @@ class ProductSection extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            productos: ["Tallo Charnley", "Cotilo Muller", "Tallo Thopmson", "Cotilo no cementado"]
+            productos: [{nombre:"Tallo Charnley", piezas:[{}]}, 
+                        {nombre:"Cotilo Muller", piezas:[{}]},
+                        {nombre:"Tallo Thopmson", piezas:[{}]},
+                        {nombre:"Cotilo no cementado", piezas:[{}]}],
+            showNewProduct: false
         }
+    }
+    // Mostrar modal
+    handleShowNewProduct = () => {
+        this.setState({ showNewProduct: true });
+    }
+
+    // Ocultar modal
+    handleCloseNewProduct = () => {
+        this.setState({ showNewProduct: false });
+    }
+
+    handleAddProduct = (nuevoProducto) => {
+        this.setState((prevState) => ({
+            productos: [...prevState.productos, nuevoProducto],
+            showNewProduct: false  // de paso cerramos el modal
+        }));
     }
 
     //Render
     render(){   
-        const items = this.state.productos.map((item) =>{return (<ProductItem name={item}/>) });
+        const items = this.state.productos.map((item) =>{return (<ProductItem name={item.nombre}/>) });
         return (
             <>
             <div className='filters'>
@@ -29,7 +50,7 @@ class ProductSection extends React.Component{
                 </div>
                 <div className='button-container'>
                     <button className='add-button'>Agregar categoría</button>
-                    <button className='add-button'>Agregar producto</button>
+                    <button className='add-button' onClick={this.handleShowNewProduct}>Agregar producto</button>
                 </div>
             </div>
 
@@ -37,6 +58,11 @@ class ProductSection extends React.Component{
                 <div className='product-list-header'>Nombre</div>
                 {items}
             </div>
+
+            {/* 👇 Render condicional */}
+            {this.state.showNewProduct && (
+                <NewProduct onClose={this.handleCloseNewProduct} onCreate={this.handleAddProduct}/>
+            )}
             </>
         );
     }

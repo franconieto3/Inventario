@@ -27,7 +27,6 @@ function App() {
             </div>
           </div>
           <ProductSection />
-          {/*<NewProduct/>*/}
         </>);
 }
 
