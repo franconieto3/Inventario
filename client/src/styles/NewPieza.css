@@ -1,0 +1,14 @@
+.new-part-box{
+    display:flex;
+    gap: 10px
+}
+
+.delete{
+    display: flex;
+    align-items: center;
+}
+
+.delete:hover{
+    cursor: pointer; 
+    color: red;
+}

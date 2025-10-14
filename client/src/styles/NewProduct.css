@@ -21,6 +21,9 @@
       max-width: 90%;
       text-align: center;
       z-index: 1001;
+
+      max-height: 80vh;   /* el modal no puede superar el 80% de la pantalla */
+      overflow-y: auto;   /* activa scroll vertical si se excede */
     }
 
     .modal h2 {
@@ -56,4 +59,17 @@
 
     .modal button.cancel {
       color: gray;
+    }
+
+    select {
+      font-family: system-ui, sans-serif;
+      font-size: 1rem;
+      padding: 0.5em 1.5em 0.5em 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: white;
+      color: #333;
+      cursor: pointer;
+      width: 100%;
+      margin: 15px 0;
     }

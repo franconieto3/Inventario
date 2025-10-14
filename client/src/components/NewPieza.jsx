@@ -1,42 +1,42 @@
-//Componentes
+// NewPieza.jsx
 import React from "react";
+import "../styles/NewPieza.css";
 
-//Estilos
-import "../styles/NewPieza.css"
+function NewPieza({ id, data = {}, onChange, onDelete }) {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    // enviar al padre el objeto actualizado (no mutar data)
+    onChange({ ...data, [name]: value }, id);
+  };
 
-class NewPieza extends React.Component{
-    //Constructor
-    constructor(props){
-        super(props);
-        this.state ={
-            codigoPieza: props.data?.codigoPieza || "",
-            nombrePieza: props.data?.nombrePieza || ""
-        }
-    }
-
-    //Metodos
-    handleChange = (e) => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value }, () => {
-            // avisamos al padre con los datos actualizados y el index
-            this.props.onChange(this.state, this.props.index);
-        });
-    };
-
-    //Render
-    render(){
-        return(
-            <>
-            <div>
-                <div>Código de pieza:</div>
-                <input type="number" name="codigoPieza" value={this.state.codigoPieza} onChange={this.handleChange}/>
-                <div>Nombre de la pieza:</div>
-                <input type="text" name="nombrePieza"  value={this.state.nombrePieza} onChange={this.handleChange}/>
-                <hr/> 
-            </div>
-            </>
-        );
-    }
+  return (
+    <>
+      <div className="new-part-box">
+        <div>
+          <div>Código de pieza:</div>
+          <input
+            type="number"
+            name="codigoPieza"
+            value={data.codigoPieza ?? ""}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <div>Descripción:</div>
+          <input
+            type="text"
+            name="nombrePieza"
+            value={data.nombrePieza ?? ""}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="delete" onClick={() => onDelete(id)}>
+          <i className="material-icons">delete</i>
+        </div>
+      </div>
+      <hr />
+    </>
+  );
 }
 
 export default NewPieza;
