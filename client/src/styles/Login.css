@@ -1,0 +1,28 @@
+*{
+
+}
+
+form{
+
+    padding: 10px;
+}
+
+label{
+    display: block;
+    margin-top:10px;
+    justify-items: center;
+
+}
+
+input{
+    display: block;
+    margin-top:5px
+}
+
+a{
+    margin: 0px;
+}
+
+button{
+    margin:10px
+}

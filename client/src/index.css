@@ -25,48 +25,4 @@ html, body {
 }
 
 
-/* Logo */
-
-.logo-container{
-  
-  font-size: 20px;
-  display: flex;
-  align-items: center; 
-  gap: 10px;  
-  padding: 0px;
-}
-
-.logo-img{
-  width: 60px;
-  height: auto;
-}
-.logo-text{
-  font-family: "Times New Roman", Times, serif;
-}
-
-/* Contador de productos y botón para agregar */
-
-.title-container{
-  display: flex;
-  padding: 0px;
-  justify-content: space-between;
-  margin-top: 50px;
-  margin-bottom: 30px;
-  align-items: center;
-}
-
-.products-text{
-  margin: 0%;
-  font-size: 25px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  text-align: left;
-}
-.products-count{
-  margin: 0%;
-  font-family: 'Inter', sans-serif;
-  color: gray;
-  font-size: 15px;
-  text-align: left;
-}
 

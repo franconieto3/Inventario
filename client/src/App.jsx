@@ -1,9 +1,13 @@
-import reactLogo from './assets/react.svg'
-import logo from './assets/logo.png';
 import './App.css'
 import ProductSection from "./components/ProductSection";
-import NewProduct from "./components/NewProduct";
 import { useEffect, useState } from "react";
+import { BrowserRouter,Routes, Route, Link} from 'react-router-dom'
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import { AuthContextProvider } from './context/authContext';
+import HomePage from './components/HomePage';
+import PrivateRoute from './components/PrivateRoute';
+
 
 function App() {
   const [mensaje, setMensaje] = useState("");
@@ -16,17 +20,35 @@ function App() {
 
   return (  
         <>
-           <div className='logo-container'>
-            <img className="logo-img" src={logo} alt="logo"></img>
-            <span className='logo-text'>BIOPROTECE S.A.</span>
-          </div>
-          <div className='title-container'>
-            <div>
-            <p className='products-text'>Productos</p>
-            <p className='products-count'>21 productos</p>
-            </div>
-          </div>
-          <ProductSection />
+        
+        <AuthContextProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+               
+            {/* Rutas Privadas */}
+            <Route 
+              path="/homepage" 
+              element={
+                <PrivateRoute>
+                  <HomePage />
+                </PrivateRoute>
+              } 
+            />
+            <Route
+              path="/products" 
+              element={
+                <PrivateRoute>
+                  <ProductSection />
+                </PrivateRoute>
+              }
+            />
+
+            </Routes>
+          </BrowserRouter>
+        </AuthContextProvider>
         </>);
 }
 

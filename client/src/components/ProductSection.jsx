@@ -2,6 +2,7 @@
 import React from "react";
 import ProductItem from "./ProductItem";
 import NewProduct from "./NewProduct";
+import logo from '../assets/logo.png';
 
 //Estilos
 import "../styles/ProductSection.css"
@@ -61,6 +62,17 @@ class ProductSection extends React.Component{
         const items = this.state.productos.map((item) =>{return (<ProductItem name={item.nombre}/>) });
         return (
             <>
+            <div className='logo-container'>
+                <img className="logo-img" src={logo} alt="logo"></img>
+                <span className='logo-text'>BIOPROTECE S.A.</span>
+            </div>
+            <div className='title-container'>
+                <div>
+                <p className='products-text'>Productos</p>
+                <p className='products-count'>21 productos</p>
+                </div>
+            </div>
+
             <div className='filters'>
                 <div className='search-box'>
                     <input type='text' placeholder="Buscar productos..." />
