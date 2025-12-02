@@ -1,11 +1,14 @@
 import React from 'react';
 
 import NavBar from './NavBar';
+import BodyContainer from './BodyContainer';
 
 export default function HomePage(){
     return(
     <>
         <NavBar />
-        <h1>¡Bienvenido!</h1>
+        <BodyContainer>
+            <h1>¡Bienvenido!</h1>
+        </BodyContainer>
     </>);
 }

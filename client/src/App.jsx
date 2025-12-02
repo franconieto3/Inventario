@@ -1,5 +1,5 @@
-import './App.css'
-import ProductSection from "./components/ProductSection";
+
+import ProductSection from "./components/products/ProductSection";
 import { useEffect, useState } from "react";
 import { BrowserRouter,Routes, Route, Link} from 'react-router-dom'
 import Login from './components/auth/Login';

@@ -13,10 +13,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // Middleware para verificar el token
 const verificarToken = (req, res, next) => {
   // 1. Obtener el token del encabezado (Header)
   // El formato estándar es: "Authorization: Bearer <token_aqui>"
+  
   const authHeader = req.headers['authorization'];
   
   // Si no hay header, o no tiene el formato correcto, tomamos undefined
@@ -25,7 +27,7 @@ const verificarToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ error: "Acceso denegado. Token no proporcionado." });
   }
-
+  
   try {
     // 2. Verificar el token con la misma clave secreta del login
     const verified = jwt.verify(token, process.env.JWT_SECRET);
@@ -91,7 +93,7 @@ app.post('/login', async (req, res) => {
     // Esto crea una "llave" digital que contiene el ID del usuario y expira en 1 hora
     const token = jwt.sign(
       { id: user.id_suario, email: user.email }, 
-      process.env.JWT_SECRET || 'secreto_super_seguro', // En producción, usa variables de entorno
+      process.env.JWT_SECRET, // En producción, usa variables de entorno
       { expiresIn: '9h' }
     );
 
@@ -199,6 +201,73 @@ app.get('/perfil', verificarToken, async (req, res) => {
   }
 });
 
+// Obtener Rubros
+app.get('/rubros', verificarToken, async (req, res) => {
+  try {
+    
+    const { data, error } = await supabase
+      .from('rubro')
+      .select('id_rubro, descripcion'); 
+
+    if (error) throw error;
+    console.log(data)
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Error al obtener rubros" });
+  }
+});
+
+// Obtener Registros PM
+app.get('/registros-pm', verificarToken, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('registro_pm')
+      .select('id_registro_pm, descripcion');
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al obtener registros PM" });
+  }
+});
+
+// Ruta para crear Producto + Piezas (Transaccional)
+app.post('/productos', verificarToken, async (req, res) => {
+  try {
+    const { nombre, id_registro_pm, id_rubro, piezas } = req.body;
+
+    // Validaciones básicas de entrada
+    if (!nombre || !piezas || piezas.length === 0) {
+      return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    // Llamada a la función RPC de Supabase
+    const { data, error } = await supabase.rpc('crear_producto_con_piezas', {
+      nombre_prod: nombre,
+      id_pm: id_registro_pm,
+      id_rubro_param: id_rubro,
+      piezas_json: piezas 
+    });
+
+    if (error) {
+      console.error("Error en transacción:", error);
+      // Supabase devuelve error 500 o 400 dentro del objeto error
+      return res.status(500).json({ error: "Error al guardar el producto en la base de datos." });
+    }
+
+    // Si todo salió bien
+    res.status(201).json({ 
+      message: "Producto y piezas creados exitosamente", 
+      id_producto: data.id_producto 
+    });
+
+  } catch (err) {
+    console.error("Error del servidor:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
