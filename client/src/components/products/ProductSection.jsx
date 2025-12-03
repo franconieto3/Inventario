@@ -9,29 +9,18 @@ import { useState , useEffect} from "react";
 import "../../styles/ProductSection.css"
 import BodyContainer from "../BodyContainer";
 import { useNavigate } from "react-router-dom";
-/*
-//Simulación de datos extraidos del backend
-const listadoPM = [{id: 0, nombre: "Ninguno"},
-                   {id: 1, nombre: "Cadera"},
-                   {id: 2, nombre: "Clavos endomedulares"}]
 
-const listadoRubros = [{id: 0, nombre: "Ninguno"},
-                       {id: 13, nombre: "Bipolar"},
-                       {id: 78, nombre: "Componente de fábrica"},
-                    ]
-*/
+/*
 const listadoProductos = [{id:1, nombre:"Tallo Charnley", piezas:[{}]}, 
                         {id:2, nombre:"Cotilo Muller", piezas:[{}]},
                         {id:3, nombre:"Tallo Thopmson", piezas:[{}]},
                         {id:4, nombre:"Cotilo no cementado", piezas:[{}]}]
-
-
-
+*/
 
 export default function ProductSection(){
 
     const [showNewProduct, setShowNewProduct] = useState(false);
-    const [productos, setProductos] = useState([...listadoProductos]);
+    const [productos, setProductos] = useState([]);
     const [registrosPM, setRegistrosPM] = useState([]);
     const [rubros, setRubros] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
@@ -46,7 +35,7 @@ export default function ProductSection(){
             setLoadingData(true);
             try {
                 // Hacemos ambas peticiones en paralelo
-                const [resRubros, resPM] = await Promise.all([
+                const [resRubros, resPM, resProductos] = await Promise.all([
                     fetch('http://localhost:4000/rubros', {
                         headers: { 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}` }
@@ -54,21 +43,26 @@ export default function ProductSection(){
                     fetch('http://localhost:4000/registros-pm', {
                         headers: {'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}` }
+                    }),
+                    fetch('http://localhost:4000/productos', {
+                        headers: {'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}` }
                     })
                 ]);
 
-                if (!resRubros.ok || !resPM.ok) {
+                if (!resRubros.ok || !resPM.ok || !resProductos.ok) {
                     throw new Error("Error obteniendo listas auxiliares");
                 }
 
                 const dataRubros = await resRubros.json();
                 const dataPM = await resPM.json();
+                const dataProductos = await resProductos.json();
 
-                console.log("Datos recibidos de la API:", dataPM);
 
                 // 4. Actualizamos el estado
                 setRubros(dataRubros);
                 setRegistrosPM(dataPM);
+                setProductos(dataProductos);
 
             } catch (error) {
                 console.error("Error cargando listas:", error);
@@ -77,7 +71,7 @@ export default function ProductSection(){
                 setLoadingData(false);
             }
         };
-
+        
         fetchAuxData();
     }, []);
 
@@ -110,12 +104,9 @@ export default function ProductSection(){
                 throw new Error(data.error || "Error desconocido al crear producto");
             }
 
-            // 4. Éxito
-            alert(`Producto creado con éxito. ID: ${data.id_producto}`);
-            
-            // Actualizamos la lista visualmente (Optimista)
+
             // Opcional: Podrías hacer un fetch() nuevo para traer la lista real actualizada
-            setProductos(prev => [...prev, payload]);
+            setProductos(prev => [...prev, {"id_producto": data.id_producto, "nombre": data.name}]);
             
             setShowNewProduct(false); // Cerramos el modal
 
@@ -125,8 +116,12 @@ export default function ProductSection(){
         }
     }
 
-    const items = productos.map((item, idx) => (
-        <ProductItem key={item.id} name={item.nombre} />
+    const handleProductClick = (id) => {
+        navigate(`/producto/${id}`); 
+    };
+
+    const items = productos.map((item) => (
+        <ProductItem key={item.id_producto} id ={item.id_producto} name={item.nombre} onChange={handleProductClick}/>
     ));
 
 
@@ -141,7 +136,7 @@ export default function ProductSection(){
                 <div className='title-container'>
                     <div>
                     <p className='products-text'>Productos</p>
-                    <p className='products-count'>{`${listadoProductos.length}`} productos</p>
+                    <p className='products-count'>{`${productos.length}`} productos</p>
                     </div>
                 </div>
 

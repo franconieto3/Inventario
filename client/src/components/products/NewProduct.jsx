@@ -76,8 +76,8 @@ export default function NewProduct(props) {
     setLoading(true);
     
     // Enviamos la "entidad" tal como estaba en la versión de clase
-    props.onCreate({ nombre, pm, rubro, piezas });
-    //props.onCreate(payload);
+    //props.onCreate({ nombre, pm, rubro, piezas });
+    props.onCreate(payload);
     setNombre("");
     setPiezas([{ id: genId(), codigoPieza: "", nombrePieza: "" }]);
     setPm(0);

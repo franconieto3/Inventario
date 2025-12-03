@@ -233,6 +233,19 @@ app.get('/registros-pm', verificarToken, async (req, res) => {
   }
 });
 
+//Obtener productos
+app.get('/productos', verificarToken, async (req, res)=>{
+  try{
+    const {data, error} = await supabase.from('producto').select('*');
+    if (error) throw error;
+    res.json(data);
+
+  }catch(err){
+    console.error(err);
+    res.status(500).json({error:"Error al obtener productos"});
+  }
+})
+
 // Ruta para crear Producto + Piezas (Transaccional)
 app.post('/productos', verificarToken, async (req, res) => {
   try {
@@ -260,12 +273,49 @@ app.post('/productos', verificarToken, async (req, res) => {
     // Si todo salió bien
     res.status(201).json({ 
       message: "Producto y piezas creados exitosamente", 
-      id_producto: data.id_producto 
+      id_producto: data.id_producto,
+      id_registro_pm: data.id_registro_pm,
+      id_rubro: data.id_rubro,
+      nombre: data.name 
     });
 
   } catch (err) {
     console.error("Error del servidor:", err);
     res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+// Ruta para obtener el detalle de UN producto específico por su ID
+app.get('/productos/:id', verificarToken, async (req, res) => {
+  try {
+    // 1. Capturamos el ID que viene en la URL (ej: /productos/15 -> id = 15)
+    const { id } = req.params;
+
+    // 2. Consulta a Supabase
+  
+   const { data, error } = await supabase
+      .from('producto')
+      .select(`
+        *,
+        pieza (*) 
+      `)
+      .eq('id_producto', id)
+      .single();
+
+    if (error) {
+      // Si el error es que no encontró filas, devolvemos 404
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: "Producto no encontrado" });
+      }
+      throw error;
+    }
+
+    res.json(data);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al obtener el detalle del producto" });
   }
 });
 

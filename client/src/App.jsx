@@ -7,6 +7,7 @@ import Register from './components/auth/Register';
 import { AuthContextProvider } from './context/authContext';
 import HomePage from './components/HomePage';
 import PrivateRoute from './components/PrivateRoute';
+import ProductDetail from "./components/products/ProductDetail";
 
 
 function App() {
@@ -45,7 +46,14 @@ function App() {
                 </PrivateRoute>
               }
             />
-
+            <Route 
+              path="/producto/:id" 
+              element={
+                <PrivateRoute>
+                  <ProductDetail />
+                </PrivateRoute>
+                } 
+            />
             </Routes>
           </BrowserRouter>
         </AuthContextProvider>
