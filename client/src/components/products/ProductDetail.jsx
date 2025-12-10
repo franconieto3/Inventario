@@ -9,15 +9,41 @@ import SubirArchivo from '../SubirArchivo';
 export default function ProductDetail() {
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
+
+  //Estados de visualización 
   const [mostrarPiezas, setMostrarPiezas] = useState(true);
   const [mostrarPlanos, setMostrarPlanos] = useState(true);
   const [mostrarMateriales, setMostrarMateriales] = useState(true);
   const [mostrarProcesos, setMostrarProcesos] = useState(true);
+  const [seleccionarPiezas,setSeleccionarPiezas] = useState(false);
+  
 
+  //Estado de archivo para plano
   const [file, setFile] = useState(null);
-  useEffect(()=>console.log(file),[file])
+  const [piezasPlano, setPiezasPlano] = useState([]);
 
+  const togglePieza = (id) => {
+    setPiezasPlano(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(p => p !== id);
+      }
+      return [...prev, id];
+    });
+  };
 
+  const subirPlano = ()=>{
+
+  }
+
+  useEffect(()=>{
+    if(file){
+      setSeleccionarPiezas(true);
+      return;
+    }
+    setSeleccionarPiezas(false);
+    return;
+
+  },[file])
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -79,7 +105,7 @@ export default function ProductDetail() {
                   </p>
                 </div>
 
-              {/* Card Content */}
+                {/* Card Content */}
 
                 <div className='upload-content'>
                   <form>
@@ -99,8 +125,20 @@ export default function ProductDetail() {
                     </div>
                   </form>
                 </div>
-                <SubirArchivo onUpload={(plano)=>{setFile(plano)}}/>
 
+                <SubirArchivo onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
+                
+                {/*Botón de seleccionar todos*/}
+                
+                {<ul style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
+                  {producto.pieza && producto.pieza.map(p => (
+                    <li key={p.id_pieza}>
+                    <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
+                    <span>{producto.nombre + " " + p.nombre}</span>
+                    </li>
+                  ))}
+                </ul>}
+                <button onClick={subirPlano}>Guardar</button>
               </div>
               
             </div>
