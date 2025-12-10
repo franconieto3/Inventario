@@ -1,28 +1,111 @@
-*{
-
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.auth-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: white;
 }
 
-form{
+.login-container{
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
 
+.login-header {
+    margin-bottom: 20px;
+}
+
+.login-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.login-header p {
+    font-size: 14px;
+    color: #666; /* Gris suave */
+}
+
+.login-form{
     padding: 10px;
 }
 
-label{
+.login-form label{
     display: block;
-    margin-top:10px;
-    justify-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #000;
+    text-align: start;
 
 }
 
-input{
-    display: block;
-    margin-top:5px
+.login-form label input{
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #e2e8f0; /* Gris muy claro borde */
+    border-radius: 6px;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
-a{
+input:focus {
+    border-color: #000; /* Foco negro como suele ser en estos diseños */
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+
+
+/* 5. Botón */
+.btn-submit {
+    width: 100%;
+    background-color: #111; /* Negro casi puro */
+    color: #fff;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #333;
+}
+
+.login-footer {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #666;
+}
+
+.login-footer a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
     margin: 0px;
+    font-size: 14px;
 }
 
-button{
-    margin:10px
+.login-footer a:hover {
+    text-decoration: underline;
 }

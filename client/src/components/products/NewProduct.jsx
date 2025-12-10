@@ -1,5 +1,6 @@
 // NewProduct.jsx
 import "../../styles/NewProduct.css";
+import BuscadorRubros from "../BuscadorRubros";
 import NewPieza from "./NewPieza";
 import { useState } from "react";
 
@@ -118,6 +119,7 @@ export default function NewProduct(props) {
               {props.rubros.map(item => (<option key={item.id_rubro} value={item.id_rubro}>{item.descripcion}</option>))}
             </select>
           </div>
+          <BuscadorRubros rubros={props.rubros} onChange={(id)=>setRubro(id)}/>
 
           <hr />
           {piezas.map((pieza) => (
@@ -128,6 +130,7 @@ export default function NewProduct(props) {
               onChange={handlePartChange}
               onDelete={deletePart}
               rubro={rubro}
+              producto={nombre}
             />
           ))}
           <button onClick={addPart}>Agregar pieza</button>

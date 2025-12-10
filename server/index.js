@@ -39,7 +39,14 @@ const verificarToken = (req, res, next) => {
     // 4. Continuar con la siguiente función (la ruta protegida)
     next(); 
   } catch (error) {
-    res.status(400).json({ error: "Token inválido o expirado." });
+      if (err.name === "TokenExpiredError") {
+        console.log("El token expiró");
+        res.status(400).json({ error: "Token expirado" });
+      } else {
+        console.log("Token inválido:", err.message);
+        res.status(400).json({ error: "Token inválido" });
+      }
+    
   }
 };
 
@@ -51,6 +58,8 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
 });
+
+app.get('/verificar', verificarToken, (req, res)=>res.sendStatus(200));
 
 //Ruta de Login
 app.post('/login', async (req, res) => {
@@ -210,7 +219,6 @@ app.get('/rubros', verificarToken, async (req, res) => {
       .select('id_rubro, descripcion'); 
 
     if (error) throw error;
-    console.log(data)
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: "Error al obtener rubros" });
@@ -276,7 +284,7 @@ app.post('/productos', verificarToken, async (req, res) => {
       id_producto: data.id_producto,
       id_registro_pm: data.id_registro_pm,
       id_rubro: data.id_rubro,
-      nombre: data.name 
+      nombre: data.nombre 
     });
 
   } catch (err) {

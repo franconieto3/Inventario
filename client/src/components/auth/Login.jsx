@@ -50,29 +50,38 @@ export default function Login() {
 
   return(
     <>
-    <div>
-      <h1>Iniciar sesión</h1>
-      <form className='login-form' onSubmit={handleSubmit}>
-        <label>
-          Ingrese su DNI:
-          <input placeholder='Número de DNI' type="text" onChange={(e)=>setDni(e.target.value)}/>
-        </label>
-        <label>
-          Contraseña:
-          <input placeholder='Contraseña' type="password" onChange={(e)=>setPassword(e.target.value)}/>
-        </label>
-        <p><a href=''>¿Olvidaste tu contraseña?</a></p>
+    <div className='auth-container'>
+      <div className='login-container'>
+        <div class="login-header">
+          <h1>Bienvenido</h1>
+          <p>Ingrese sus credenciales para acceder a la cuenta.</p>
+        </div>
+        <form className='login-form' onSubmit={handleSubmit}>
+          <label>
+            DNI:
+            <input placeholder='Número de DNI' type="text" onChange={(e)=>setDni(e.target.value)}/>
+          </label>
+          <label>
+            Contraseña:
+            <input placeholder='Contraseña' type="password" onChange={(e)=>setPassword(e.target.value)}/>
+          </label>
 
-        {error && (
-          <p className="error-message" style={{ color: "red" }}>
-            {error}
-          </p>
-        )}
+          {error && (
+            <p className="error-message" style={{ color: "red" }}>
+              {error}
+            </p>
+          )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Cargando..." : "Iniciar sesión"}
-        </button>
-      </form>
+          <button className="btn-submit" type="submit" disabled={loading}>
+            {loading ? "Cargando..." : "Ingresar"}
+          </button>
+        </form>
+        
+        <div class="login-footer">
+            Olvidó su contraseña? <a href="#">Recuperar contraseña</a>
+        </div>
+
+      </div>
     </div>
     </>
   );

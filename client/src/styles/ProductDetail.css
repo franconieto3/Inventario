@@ -1,0 +1,142 @@
+.detail-container{
+}
+
+.detail-container h1{
+    text-align: start;
+    margin-bottom: 20px;
+}
+
+.detail-container p{
+    text-align: start;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+.detail{
+    padding: 15px;
+    text-align: start;
+    border: solid;
+    border-width: thin;
+    border-color: grey;
+    border-radius: 10px;
+
+}
+
+.detail-subtitle{
+    display: flex;
+    gap: 10px;
+}
+
+.detail-subtitle span{
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.detail div ul{
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 10px;
+  margin-left: 25px;
+}
+
+/*Pestaña de planos*/
+
+.upload-container{
+}
+
+/* Dropzone Area */
+.dropzone {
+  margin-top: 0.5rem;
+  border: 1px dashed #e4e4e7;
+  border-radius: 0.5rem;;
+  padding: 2.5rem 1.5rem; /* py-20 equiv aprox */
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #ffffff;
+  color: black;
+  font-size: 0.875rem;
+}
+
+.dropzone:hover {
+  background-color: #f4f4f5;
+}
+
+.dropzone.active {
+  border-color: #18181b;
+  background-color: rgba(24, 24, 27, 0.05); /* primary/10 */
+  outline: 2px solid rgba(24, 24, 27, 0.2);
+}
+
+/* Lista de archivos subidos */
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.file-item-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--background);
+}
+
+.file-icon-wrapper {
+  height: 2.5rem;
+  width: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background-color: var(--muted);
+  margin-right: 0.75rem;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.file-size {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0.125rem 0 0 0;
+}
+
+/* Botón de eliminar */
+.delete-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+

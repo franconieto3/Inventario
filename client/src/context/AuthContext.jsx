@@ -18,18 +18,35 @@ export const AuthContextProvider = ({ children }) => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      try {
-        // Restauramos la sesión desde el almacenamiento local
+    const verifyToken = async ()=>{
+      try{
+        const response = await fetch('http://localhost:4000/verificar', {
+                  method: 'GET',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${storedToken}` // Header requerido por tu middleware 'verificarToken'
+                  }
+                });
+        if (!response.ok) {
+            throw new Error("Token inválido o expirado");
+        }
         setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Error al leer datos del usuario", error);
+      }catch(error){
+        console.error("Sesión caducada:", error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        setUser(null);
+      }finally{
+        setLoading(false);
       }
     }
-    // Terminamos de cargar
-    setLoading(false);
+
+    if (storedToken && storedUser) {
+      verifyToken();
+    }else{
+      setLoading(false);
+    }
+    
   }, []);
 
     // 2. FUNCIÓN LOGIN: Conecta con tu backend

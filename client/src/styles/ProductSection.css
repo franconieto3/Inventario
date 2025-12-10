@@ -1,21 +1,4 @@
-/* Logo */
 
-.logo-container{
-  
-  font-size: 20px;
-  display: flex;
-  align-items: center; 
-  gap: 10px;  
-  padding: 0px;
-}
-
-.logo-img{
-  width: 60px;
-  height: auto;
-}
-.logo-text{
-  font-family: "Times New Roman", Times, serif;
-}
 
 /* Contador de productos y botón para agregar */
 
@@ -23,7 +6,7 @@
   display: flex;
   padding: 0px;
   justify-content: space-between;
-  margin-top: 50px;
+  margin-top: 0px;
   margin-bottom: 30px;
   align-items: center;
 }

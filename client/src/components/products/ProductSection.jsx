@@ -7,15 +7,9 @@ import { useState , useEffect} from "react";
 
 //Estilos
 import "../../styles/ProductSection.css"
-import BodyContainer from "../BodyContainer";
 import { useNavigate } from "react-router-dom";
+import { UserAuth } from "../../context/authContext";
 
-/*
-const listadoProductos = [{id:1, nombre:"Tallo Charnley", piezas:[{}]}, 
-                        {id:2, nombre:"Cotilo Muller", piezas:[{}]},
-                        {id:3, nombre:"Tallo Thopmson", piezas:[{}]},
-                        {id:4, nombre:"Cotilo no cementado", piezas:[{}]}]
-*/
 
 export default function ProductSection(){
 
@@ -25,12 +19,18 @@ export default function ProductSection(){
     const [rubros, setRubros] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
 
+    const { logout } = UserAuth();
     const navigate = useNavigate();
 
+    //Petción de rubros, listados de PM y productos al cargar el componente
     useEffect(() => {
         const fetchAuxData = async () => {
             const token = localStorage.getItem('token');
-            if (!token) navigate('/login'); // Si no hay token, no intentamos buscar nada
+            if (!token) {
+                 logout(); // Asegurar limpieza
+                 navigate('/login');
+                 return;
+            }
 
             setLoadingData(true);
             try {
@@ -49,6 +49,13 @@ export default function ProductSection(){
                                 'Authorization': `Bearer ${token}` }
                     })
                 ]);
+
+                // VERIFICACIÓN CLAVE: Si alguno da 401 (No autorizado/Expirado)
+                if (resRubros.status === 401 || resPM.status === 401 || resProductos.status === 401) {
+                    logout(); // Borra usuario y token del estado y localStorage
+                    navigate('/login');
+                    return;
+                }
 
                 if (!resRubros.ok || !resPM.ok || !resProductos.ok) {
                     throw new Error("Error obteniendo listas auxiliares");
@@ -81,8 +88,9 @@ export default function ProductSection(){
         const token = localStorage.getItem('token'); 
 
         if (!token) {
-            alert("Error: No has iniciado sesión.");
-            return;
+                logout(); // Asegurar limpieza
+                navigate('/login');
+                return;
         }
 
         try {
@@ -98,15 +106,16 @@ export default function ProductSection(){
             });
 
             const data = await response.json();
+            console.log(data);
 
             // 3. Verificar si hubo error en el servidor
             if (!response.ok) {
                 throw new Error(data.error || "Error desconocido al crear producto");
             }
 
-
+            
             // Opcional: Podrías hacer un fetch() nuevo para traer la lista real actualizada
-            setProductos(prev => [...prev, {"id_producto": data.id_producto, "nombre": data.name}]);
+            setProductos(prev => [...prev, {"id_producto": data.id_producto, "nombre": data.nombre}]);
             
             setShowNewProduct(false); // Cerramos el modal
 
@@ -128,14 +137,10 @@ export default function ProductSection(){
     return (
         <>
             <NavBar />
-            <BodyContainer>
-                <div className='logo-container'>
-                    <img className="logo-img" src={logo} alt="logo"></img>
-                    <span className='logo-text'>BIOPROTECE S.A.</span>
-                </div>
+            <div className='body-container'>
                 <div className='title-container'>
                     <div>
-                    <p className='products-text'>Productos</p>
+                    <p className='products-text'>Registro de productos</p>
                     <p className='products-count'>{`${productos.length}`} productos</p>
                     </div>
                 </div>
@@ -163,7 +168,7 @@ export default function ProductSection(){
                 {showNewProduct && (
                     <NewProduct onClose={()=>setShowNewProduct(false)} onCreate={handleAddProduct} registros = {registrosPM} rubros = {rubros}/>
                 )}
-            </BodyContainer>
+            </div>
         </>
     );
 }

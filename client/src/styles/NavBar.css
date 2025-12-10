@@ -1,3 +1,65 @@
+
 .nav-bar{
+    box-sizing: border-box;
     background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin: 0px;
+    width: 100%;
+}
+
+.logo-container{
+  
+  font-size: 20px;
+  display: flex;
+  align-items: center; 
+  gap: 10px;  
+  padding: 0px;
+}
+
+.logo-container:hover{
+  cursor: pointer;
+}
+
+.logo-img{
+  width: 60px;
+  height: auto;
+}
+.logo-text{
+  font-family: "Times New Roman", Times, serif;
+}
+
+.user-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:15px
+}
+
+.user-button{
+  padding: 12px;
+  border-radius: 100%;
+  background-color: rgb(215, 215, 215);
+  border:none
+}
+
+.logout-button{
+  background-color: white;
+  border: none;
+}
+
+.logout-button div{
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.logout-button div:hover{
+  background-color: rgb(215, 215, 215);
+  cursor: pointer;
+}
+
+.logout-button i{
+  color: red;
 }
