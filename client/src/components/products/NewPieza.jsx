@@ -26,7 +26,7 @@ function NewPieza({ id, data = {}, onChange, onDelete, rubro, producto }) {
       <div className="new-part-box">
         <div style={{"display":"block"}}>
           <div className="input-codigo">
-            <div >Código de pieza:</div>
+            <div >Código de pieza: </div>
             <div className="input-wrapper">
               <span className="prefix">{String(rubro).padStart(2, "0")} -</span>
               <input
