@@ -36,29 +36,29 @@ export default function SubirArchivo( {onUpload} ){
             </div>
             )}
         </div>
-        <p>Solo los archivos .pdf están permitidos</p>
+        <p className="card-description">Solo los archivos .pdf están permitidos</p>
         {selected.length > 0 && (
-            <ul className="file-list">
-            {selected.map((file) => (
-                <li key={file.name} className="file-item-card">
-                <div className="file-icon-wrapper">
-                    <i className="material-icons">file_copy</i>
-                </div>
-                <div className="file-info">
-                    <p className="file-name">{file.name}</p>
-                    <p className="file-size">{file.size/1000000} MB</p>
-                </div>
-                <button
-                    type="button"
-                    className="delete-btn"
-                    aria-label="Remove file"
-                    onClick={() => removeFile(file.name)}
-                >
-                    <i className="material-icons">delete</i>
-                </button>
-                </li>
-            ))}
-            </ul>
+        <ul className="file-list">
+        {selected.map((file) => (
+            <li key={file.name} className="file-item-card">
+            <div className="file-icon-wrapper">
+                <i className="material-icons">file_copy</i>
+            </div>
+            <div className="file-info">
+                <p className="file-name">{file.name}</p>
+                <p className="file-size">{file.size/1000000} MB</p>
+            </div>
+            <button
+                type="button"
+                className="delete-btn"
+                aria-label="Remove file"
+                onClick={() => removeFile(file.name)}
+            >
+                <i className="material-icons">delete</i>
+            </button>
+            </li>
+        ))}
+        </ul>
         )}
         </>
     );

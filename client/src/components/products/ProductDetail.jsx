@@ -110,7 +110,7 @@ export default function ProductDetail() {
                 <div className='upload-content'>
                   <form>
                     <div>
-                      <label>Denominación</label>
+                      <label>Denominación: </label>
                       <input
                         type="text"
                         id="denominacion"
@@ -120,8 +120,20 @@ export default function ProductDetail() {
                       />
                     </div>
                     <div>
-                      <label>Versión</label>
+                      <label>Versión: </label>
                       <input type="number"/>
+                    </div>
+                    <div>
+                      <label>Fecha de vigencia: </label>
+                      <input type="date"/>
+                    </div>
+                    <div>
+                      <label>Descripción de versión: </label>
+                      <input type="text"/>
+                    </div>
+                    <div>
+                      <label>Resolución: </label>
+                      <input type="text"/>
                     </div>
                   </form>
                 </div>
