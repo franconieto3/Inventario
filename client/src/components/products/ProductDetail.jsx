@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { supabase } from '../../supabase/client';
 
 import NavBar from '../NavBar';
 
@@ -44,6 +45,20 @@ export default function ProductDetail() {
     });
   };
 
+  const fetchProduct = async () => {
+    const token = localStorage.getItem('token');
+    
+    // Llamamos al endpoint dinámico pasando el ID capturado
+    const response = await fetch(`http://localhost:4000/productos/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      setProducto(data);
+    }
+  };
+
   useEffect(()=>{
     if(file){
       setSeleccionarPiezas(true);
@@ -55,20 +70,6 @@ export default function ProductDetail() {
   },[file])
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      const token = localStorage.getItem('token');
-      
-      // Llamamos al endpoint dinámico pasando el ID capturado
-      const response = await fetch(`http://localhost:4000/productos/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setProducto(data);
-      }
-    };
-
     fetchProduct();
   }, [id]); // El efecto se ejecuta si cambia el ID
 
@@ -140,14 +141,13 @@ export default function ProductDetail() {
         const payload = {
           documento: {
             descripcion: denominacion,
-            tipo_documento: 1, // Valor fijo según requerimiento
-            id_producto: id // Probablemente necesites vincularlo al producto actual
+            tipo_documento: 1,
           },
           version: {
             n_version: Number(version),
             fecha_vigencia: fecha,
             commit: commit,
-            path: finalPath, // Path obtenido de Supabase
+            path: finalPath,
             resolucion: resolucion
           },
           piezas: piezasPlano // Array de IDs de piezas seleccionadas
