@@ -54,6 +54,8 @@ const verificarToken = (req, res, next) => {
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_API_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+// Cliente ADMIN (ignora RLS)
+const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
@@ -101,7 +103,7 @@ app.post('/login', async (req, res) => {
     // 4. Generar un Token (JWT)
     // Esto crea una "llave" digital que contiene el ID del usuario y expira en 1 hora
     const token = jwt.sign(
-      { id: user.id_suario, email: user.email }, 
+      { id: user.id_usuario, email: user.email }, 
       process.env.JWT_SECRET, // En producción, usa variables de entorno
       { expiresIn: '9h' }
     );
@@ -326,6 +328,24 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
     res.status(500).json({ error: "Error al obtener el detalle del producto" });
   }
 });
+
+app.post('/subir-plano', verificarToken, async (req,res)=>{
+  const {fileName, userId} = req.body;
+
+  //Validaciones
+  //¿El usuario puede subir planos?
+  //¿El archivo cumple con el tipo y tamaño permitidos?
+
+  const path = `planos/${Date.now()}-${fileName}`;
+  
+  const {data,error} = await supabaseAdmin
+                            .storage
+                            .from('planos')
+                            .createSignedUploadUrl(path, { upsert: false });
+
+  return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: data.path });
+  }
+);
 
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

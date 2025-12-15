@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../../supabase/client';
+//import { supabase } from '../../supabase/client';
 
 import NavBar from '../NavBar';
 
 import "../../styles/ProductDetail.css"
 import SubirArchivo from '../SubirArchivo';
+import { UserAuth } from '../../context/authContext';
 
 export default function ProductDetail() {
+  const { user} = UserAuth();
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
 
@@ -60,6 +62,7 @@ export default function ProductDetail() {
   };
 
   useEffect(()=>{
+    console.log(file);
     if(file){
       setSeleccionarPiezas(true);
       return;
@@ -75,7 +78,14 @@ export default function ProductDetail() {
 
   const subirPlano = async(e)=>{
     e.preventDefault();
+    const token = localStorage.getItem('token'); 
 
+    if (!token) {
+            logout(); // Asegurar limpieza
+            navigate('/login');
+            return;
+    }
+    
     // --- 1. Validaciones ---
     if (!file) {
       setError("Por favor, selecciona un archivo PDF.");
@@ -109,6 +119,29 @@ export default function ProductDetail() {
       return;
     }
 
+    
+    try{
+      const response = await fetch('http://localhost:4000/subir-plano', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({fileName:file.name, userId: user.id})
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Error al generar URL de subida');
+      }
+
+      const {signedUrl, path, uploadToken } = await response.json();
+      console.log(signedUrl);
+    }catch(err){
+      console.error(err);
+    }
+
+    /*
   try {
         setLoading(true);
 
@@ -192,7 +225,7 @@ export default function ProductDetail() {
         alert(error.message);
       } finally {
         setLoading(false);
-      }
+      }*/
   }
 
   if (!producto) return <div>Cargando...</div>;
