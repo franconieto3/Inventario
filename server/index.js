@@ -343,9 +343,19 @@ app.post('/subir-plano', verificarToken, async (req,res)=>{
                             .from('planos')
                             .createSignedUploadUrl(path, { upsert: false });
 
-  return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: data.path });
+  if (error) {
+    console.error("Error Supabase Storage:", error);
+    return res.status(500).json({ error: "No se pudo generar la URL de subida" });
+  }
+                            
+  return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: path });
   }
 );
+
+app.post('/guardar-documento', verificarToken, async (req, res)=>{
+  console.log(req.body);
+  return res.status(201).json({message: "Mensaje recibido"})
+})
 
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

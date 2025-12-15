@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 //import { supabase } from '../../supabase/client';
 
 import NavBar from '../NavBar';
@@ -9,7 +9,8 @@ import SubirArchivo from '../SubirArchivo';
 import { UserAuth } from '../../context/authContext';
 
 export default function ProductDetail() {
-  const { user} = UserAuth();
+  const { user, logout} = UserAuth();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
 
@@ -25,8 +26,7 @@ export default function ProductDetail() {
   const [file, setFile] = useState(null);
 
   //Estados de formulario
-  const [denominacion, setDenominacion] = useState("");
-  const [path, setPath] = useState("");
+  //const [denominacion, setDenominacion] = useState("");
   const [version, setVersion] = useState(0);
   const [fecha, setFecha] = useState("");
   const [resolucion, setResolucion] = useState("");
@@ -91,12 +91,12 @@ export default function ProductDetail() {
       setError("Por favor, selecciona un archivo PDF.");
       return;
     }
-
+    /*
     if (!denominacion.trim()) {
       setError("La denominación es obligatoria.");
       return;
     }
-
+    */
     if (version < 0 || !Number.isInteger(Number(version))) {
       setError("El número de versión debe ser un número entero igual o mayor a 0.");
       return;
@@ -106,6 +106,8 @@ export default function ProductDetail() {
       setError("La fecha de vigencia es obligatoria.");
       return;
     }
+
+    //Validar que no se haya ingresado una fecha futura
 
     // Validación simple de formato de fecha (el input type="date" suele garantizar YYYY-MM-DD)
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -136,97 +138,48 @@ export default function ProductDetail() {
       }
 
       const {signedUrl, path, uploadToken } = await response.json();
-      console.log(signedUrl);
+
+      //Subir archivo al bucket con la url firmada
+      //Enviar los datos del formulario al backend
+
+      const payload = {
+        documento:{
+          descripcion: file.name,
+          id_tipo_documento: 1
+        },
+        version:{
+          n_version: Number(version),
+          fecha_vigencia: fecha,
+          commit: commit,
+          resolucion:resolucion,
+          path: path
+        },
+        piezas:piezasPlano
+      };
+
+      const res = await fetch('http://localhost:4000/guardar-documento', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Error al generar URL de subida');
+      }
+
+      const respuesta = await res.json();
+      console.log(respuesta);
+
     }catch(err){
       console.error(err);
     }
-
-    /*
-  try {
-        setLoading(true);
-
-        // --- 2. Carga del archivo al Bucket (Supabase Storage) ---
-        // Generamos un path único para evitar colisiones: /planos/ID_PRODUCTO/TIMESTAMP_NOMBRE
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}_${denominacion.replace(/\s+/g, '_')}.${fileExt}`;
-        const filePath = `planos/${id}/${fileName}`;
-
-        const { data: storageData, error: storageError } = await supabase
-          .storage
-          .from('documentos') // Asegúrate de que tu bucket se llame 'documentos' o 'planos'
-          .upload(filePath, file);
-
-        if (storageError) throw new Error(`Error al subir archivo: ${storageError.message}`);
-
-        // Obtenemos la URL pública (o el path relativo según tu lógica de backend)
-        // Si tu backend guarda solo el path relativo, usa 'filePath'.
-        // Si guarda la URL completa:
-        const { data: publicUrlData } = supabase.storage.from('documentos').getPublicUrl(filePath);
-        const finalPath = publicUrlData.publicUrl; 
-
-        // Actualizamos el estado local (opcional, por si lo usas en la UI luego)
-        setPath(finalPath);
-
-        // --- 3. Construcción del Payload ---
-        // IMPORTANTE: Usamos 'finalPath' aquí, no la variable de estado 'path',
-        // ya que el estado 'path' no se habrá actualizado todavía en este ciclo de ejecución.
-        
-        const payload = {
-          documento: {
-            descripcion: denominacion,
-            tipo_documento: 1,
-          },
-          version: {
-            n_version: Number(version),
-            fecha_vigencia: fecha,
-            commit: commit,
-            path: finalPath,
-            resolucion: resolucion
-          },
-          piezas: piezasPlano // Array de IDs de piezas seleccionadas
-        };
-
-        console.log("Enviando payload:", payload);
-
-        // --- 4. Envío al Servidor ---
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:4000/documentos', { // Ajusta el endpoint
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          // Si falla el backend, deberíamos considerar borrar el archivo de Supabase para no dejar basura
-          // await supabase.storage.from('documentos').remove([filePath]);
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Error al guardar en base de datos");
-        }
-
-        const dataRespuesta = await response.json();
-        
-        alert("Plano cargado exitosamente");
-        
-        // Limpieza de formulario
-        setDenominacion("");
-        setVersion(0);
-        setFecha("");
-        setCommit("");
-        setFile(null);
-        setPiezasPlano([]);
-        // Recargar producto para ver el nuevo plano en la lista
-        // fetchProduct(); 
-
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      } finally {
-        setLoading(false);
-      }*/
   }
+
+  
 
   if (!producto) return <div>Cargando...</div>;
 
@@ -273,7 +226,7 @@ export default function ProductDetail() {
                 {/* Card Content */}
 
                 <div className='upload-content'>
-                  <form>
+                  <form>{/*
                     <div>
                       <label>Denominación: </label>
                       <input
@@ -284,7 +237,7 @@ export default function ProductDetail() {
                         value={denominacion}
                         onChange={(e)=>setDenominacion(e.target.value)}
                       />
-                    </div>
+                    </div>*/}
                     <div>
                       <label>Versión (*): </label>
                       <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
