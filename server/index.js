@@ -7,6 +7,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { createClient } from "@supabase/supabase-js";
+import { z } from 'zod';
 
 // Middlewares
 const app = express();
@@ -335,6 +336,7 @@ app.post('/subir-plano', verificarToken, async (req,res)=>{
   //Validaciones
   //¿El usuario puede subir planos?
   //¿El archivo cumple con el tipo y tamaño permitidos?
+  //Validar piezas 
 
   const path = `planos/${Date.now()}-${fileName}`;
   
@@ -352,9 +354,83 @@ app.post('/subir-plano', verificarToken, async (req,res)=>{
   }
 );
 
+const DocumentoPayloadSchema = z.object({
+  documento: z.object({
+    id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
+    denominacion: z.string().min(3, { message: "La denominación es muy corta" })
+  }),
+  version: z.object({
+    n_version: z.number().int().nonnegative(),
+    fecha_vigencia: z.string().refine((date) => !isNaN(Date.parse(date)), {
+      message: "Formato de fecha inválido (Use ISO 8601)"
+    }),
+    commit: z.string().optional(),
+    resolucion: z.string().optional(),
+    path: z.string().min(1, { message: "El path del archivo es obligatorio" })
+  }),
+  piezas: z.array(z.number().int()).optional().default([])
+});
+
 app.post('/guardar-documento', verificarToken, async (req, res)=>{
-  console.log(req.body);
-  return res.status(201).json({message: "Mensaje recibido"})
+  try{
+    const datosValidado = DocumentoPayloadSchema.parse(req.body);
+
+    // Intentamos obtener los metadatos del archivo para ver si existe
+    const BUCKET_NAME = 'planos';
+    const filePath = datosValidado.version.path;
+
+    const { data: fileData, error: fileError } = await supabaseAdmin
+      .storage
+      .from(BUCKET_NAME)
+      .list(filePath.split('/').slice(0, -1).join('/'), { // Listamos la carpeta contenedora
+        limit: 100,
+        search: filePath.split('/').pop() // Buscamos el nombre exacto del archivo
+    });
+
+    if (fileError || !fileData || fileData.length === 0) {
+      return res.status(400).json({ 
+        error: "Validación de Archivo Fallida", 
+        message: `El archivo '${filePath}' no fue encontrado en el bucket '${BUCKET_NAME}'. Súbelo primero.` 
+      });
+    }
+
+    // Ejecutar la Función SQL (RPC)
+    
+    const { data: idVersionCreada, error: rpcError } = await supabase
+      .rpc('crear_documento_version_piezas', { 
+        payload: datosValidado 
+      });
+
+    if (rpcError) {
+      // Manejamos errores específicos de SQL
+      console.error("❌ Error SQL:", rpcError);
+      
+      // Si es el error que lanzamos manualmente en SQL o constraint unique
+      if (rpcError.code === 'P0001' || rpcError.code === '23505') { 
+         return res.status(409).json({ error: "Conflicto", message: rpcError.message });
+      }
+      
+      return res.status(500).json({ error: "Error de Base de Datos", details: rpcError.message });
+    }
+
+    // ÉXITO
+    return res.status(201).json({
+      message: "Documento y versión creados exitosamente",
+      id_version: idVersionCreada
+    });
+
+  }catch(error){
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        error: "Datos inválidos", 
+        detalles: error.errors.map(e => ({ campo: e.path.join('.'), mensaje: e.message })) 
+      });
+    }
+
+    // Captura de otros errores no controlados
+    console.error("❌ Error del servidor:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
 })
 
 const PORT = 4000;

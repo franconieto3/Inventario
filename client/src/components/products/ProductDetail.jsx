@@ -17,9 +17,11 @@ export default function ProductDetail() {
   //Estados de visualización 
   const [mostrarPiezas, setMostrarPiezas] = useState(true);
   const [mostrarPlanos, setMostrarPlanos] = useState(true);
+  const [agregarPlanos, setAgregarPlanos] = useState(false);
   const [mostrarMateriales, setMostrarMateriales] = useState(true);
   const [mostrarProcesos, setMostrarProcesos] = useState(true);
   const [seleccionarPiezas,setSeleccionarPiezas] = useState(false);
+
   
 
   //Estado de archivo para plano
@@ -31,7 +33,6 @@ export default function ProductDetail() {
   const [fecha, setFecha] = useState("");
   const [resolucion, setResolucion] = useState("");
   const [commit, setCommit] = useState("");
-
   const [resetKey, setResetKey] = useState(0);
 
   const [piezasPlano, setPiezasPlano] = useState([]);
@@ -64,7 +65,6 @@ export default function ProductDetail() {
   };
 
   useEffect(()=>{
-    console.log(file);
     if(file){
       setSeleccionarPiezas(true);
       return;
@@ -93,12 +93,7 @@ export default function ProductDetail() {
       setError("Por favor, selecciona un archivo PDF.");
       return;
     }
-    /*
-    if (!denominacion.trim()) {
-      setError("La denominación es obligatoria.");
-      return;
-    }
-    */
+
     if (version < 0 || !Number.isInteger(Number(version))) {
       setError("El número de versión debe ser un número entero igual o mayor a 0.");
       return;
@@ -142,6 +137,18 @@ export default function ProductDetail() {
       const {signedUrl, path, uploadToken } = await response.json();
 
       //Subir archivo al bucket con la url firmada
+      const uploadResponse = await fetch(signedUrl,{
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        }
+      })
+
+      if (!uploadResponse.ok){
+        throw new Error('Error al subir el archivo físico al almacenamiento. Intente nuevamente.')
+      }
+
       //Enviar los datos del formulario al backend
 
       const payload = {
@@ -180,6 +187,7 @@ export default function ProductDetail() {
 
     }catch(err){
       console.error(err);
+      setError(err.message || "Ocurrió un error inesperado.");
     }
   }
 
@@ -243,60 +251,59 @@ export default function ProductDetail() {
                 <input type='checkbox' name="Planos" onChange={()=>setMostrarPlanos(!mostrarPlanos)} checked={mostrarPlanos}/>
                 <span>Planos:</span>
               </div>
-              
+              <p> + Agregar planos</p>
+
               <div className='upload-container' style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
+
                 <div className='upload-header'>
-                  <h3>Agregar plano</h3>
+                  <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
                   <p className="card-description">
-                    Sube el archivo .pdf y asigna las piezas asociadas al plano 
+                    Sube el archivo, completa el formulario y asigna las piezas asociadas al plano 
                   </p>
                 </div>
 
-                {/* Card Content */}
-
-
-
                 <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
-                
-                <div className='upload-content'>
-                  <form>
-                    <div>
-                      <label>Versión (*): </label>
-                      <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
-                    </div>
-                    <div>
-                      <label>Fecha de vigencia (*): </label>
-                      <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
-                    </div>
-                    <div>
-                      <label>Descripción de versión: </label>
-                      <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
-                    </div>
-                    <div>
-                      <label>Resolución: </label>
-                      <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
-                    </div>
-                  </form>
-                </div>
-
-                {/*Botón de seleccionar todos*/}
-                
-                {<ul style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
-                  <li>
-                    <button onClick={handleSelectAll}>
-                      {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
-                    </button>
-                  </li>
-                  {producto.pieza && producto.pieza.map(p => (
-                    <li key={p.id_pieza}>
-                    <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
-                    <span>{producto.nombre + " " + p.nombre}</span>
+                <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
+                  <div className='upload-content'>
+                    <form>
+                      <div className="form-input">
+                        <label>Versión (*): </label>
+                        <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
+                      </div>
+                      <div className="form-input">
+                        <label>Fecha de vigencia (*): </label>
+                        <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
+                      </div>
+                      <div className="form-input">
+                        <label>Descripción de versión: </label>
+                        <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
+                      </div>
+                      <div className="form-input">
+                        <label>Resolución: </label>
+                        <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
+                      </div>
+                    </form>
+                  </div>
+                  <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>
+                  {<ul style={{"marginBottom":"10px", "marginTop":"10px"}}>
+                    {producto.pieza && producto.pieza.map(p => (
+                      <li key={p.id_pieza} style={{
+                                                  "marginBottom":"5px",
+                                                  "fontSize": "0.875rem"}}>
+                      <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
+                      <span>{" "+producto.nombre + " " + p.nombre}</span>
+                      </li>
+                    ))}
+                    <li>
+                      <button onClick={handleSelectAll}>
+                        {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
+                      </button>
                     </li>
-                  ))}
-                </ul>}
-                <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
+                  </ul>}
+                  <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
 
-                {error && <p style={{"color":"red"}}>{error}</p>}
+                  {error && <p style={{"color":"red"}}>{error}</p>}
+                </div>
               </div>
               
             </div>

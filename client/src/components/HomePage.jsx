@@ -11,14 +11,14 @@ export default function HomePage(){
         <div>
             <NavBar />
             <div className='body-container'>
-                <h1 style={{"margin-bottom":"30px"}}>¡Bienvenido!</h1>
+                <h1 style={{"marginBottom":"30px"}}>¡Bienvenido!</h1>
                 <div className="cards-container">
                     <div className="card" onClick={()=>navigate("/products")}>
                         <div className='icons-container'>
                             <div className="first-icon">
                                 <i className="material-icons" id="inventory">inventory</i>
                             </div>
-                            <i className="material-icons" style={{"font-size":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
                         </div>
                         <div className='card-title'>
                             <h1>Información de productos</h1>
@@ -32,7 +32,7 @@ export default function HomePage(){
                             <div className="first-icon">
                                 <i className="material-icons">person</i>
                             </div>
-                            <i className="material-icons" style={{"font-size":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
                         </div>
                         <div className='card-title'>
                             <h1>Usuarios</h1>
