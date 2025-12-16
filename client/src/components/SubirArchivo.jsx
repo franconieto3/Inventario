@@ -22,21 +22,23 @@ export default function SubirArchivo( {onUpload} ){
     return(
         <>
         {/* Dropzone */}
-        <div
-            {...getRootProps()}
-            className={`dropzone ${isDragActive ? "active" : ""}`}
-        >
-            <input {...getInputProps()} id="file-upload" />
-            {isDragActive ? (
-            <p>Suelte el archivo aquí.</p>
-            ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                <i className="material-icons">file_copy</i>
-                <p>Arrastre y suelte el archivo aquí, o haga click para seleccionar</p>
+        <div style={selected.length===0?{"display":"block"}:{"display":"none"}}> 
+            <div
+                {...getRootProps()}
+                className={`dropzone ${isDragActive ? "active" : ""}`}
+            >
+                <input {...getInputProps()} id="file-upload" />
+                {isDragActive ? (
+                <p>Suelte el archivo aquí.</p>
+                ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                    <i className="material-icons">file_copy</i>
+                    <p>Arrastre y suelte el archivo aquí, o haga click para seleccionar</p>
+                </div>
+                )}
             </div>
-            )}
+            <p className="card-description">Solo los archivos .pdf están permitidos</p>
         </div>
-        <p className="card-description">Solo los archivos .pdf están permitidos</p>
         {selected.length > 0 && (
         <ul className="file-list">
         {selected.map((file) => (

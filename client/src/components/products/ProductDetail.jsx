@@ -32,6 +32,8 @@ export default function ProductDetail() {
   const [resolucion, setResolucion] = useState("");
   const [commit, setCommit] = useState("");
 
+  const [resetKey, setResetKey] = useState(0);
+
   const [piezasPlano, setPiezasPlano] = useState([]);
 
   //Estado de carga
@@ -107,7 +109,7 @@ export default function ProductDetail() {
       return;
     }
 
-    //Validar que no se haya ingresado una fecha futura
+    //Validar que no se haya ingresado una fecha futura (opcional)
 
     // Validación simple de formato de fecha (el input type="date" suele garantizar YYYY-MM-DD)
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -172,14 +174,41 @@ export default function ProductDetail() {
       }
 
       const respuesta = await res.json();
-      console.log(respuesta);
+      
+      limpiarFormulario();
+      alert("Plano subido y asociado correctamente.");
 
     }catch(err){
       console.error(err);
     }
   }
 
-  
+  const handleSelectAll = (e)=>{
+    e.preventDefault();
+    
+    if (!producto?.pieza) return;
+
+    // Si ya están todos seleccionados, vaciamos. Si falta alguno, seleccionamos todos.
+    const todosSeleccionados = piezasPlano.length === producto.pieza.length;
+
+    if (todosSeleccionados) {
+      setPiezasPlano([]);
+    } else {
+      const todosLosIds = producto.pieza.map(p => p.id_pieza);
+      setPiezasPlano(todosLosIds);
+    }
+  }
+
+  const limpiarFormulario = () => {
+    setFile(null);
+    setVersion(0); // O el valor inicial que prefieras
+    setFecha("");
+    setResolucion("");
+    setCommit("");
+    setPiezasPlano([]);
+    setResetKey(prev => prev + 1);
+    setSeleccionarPiezas(false); 
+  };
 
   if (!producto) return <div>Cargando...</div>;
 
@@ -225,19 +254,12 @@ export default function ProductDetail() {
 
                 {/* Card Content */}
 
+
+
+                <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
+                
                 <div className='upload-content'>
-                  <form>{/*
-                    <div>
-                      <label>Denominación: </label>
-                      <input
-                        type="text"
-                        id="denominacion"
-                        name="denominacion"
-                        placeholder="Denominacion"
-                        value={denominacion}
-                        onChange={(e)=>setDenominacion(e.target.value)}
-                      />
-                    </div>*/}
+                  <form>
                     <div>
                       <label>Versión (*): </label>
                       <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
@@ -257,11 +279,14 @@ export default function ProductDetail() {
                   </form>
                 </div>
 
-                <SubirArchivo onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
-                
                 {/*Botón de seleccionar todos*/}
                 
                 {<ul style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
+                  <li>
+                    <button onClick={handleSelectAll}>
+                      {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
+                    </button>
+                  </li>
                   {producto.pieza && producto.pieza.map(p => (
                     <li key={p.id_pieza}>
                     <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
