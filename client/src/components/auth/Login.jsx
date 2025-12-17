@@ -52,7 +52,7 @@ export default function Login() {
     <>
     <div className='auth-container'>
       <div className='login-container'>
-        <div class="login-header">
+        <div className="login-header">
           <h1>Bienvenido</h1>
           <p>Ingrese sus credenciales para acceder a la cuenta.</p>
         </div>
@@ -77,7 +77,7 @@ export default function Login() {
           </button>
         </form>
         
-        <div class="login-footer">
+        <div className="login-footer">
             Olvidó su contraseña? <a href="#">Recuperar contraseña</a>
         </div>
 

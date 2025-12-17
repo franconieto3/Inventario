@@ -251,61 +251,66 @@ export default function ProductDetail() {
                 <input type='checkbox' name="Planos" onChange={()=>setMostrarPlanos(!mostrarPlanos)} checked={mostrarPlanos}/>
                 <span>Planos:</span>
               </div>
-              <p> + Agregar planos</p>
 
-              <div className='upload-container' style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
+              <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
+                <i className='material-icons' id="add-icon">add</i>
+                <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
+              </div>
 
-                <div className='upload-header'>
-                  <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
-                  <p className="card-description">
-                    Sube el archivo, completa el formulario y asigna las piezas asociadas al plano 
-                  </p>
-                </div>
-
-                <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
-                <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
-                  <div className='upload-content'>
-                    <form>
-                      <div className="form-input">
-                        <label>Versión (*): </label>
-                        <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
-                      </div>
-                      <div className="form-input">
-                        <label>Fecha de vigencia (*): </label>
-                        <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
-                      </div>
-                      <div className="form-input">
-                        <label>Descripción de versión: </label>
-                        <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
-                      </div>
-                      <div className="form-input">
-                        <label>Resolución: </label>
-                        <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
-                      </div>
-                    </form>
+              <div style={agregarPlanos?{"display":"flex","gap":"8px"}:{"display":"none"}}>
+                <i className='material-icons' id='close-button' onClick={()=>{setAgregarPlanos(false)}}>close</i>
+                <div className='upload-container' style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
+                  <div className='upload-header'>
+                    <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
+                    <p className="card-description">
+                      Sube el archivo, completa el formulario y asigna las piezas asociadas al plano 
+                    </p>
                   </div>
-                  <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>
-                  {<ul style={{"marginBottom":"10px", "marginTop":"10px"}}>
-                    {producto.pieza && producto.pieza.map(p => (
-                      <li key={p.id_pieza} style={{
-                                                  "marginBottom":"5px",
-                                                  "fontSize": "0.875rem"}}>
-                      <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
-                      <span>{" "+producto.nombre + " " + p.nombre}</span>
-                      </li>
-                    ))}
-                    <li>
-                      <button onClick={handleSelectAll}>
-                        {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
-                      </button>
-                    </li>
-                  </ul>}
-                  <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
 
-                  {error && <p style={{"color":"red"}}>{error}</p>}
+                  <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
+                  <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
+                    <div className='upload-content'>
+                      <form>
+                        <div className="form-input">
+                          <label>Versión (*): </label>
+                          <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
+                        </div>
+                        <div className="form-input">
+                          <label>Fecha de vigencia (*): </label>
+                          <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
+                        </div>
+                        <div className="form-input">
+                          <label>Descripción de versión: </label>
+                          <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
+                        </div>
+                        <div className="form-input">
+                          <label>Resolución: </label>
+                          <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
+                        </div>
+                      </form>
+                    </div>
+                    <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>
+                    {<ul style={{"marginBottom":"10px", "marginTop":"10px"}}>
+                      {producto.pieza && producto.pieza.map(p => (
+                        <li key={p.id_pieza} style={{
+                                                    "marginBottom":"5px",
+                                                    "fontSize": "0.875rem"}}>
+                        <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
+                        <span>{" "+producto.nombre + " " + p.nombre}</span>
+                        </li>
+                      ))}
+                      <li>
+                        <button onClick={handleSelectAll}>
+                          {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
+                        </button>
+                      </li>
+                    </ul>}
+                    <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
+
+                    {error && <p style={{"color":"red"}}>{error}</p>}
+                  </div>
                 </div>
               </div>
-              
             </div>
           </div>
 
