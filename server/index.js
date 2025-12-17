@@ -40,11 +40,11 @@ const verificarToken = (req, res, next) => {
     // 4. Continuar con la siguiente función (la ruta protegida)
     next(); 
   } catch (error) {
-      if (err.name === "TokenExpiredError") {
+      if (error.name === "TokenExpiredError") {
         console.log("El token expiró");
         res.status(400).json({ error: "Token expirado" });
       } else {
-        console.log("Token inválido:", err.message);
+        console.log("Token inválido:", error.message);
         res.status(400).json({ error: "Token inválido" });
       }
     
@@ -357,7 +357,7 @@ app.post('/subir-plano', verificarToken, async (req,res)=>{
 const DocumentoPayloadSchema = z.object({
   documento: z.object({
     id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
-    denominacion: z.string().min(3, { message: "La denominación es muy corta" })
+    descripcion: z.string().min(3, { message: "La denominación es muy corta" })
   }),
   version: z.object({
     n_version: z.number().int().nonnegative(),

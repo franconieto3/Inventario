@@ -22,8 +22,6 @@ export default function ProductDetail() {
   const [mostrarProcesos, setMostrarProcesos] = useState(true);
   const [seleccionarPiezas,setSeleccionarPiezas] = useState(false);
 
-  
-
   //Estado de archivo para plano
   const [file, setFile] = useState(null);
 
@@ -51,16 +49,24 @@ export default function ProductDetail() {
   };
 
   const fetchProduct = async () => {
-    const token = localStorage.getItem('token');
-    
-    // Llamamos al endpoint dinámico pasando el ID capturado
-    const response = await fetch(`http://localhost:4000/productos/${id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    
-    if (response.ok) {
+    try{
+      const token = localStorage.getItem('token');
+      
+      // Llamamos al endpoint dinámico pasando el ID capturado
+      const response = await fetch(`http://localhost:4000/productos/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Error al cargar producto');
+      }
+
       const data = await response.json();
       setProducto(data);
+      
+    }catch(err){
+      console.error(err.message);
     }
   };
 
@@ -77,6 +83,14 @@ export default function ProductDetail() {
   useEffect(() => {
     fetchProduct();
   }, [id]); // El efecto se ejecuta si cambia el ID
+
+  const limpiarNombreArchivo = (nombre) => {
+    return nombre
+      .normalize("NFD") // Descompone caracteres (á -> a + ´)
+      .replace(/[\u0300-\u036f]/g, "") // Elimina los acentos
+      .replace(/[^a-zA-Z0-9.\-]/g, "_"); // Reemplaza todo lo que no sea letra, número, punto o guion por "_"
+  };
+
 
   const subirPlano = async(e)=>{
     e.preventDefault();
@@ -120,13 +134,17 @@ export default function ProductDetail() {
 
     
     try{
+      setLoading(true)
+
+      const nombreLimpio = limpiarNombreArchivo(file.name);
+
       const response = await fetch('http://localhost:4000/subir-plano', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({fileName:file.name, userId: user.id})
+          body: JSON.stringify({fileName:nombreLimpio, userId: user.id})
       });
 
       if (!response.ok) {
@@ -182,12 +200,17 @@ export default function ProductDetail() {
 
       const respuesta = await res.json();
       
-      limpiarFormulario();
       alert("Plano subido y asociado correctamente.");
+      
+      //limpiarFormulario();
+      setAgregarPlanos(false);
+      
 
     }catch(err){
       console.error(err);
       setError(err.message || "Ocurrió un error inesperado.");
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -218,6 +241,12 @@ export default function ProductDetail() {
     setSeleccionarPiezas(false); 
   };
 
+  useEffect(()=>{
+    if(!agregarPlanos){
+      limpiarFormulario();
+    }
+  },[agregarPlanos])
+
   if (!producto) return <div>Cargando...</div>;
 
   return (
@@ -235,7 +264,7 @@ export default function ProductDetail() {
                 <input type='checkbox' name="Piezas" onChange={()=>setMostrarPiezas(!mostrarPiezas)} checked={mostrarPiezas}/>
                 <span>Piezas:</span>
               </div>
-              <ul style={mostrarPiezas?{"display":"block"}:{"display":"none"}}>
+              <ul className='part-list' style={mostrarPiezas?{"display":"block"}:{"display":"none"}}>
                 {producto.pieza && producto.pieza.map(p => (
                   <li key={p.id_pieza}>
                   Código: {p.codigo_am} - {producto.nombre + " " + p.nombre}
@@ -251,63 +280,64 @@ export default function ProductDetail() {
                 <input type='checkbox' name="Planos" onChange={()=>setMostrarPlanos(!mostrarPlanos)} checked={mostrarPlanos}/>
                 <span>Planos:</span>
               </div>
+              <div style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
+                <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
+                  <i className='material-icons' id="add-icon">add</i>
+                  <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
+                </div>
 
-              <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
-                <i className='material-icons' id="add-icon">add</i>
-                <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
-              </div>
-
-              <div style={agregarPlanos?{"display":"flex","gap":"8px"}:{"display":"none"}}>
-                <i className='material-icons' id='close-button' onClick={()=>{setAgregarPlanos(false)}}>close</i>
-                <div className='upload-container' style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
-                  <div className='upload-header'>
-                    <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
-                    <p className="card-description">
-                      Sube el archivo, completa el formulario y asigna las piezas asociadas al plano 
-                    </p>
-                  </div>
-
-                  <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
-                  <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
-                    <div className='upload-content'>
-                      <form>
-                        <div className="form-input">
-                          <label>Versión (*): </label>
-                          <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
-                        </div>
-                        <div className="form-input">
-                          <label>Fecha de vigencia (*): </label>
-                          <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
-                        </div>
-                        <div className="form-input">
-                          <label>Descripción de versión: </label>
-                          <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
-                        </div>
-                        <div className="form-input">
-                          <label>Resolución: </label>
-                          <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
-                        </div>
-                      </form>
+                <div style={agregarPlanos?{"display":"flex","gap":"8px"}:{"display":"none"}}>
+                  <i className='material-icons' id='close-button' onClick={()=>{setAgregarPlanos(false)}}>close</i>
+                  <div className='upload-container' >
+                    <div className='upload-header'>
+                      <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
+                      <p className="card-description">
+                        Sube el archivo, completa el formulario y asigna las piezas asociadas al plano 
+                      </p>
                     </div>
-                    <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>
-                    {<ul style={{"marginBottom":"10px", "marginTop":"10px"}}>
-                      {producto.pieza && producto.pieza.map(p => (
-                        <li key={p.id_pieza} style={{
-                                                    "marginBottom":"5px",
-                                                    "fontSize": "0.875rem"}}>
-                        <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
-                        <span>{" "+producto.nombre + " " + p.nombre}</span>
-                        </li>
-                      ))}
-                      <li>
-                        <button onClick={handleSelectAll}>
-                          {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
-                        </button>
-                      </li>
-                    </ul>}
-                    <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
 
-                    {error && <p style={{"color":"red"}}>{error}</p>}
+                    <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
+                    <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
+                      <div className='upload-content'>
+                        <form>
+                          <div className="form-input">
+                            <label>Versión (*): </label>
+                            <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
+                          </div>
+                          <div className="form-input">
+                            <label>Fecha de vigencia (*): </label>
+                            <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
+                          </div>
+                          <div className="form-input">
+                            <label>Descripción de versión: </label>
+                            <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
+                          </div>
+                          <div className="form-input">
+                            <label>Resolución: </label>
+                            <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
+                          </div>
+                        </form>
+                      </div>
+                      <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>
+                      {<ul className="part-list" style={{"marginBottom":"10px", "marginTop":"10px"}}>
+                        {producto.pieza && producto.pieza.map(p => (
+                          <li key={p.id_pieza} style={{
+                                                      "marginBottom":"5px",
+                                                      "fontSize": "0.875rem"}}>
+                          <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
+                          <span>{" "+producto.nombre + " " + p.nombre}</span>
+                          </li>
+                        ))}
+                        <li>
+                          <button onClick={handleSelectAll}>
+                            {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
+                          </button>
+                        </li>
+                      </ul>}
+                      <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
+
+                      {error && <p style={{"color":"red"}}>{error}</p>}
+                    </div>
                   </div>
                 </div>
               </div>
