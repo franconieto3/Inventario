@@ -357,7 +357,8 @@ app.post('/subir-plano', verificarToken, async (req,res)=>{
 const DocumentoPayloadSchema = z.object({
   documento: z.object({
     id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
-    descripcion: z.string().min(3, { message: "La denominación es muy corta" })
+    descripcion: z.string().min(3, { message: "La denominación es muy corta" }),
+    id_producto: z.number().int().positive({ message: "ID de producto inválido" })
   }),
   version: z.object({
     n_version: z.number().int().nonnegative(),

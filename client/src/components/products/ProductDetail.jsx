@@ -12,6 +12,7 @@ export default function ProductDetail() {
   const { user, logout} = UserAuth();
   const navigate = useNavigate();
   const { id } = useParams();
+
   const [producto, setProducto] = useState(null);
 
   //Estados de visualización 
@@ -172,7 +173,8 @@ export default function ProductDetail() {
       const payload = {
         documento:{
           descripcion: file.name,
-          id_tipo_documento: 1
+          id_tipo_documento: 1,
+          id_producto: producto.id_producto
         },
         version:{
           n_version: Number(version),
