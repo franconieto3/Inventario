@@ -39,7 +39,13 @@
   margin-left: 25px;
 }
 
+
 /*Pestaña de planos*/
+
+.planos-list{
+  list-style-type: none;
+  margin-bottom: 20px;
+}
 
 .upload-container{
   /*margin-top: 15px;*/

@@ -282,7 +282,19 @@ export default function ProductDetail() {
                 <input type='checkbox' name="Planos" onChange={()=>setMostrarPlanos(!mostrarPlanos)} checked={mostrarPlanos}/>
                 <span>Planos:</span>
               </div>
+
               <div style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
+
+                <ul className='planos-list'>
+                  {producto.planos && producto.planos.map(plano => (
+                    <li key={plano.id_version}>
+                      <a href={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/planos/${plano.path}`} target="_blank">
+                        {plano.descripcion}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
                 <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
                   <i className='material-icons' id="add-icon">add</i>
                   <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
@@ -352,7 +364,10 @@ export default function ProductDetail() {
                 <input type='checkbox' name="Materiales" onChange={()=>setMostrarMateriales(!mostrarMateriales)} checked={mostrarMateriales}/>
                 <span>Materiales:</span>
               </div>
-              <p>+ Agregar materiales</p>
+              <div className='add-span' style={!mostrarMateriales?{"display":"none"}:{"display":"flex"}} >
+                <i className='material-icons' id="add-icon">add</i>
+                <h3 style={{"fontSize":"1rem"}}>Agregar materiales</h3>
+              </div>
             </div>
           </div>
 
@@ -361,6 +376,10 @@ export default function ProductDetail() {
               <div className='detail-subtitle'>
                 <input type='checkbox' name="Procesos" onChange={()=>setMostrarProcesos(!mostrarProcesos)} checked={mostrarProcesos}/>
                 <span>Procesos:</span>
+              </div>
+              <div className='add-span' style={!mostrarProcesos?{"display":"none"}:{"display":"flex"}} >
+                <i className='material-icons' id="add-icon">add</i>
+                <h3 style={{"fontSize":"1rem"}}>Agregar procesos</h3>
               </div>
             </div>
           </div>

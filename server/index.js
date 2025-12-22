@@ -303,26 +303,44 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
     // 1. Capturamos el ID que viene en la URL (ej: /productos/15 -> id = 15)
     const { id } = req.params;
 
-    // 2. Consulta a Supabase
-  
-   const { data, error } = await supabase
-      .from('producto')
-      .select(`
-        *,
-        pieza (*) 
-      `)
-      .eq('id_producto', id)
-      .single();
+    // Ejecutamos ambas consultas en paralelo para mejorar el rendimiento
+    const [productoRes, documentosRes] = await Promise.all([
+      supabase
+        .from('producto')
+        .select(`
+          *,
+          pieza (*) 
+        `)
+        .eq('id_producto', id)
+        .single(),
+      
+      // Llamada a tu función personalizada de SQL
+      supabase.rpc('obtener_ultima_version_por_documento', {
+        p_id_producto: id
+      })
+    ]);
 
-    if (error) {
-      // Si el error es que no encontró filas, devolvemos 404
-      if (error.code === 'PGRST116') {
+    // Manejo de errores de la consulta de producto
+    if (productoRes.error) {
+      if (productoRes.error.code === 'PGRST116') {
         return res.status(404).json({ error: "Producto no encontrado" });
       }
-      throw error;
+      throw productoRes.error;
     }
 
-    res.json(data);
+    // Manejo de errores de la función RPC (opcional, podrías devolver [] si falla)
+    if (documentosRes.error) {
+      console.error("Error al obtener documentos:", documentosRes.error);
+      // No bloqueamos la respuesta si solo fallan los documentos
+    }
+
+    // Combinamos los datos
+    const respuestaFinal = {
+      ...productoRes.data,
+      planos: documentosRes.data || []
+    };
+    console.log(respuestaFinal);
+    res.json(respuestaFinal);
 
   } catch (err) {
     console.error(err);
