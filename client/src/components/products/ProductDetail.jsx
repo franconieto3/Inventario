@@ -232,6 +232,40 @@ export default function ProductDetail() {
     }
   }
 
+  // Función para pedir la URL firmada y abrirla
+  const handleVerPlano = async (pathArchivo) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        logout();
+        return;
+      }
+
+      // 1. Pedir URL firmada al backend
+      const response = await fetch('http://localhost:4000/obtener-url-plano', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ path: pathArchivo })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Error al obtener permiso de visualización');
+      }
+
+      const { signedUrl } = await response.json();
+
+      // 2. Abrir el PDF en una nueva pestaña nativa del navegador
+      window.open(signedUrl, '_blank');
+
+    } catch (err) {
+      alert(err.message); // O usa un estado setError para mostrarlo bonito
+    }
+  };
+
   const limpiarFormulario = () => {
     setFile(null);
     setVersion(0); // O el valor inicial que prefieras
@@ -288,9 +322,16 @@ export default function ProductDetail() {
                 <ul className='planos-list'>
                   {producto.planos && producto.planos.map(plano => (
                     <li key={plano.id_version}>
-                      <a href={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/planos/${plano.path}`} target="_blank">
+                      <span 
+                        onClick={() => handleVerPlano(plano.path)} 
+                        style={{
+                          cursor: 'pointer', 
+                          color: 'blue', 
+                          textDecoration: 'underline'
+                        }}
+                      >
                         {plano.descripcion}
-                      </a>
+                      </span>
                     </li>
                   ))}
                 </ul>

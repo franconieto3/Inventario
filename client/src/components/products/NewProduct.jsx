@@ -105,21 +105,32 @@ export default function NewProduct(props) {
       <div className="overlay">
         <div className="modal">
           <div>
-            <h2>Nuevo Producto</h2>
-            <div>Nombre del producto:</div>
-            <input type="text" name="nombre" value={nombre} onChange={handleChange} />
+            <label>Nombre del producto:</label>
+            <input type="text" placeholder="Nombre del producto..." name="nombre" value={nombre} onChange={handleChange} />
 
-            <div>Registro de producto médico:</div>
-            <select name="pm" value={pm} id="pm" onChange={handleChange}>
-              {props.registros.map(item => (<option key={item.id_registro_pm} value={item.id_registro_pm}>{item.descripcion}</option>))}
-            </select>
-
-            <div>Especificar rubro:</div>
-            <select name="rubro" value={rubro} id="rubro" onChange={handleChange}>
-              {props.rubros.map(item => (<option key={item.id_rubro} value={item.id_rubro}>{item.descripcion}</option>))}
-            </select>
+            <label>
+              Registro de producto médico:
+            </label>
+            <BuscadorRubros
+              opciones={props.registros}
+              placeholder="Buscar registro de PM..."
+              keys={['id_registro_pm','descripcion']}
+              onChange={(id)=>setPm(id)}
+              idField="id_registro_pm"
+              displayField="descripcion"
+            />
+            
+            <label>Especificar rubro:</label>
+            <BuscadorRubros 
+              opciones={props.rubros} 
+              placeholder="Buscar rubros..." 
+              keys={['id_rubro', 'descripcion']} 
+              onChange={(id)=>setRubro(id)} 
+              idField="id_rubro" 
+              displayField="descripcion"
+            />
           </div>
-          <BuscadorRubros rubros={props.rubros} onChange={(id)=>setRubro(id)}/>
+          
 
           <hr />
           {piezas.map((pieza) => (

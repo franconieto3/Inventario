@@ -12,16 +12,16 @@
 
 .delete:hover{
     cursor: pointer; 
-
+    color:red;
 }
 
 .input-codigo{
     display: flex;
-
     align-items: center;
     font-size: 0.875rem;
     padding: 0px;
-    margin:0px
+    margin-top:5px;
+    margin-bottom: 5px;
 }
 
 .input-descripcion{
@@ -29,10 +29,14 @@
     align-items: center;
     font-size: 0.875rem;
     padding: 0px;
+    margin-top:5px;
+    margin-bottom: 5px;
 }
 
 .input-descripcion input{
-    margin:0px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left:5px
 }
 
 

@@ -452,5 +452,34 @@ app.post('/guardar-documento', verificarToken, async (req, res)=>{
   }
 })
 
+app.post('/obtener-url-plano', verificarToken, async (req, res) => {
+  try {
+    const { path } = req.body;
+
+    if (!path) {
+      return res.status(400).json({ error: "El path del archivo es obligatorio" });
+    }
+
+    // Usamos supabaseAdmin para saltarnos las RLS y firmar el archivo
+    // Expira en 60 segundos. El usuario solo necesita el link para iniciar la carga en el navegador.
+    const { data, error } = await supabaseAdmin
+      .storage
+      .from('planos')
+      .createSignedUrl(path, 60); 
+
+    if (error) {
+      console.error("Error firmando URL:", error);
+      return res.status(500).json({ error: "No se pudo obtener el documento" });
+    }
+
+    res.json({ signedUrl: data.signedUrl });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

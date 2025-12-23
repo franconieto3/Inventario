@@ -1,5 +1,16 @@
 .option-container{
     height: 150px;
     overflow-y: scroll;
+    border: solid grey 1px;
+    border-radius: 10px;
+}
+
+.search-option{
     
 }
+
+.search-option:hover{
+    background-color: #005FB8;
+    color:white
+}
+

@@ -31,10 +31,17 @@
       font-size: 18px;
     }
 
+    .modal div label{
+      display: flex;
+      font-weight: 500;
+      margin-bottom: 5px;
+      margin-top: 10px;
+    }
+
     .modal input {
       width: 100%;
       padding: 8px;
-      margin: 15px 0;
+      margin: 5px 0;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
