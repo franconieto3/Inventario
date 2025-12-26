@@ -8,8 +8,9 @@ import { useState , useEffect} from "react";
 //Estilos
 import "../../styles/ProductSection.css"
 import { useNavigate } from "react-router-dom";
-import { UserAuth } from "../../context/authContext";
+import { UserAuth } from "../../context/AuthContext";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export default function ProductSection(){
 
@@ -36,15 +37,15 @@ export default function ProductSection(){
             try {
                 // Hacemos ambas peticiones en paralelo
                 const [resRubros, resPM, resProductos] = await Promise.all([
-                    fetch('http://localhost:4000/rubros', {
+                    fetch(`${API_URL}/rubros`, {
                         headers: { 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}` }
                     }),
-                    fetch('http://localhost:4000/registros-pm', {
+                    fetch(`${API_URL}/registros-pm`, {
                         headers: {'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}` }
                     }),
-                    fetch('http://localhost:4000/productos', {
+                    fetch(`${API_URL}/productos`, {
                         headers: {'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}` }
                     })
@@ -96,7 +97,7 @@ export default function ProductSection(){
         try {
             // 2. Petición al Backend
             // Ajusta el puerto 4000 si tu servidor corre en otro
-            const response = await fetch('http://localhost:4000/productos', {
+            const response = await fetch(`${API_URL}/productos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

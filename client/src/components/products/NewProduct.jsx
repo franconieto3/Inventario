@@ -1,6 +1,6 @@
 // NewProduct.jsx
 import "../../styles/NewProduct.css";
-import BuscadorRubros from "../BuscadorRubros";
+import Buscador from "../Buscador";
 import NewPieza from "./NewPieza";
 import { useState } from "react";
 
@@ -111,7 +111,7 @@ export default function NewProduct(props) {
             <label>
               Registro de producto médico:
             </label>
-            <BuscadorRubros
+            <Buscador
               opciones={props.registros}
               placeholder="Buscar registro de PM..."
               keys={['id_registro_pm','descripcion']}
@@ -121,7 +121,7 @@ export default function NewProduct(props) {
             />
             
             <label>Especificar rubro:</label>
-            <BuscadorRubros 
+            <Buscador 
               opciones={props.rubros} 
               placeholder="Buscar rubros..." 
               keys={['id_rubro', 'descripcion']} 

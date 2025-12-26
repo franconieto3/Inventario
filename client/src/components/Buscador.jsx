@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
-import "../styles/BuscadorRubros.css"
+import "../styles/Buscador.css"
 
-const BuscadorRubros = ({ opciones, placeholder, keys, onChange, idField, displayField }) => {
+const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField }) => {
 
   const [busqueda, setBusqueda] = useState("");
   const [focus, setFocus] = useState(false);
@@ -68,4 +68,4 @@ const BuscadorRubros = ({ opciones, placeholder, keys, onChange, idField, displa
   );
 };
 
-export default BuscadorRubros;
+export default Buscador;

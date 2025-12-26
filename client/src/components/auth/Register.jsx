@@ -3,6 +3,8 @@ import React, { useState, useContext, useEffect } from 'react';
 //import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 export default function Register() {
 
   const [dni, setDni] = useState("");
@@ -55,7 +57,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:4000/register", {
+      const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

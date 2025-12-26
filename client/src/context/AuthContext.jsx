@@ -2,6 +2,8 @@ import { createContext, useEffect, useState, useContext } from "react";
 
 const AuthContext = createContext();
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'; 
+
 export const AuthContextProvider = ({ children }) => {
 
   // Estado para el usuario (null si no hay nadie, objeto usuario si hay login)
@@ -20,7 +22,7 @@ export const AuthContextProvider = ({ children }) => {
 
     const verifyToken = async ()=>{
       try{
-        const response = await fetch('http://localhost:4000/verificar', {
+        const response = await fetch(`${API_URL}/verificar`, {
                   method: 'GET',
                   headers: {
                       'Content-Type': 'application/json',

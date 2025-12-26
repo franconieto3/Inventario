@@ -6,7 +6,9 @@ import NavBar from '../NavBar';
 
 import "../../styles/ProductDetail.css"
 import SubirArchivo from '../SubirArchivo';
-import { UserAuth } from '../../context/authContext';
+import { UserAuth } from '../../context/AuthContext';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export default function ProductDetail() {
   const { user, logout} = UserAuth();
@@ -54,7 +56,7 @@ export default function ProductDetail() {
       const token = localStorage.getItem('token');
       
       // Llamamos al endpoint dinámico pasando el ID capturado
-      const response = await fetch(`http://localhost:4000/productos/${id}`, {
+      const response = await fetch(`${API_URL}/productos/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -139,7 +141,7 @@ export default function ProductDetail() {
 
       const nombreLimpio = limpiarNombreArchivo(file.name);
 
-      const response = await fetch('http://localhost:4000/subir-plano', {
+      const response = await fetch(`${API_URL}/subir-plano`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -186,7 +188,7 @@ export default function ProductDetail() {
         piezas:piezasPlano
       };
 
-      const res = await fetch('http://localhost:4000/guardar-documento', {
+      const res = await fetch(`${API_URL}/guardar-documento`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +244,7 @@ export default function ProductDetail() {
       }
 
       // 1. Pedir URL firmada al backend
-      const response = await fetch('http://localhost:4000/obtener-url-plano', {
+      const response = await fetch(`${API_URL}/obtener-url-plano`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
