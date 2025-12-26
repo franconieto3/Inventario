@@ -2,7 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 //import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/authContext';
+import { UserAuth } from '../../context/AuthContext';
 import "../../styles/Login.css";
 
 export default function Login() {

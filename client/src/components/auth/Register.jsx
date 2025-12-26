@@ -1,7 +1,7 @@
 // client/src/components/auth/Register.jsx
 import React, { useState, useContext, useEffect } from 'react';
-//import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../NavBar';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -86,86 +86,93 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <>
+      <NavBar/>
+      <div style={{"height": "calc(100dvh - 90px)"}}>
+        <div style={{"display":"flex", "justifyContent":"center", "alignItems":"center", "height":"100%"}}>
+          <div className='login-container' style={{"backgroundColor":"white"}}>
+            <form className='login-form' onSubmit={handleSubmit}>
 
-        {/* Error del servidor */}
-        {serverError && (
-          <p style={{ color: "red", fontWeight: "bold" }}>{serverError}</p>
-        )}
+              {/* Error del servidor */}
+              {serverError && (
+                <p style={{ color: "red", fontWeight: "bold" }}>{serverError}</p>
+              )}
 
-        {/* DNI */}
-        <label>
-          <input
-            type="text"
-            placeholder="DNI"
-            value={dni}
-            onChange={(e) => setDni(e.target.value)}
-          />
-        </label>
-        {errors.dni && <p style={{ color: "red" }}>{errors.dni}</p>}
+              {/* DNI */}
+              <label>
+                <input
+                  type="text"
+                  placeholder="DNI"
+                  value={dni}
+                  onChange={(e) => setDni(e.target.value)}
+                />
+              </label>
+              {errors.dni && <p style={{ color: "red" }}>{errors.dni}</p>}
 
-        {/* Password */}
-        <label>
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+              {/* Password */}
+              <label>
+                <input
+                  type="password"
+                  placeholder="Contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+              {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
 
-        {/* Confirmación */}
-        <label>
-          <input
-            type="password"
-            placeholder="Confirmar contraseña"
-            value={confirmation}
-            onChange={(e) => setConfirmation(e.target.value)}
-          />
-        </label>
-        {errors.confirmation && (
-          <p style={{ color: "red" }}>{errors.confirmation}</p>
-        )}
+              {/* Confirmación */}
+              <label>
+                <input
+                  type="password"
+                  placeholder="Confirmar contraseña"
+                  value={confirmation}
+                  onChange={(e) => setConfirmation(e.target.value)}
+                />
+              </label>
+              {errors.confirmation && (
+                <p style={{ color: "red" }}>{errors.confirmation}</p>
+              )}
 
-        {/* Nombre */}
-        <label>
-          <input
-            type="text"
-            placeholder="Nombre y apellido"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
-        {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
+              {/* Nombre */}
+              <label>
+                <input
+                  type="text"
+                  placeholder="Nombre y apellido"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </label>
+              {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
 
-        {/* Email */}
-        <label>
-          <input
-            type="text"
-            placeholder="e-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
+              {/* Email */}
+              <label>
+                <input
+                  type="text"
+                  placeholder="e-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </label>
+              {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
 
-        {/* Teléfono */}
-        <label>
-          <input
-            type="text"
-            placeholder="Teléfono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
-          />
-        </label>
-        {errors.telefono && <p style={{ color: "red" }}>{errors.telefono}</p>}
+              {/* Teléfono */}
+              <label>
+                <input
+                  type="text"
+                  placeholder="Teléfono"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                />
+              </label>
+              {errors.telefono && <p style={{ color: "red" }}>{errors.telefono}</p>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Registrando..." : "Registrar usuario"}
-        </button>
-      </form>
-    </div>
+              <button className="btn-submit" type="submit" disabled={loading}>
+                {loading ? "Registrando..." : "Registrar usuario"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>  
+    </>
   );
 }

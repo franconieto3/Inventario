@@ -51,53 +51,53 @@ export const AuthContextProvider = ({ children }) => {
     
   }, []);
 
-    // 2. FUNCIÓN LOGIN: Conecta con tu backend
-    const login = async (dni, password) => {
-        try {
-            const response = await fetch("http://localhost:4000/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ dni, password })
-            });
+  // 2. FUNCIÓN LOGIN: Conecta con tu backend
+  const login = async (dni, password) => {
+      try {
+          const response = await fetch("http://localhost:4000/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ dni, password })
+          });
 
-            const data = await response.json();
+          const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.error || "Error al iniciar sesión");
-            }
+          if (!response.ok) {
+              throw new Error(data.error || "Error al iniciar sesión");
+          }
 
-            // Guardamos en LocalStorage
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+          // Guardamos en LocalStorage
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
 
-            // Actualizamos el estado global
-            setUser(data.user);
-            
-            return data; // Retornamos data por si el componente quiere hacer algo extra
+          // Actualizamos el estado global
+          setUser(data.user);
+          
+          return data; // Retornamos data por si el componente quiere hacer algo extra
 
-        } catch (error) {
-        throw error; // Lanzamos el error para que el componente Login lo muestre
-        }
-    };
+      } catch (error) {
+      throw error; // Lanzamos el error para que el componente Login lo muestre
+      }
+  };
 
-    // 3. FUNCIÓN LOGOUT: Limpia todo
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-    };
+  // 3. FUNCIÓN LOGOUT: Limpia todo
+  const logout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+  };
 
-    return (
-        <AuthContext.Provider value={{ 
-            user, 
-            isAuthenticated, 
-            loading, 
-            login, 
-            logout 
-        }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+      <AuthContext.Provider value={{ 
+          user, 
+          isAuthenticated, 
+          loading, 
+          login, 
+          logout 
+      }}>
+          {children}
+      </AuthContext.Provider>
+  );
 };
 
 export const UserAuth = () => {
