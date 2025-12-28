@@ -24,20 +24,6 @@ export const AuthContextProvider = ({ children }) => {
     
     const verifyToken = async ()=>{
       try{
-        /*
-        const response = await fetch(`${API_URL}/verificar`, {
-                  method: 'GET',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${storedToken}` // Header requerido por tu middleware 'verificarToken'
-                  }
-                });
-        if (!response.ok) {
-            throw new Error("Token inválido o expirado");
-        }
-        setUser(JSON.parse(storedUser));
-        */
-       
         const res = await apiCall(`${API_URL}/verificar`, {method: 'GET'});
         setUser(JSON.parse(storedUser));
 
@@ -62,20 +48,7 @@ export const AuthContextProvider = ({ children }) => {
   // 2. FUNCIÓN LOGIN: Conecta con tu backend
   const login = async (dni, password) => {
       try {
-        
-          const response = await fetch(`${API_URL}/login`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ dni, password })
-          });
-
-          const data = await response.json();
-
-          if (!response.ok) {
-              throw new Error(data.error || "Error al iniciar sesión");
-          }
-
-          //const data = await apiCall(`${API_URL}/login`,{method:'POST',body: JSON.stringify({ dni, password })});
+          const data = await apiCall(`${API_URL}/login`,{method:'POST',body: JSON.stringify({ dni, password })});
 
           // Guardamos en LocalStorage
           localStorage.setItem('token', data.token);

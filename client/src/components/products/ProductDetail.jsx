@@ -54,20 +54,6 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     try{
-      /*
-      const token = localStorage.getItem('token');
-      
-      // Llamamos al endpoint dinámico pasando el ID capturado
-      const response = await fetch(`${API_URL}/productos/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Error al cargar producto');
-      }
-
-      const data = await response.json();*/
 
       const data = await apiCall(`${API_URL}/productos/${id}`, {});
       setProducto(data);
@@ -144,23 +130,6 @@ export default function ProductDetail() {
       setLoading(true)
 
       const nombreLimpio = limpiarNombreArchivo(file.name);
-      /*
-      const response = await fetch(`${API_URL}/subir-plano`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({fileName:nombreLimpio, userId: user.id})
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Error al generar URL de subida');
-      }
-
-      const {signedUrl, path, uploadToken } = await response.json();
-      */
       const { signedUrl, path, uploadToken } = await apiCall(`${API_URL}/subir-plano`, {method: 'POST', body: JSON.stringify({fileName:nombreLimpio, userId: user.id})})
 
       //Subir archivo al bucket con la url firmada
@@ -193,22 +162,7 @@ export default function ProductDetail() {
         },
         piezas:piezasPlano
       };
-      /*
-      const res = await fetch(`${API_URL}/guardar-documento`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      })
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || 'Error al generar URL de subida');
-      }
-
-      const respuesta = await res.json();*/
       const respuesta = await apiCall(`${API_URL}/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
       
       alert("Plano subido y asociado correctamente.");
@@ -244,30 +198,6 @@ export default function ProductDetail() {
   // Función para pedir la URL firmada y abrirla
   const handleVerPlano = async (pathArchivo) => {
     try {
-      /*
-      const token = localStorage.getItem('token');
-      if (!token) {
-        logout();
-        return;
-      }
-
-      // 1. Pedir URL firmada al backend
-      const response = await fetch(`${API_URL}/obtener-url-plano`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ path: pathArchivo })
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Error al obtener permiso de visualización');
-      }
-
-      const { signedUrl } = await response.json();
-      */
       const {signedUrl} = await apiCall(`${API_URL}/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
       window.open(signedUrl, '_blank');
 

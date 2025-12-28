@@ -36,39 +36,6 @@ export default function ProductSection(){
 
             setLoadingData(true);
             try {
-                /*
-                // Hacemos ambas peticiones en paralelo
-                const [resRubros, resPM, resProductos] = await Promise.all([
-                    fetch(`${API_URL}/rubros`, {
-                        headers: { 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}` }
-                    }),
-                    fetch(`${API_URL}/registros-pm`, {
-                        headers: {'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}` }
-                    }),
-                    fetch(`${API_URL}/productos`, {
-                        headers: {'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}` }
-                    })
-                ]);
-
-                // VERIFICACIÓN CLAVE: Si alguno da 401 (No autorizado/Expirado)
-                if (resRubros.status === 401 || resPM.status === 401 || resProductos.status === 401) {
-                    logout(); // Borra usuario y token del estado y localStorage
-                    navigate('/login');
-                    return;
-                }
-
-                if (!resRubros.ok || !resPM.ok || !resProductos.ok) {
-                    throw new Error("Error obteniendo listas auxiliares");
-                }
-
-                const dataRubros = await resRubros.json();
-                const dataPM = await resPM.json();
-                const dataProductos = await resProductos.json();*/
-
-                
                 const [dataRubros, dataPM, dataProductos] = await Promise.all([
                     apiCall(`${API_URL}/rubros`,{}),
                     apiCall(`${API_URL}/registros-pm`,{}),
@@ -102,29 +69,11 @@ export default function ProductSection(){
                 return;
         }
 
-        try {/*
-            // 2. Petición al Backend
-            const response = await fetch(`${API_URL}/productos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload) // El payload ya viene limpio desde NewProduct
-            });
-
-            const data = await response.json();
-
-            // 3. Verificar si hubo error en el servidor
-            if (!response.ok) {
-                throw new Error(data.error || "Error desconocido al crear producto");
-            }*/
-
+        try {
             const data = await apiCall(`${API_URL}/productos`, {method: 'POST', body: JSON.stringify(payload)});
             
             // Opcional: Podrías hacer un fetch nuevo para traer la lista real actualizada
             setProductos(prev => [...prev, {"id_producto": data.id_producto, "nombre": data.nombre}]);
-            
             setShowNewProduct(false); // Cerramos el modal
 
         } catch (error) {

@@ -58,23 +58,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      /*
-      const response = await fetch(`${API_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ dni, password, name, email, telefono })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setServerError(data.error || "Error al registrar usuario");
-      } else {
-        console.log("Registro exitoso:", data);
-      }*/
-
+      
       const data = await apiCall(`${API_URL}/register`, {method:'POST', body: JSON.stringify({ dni, password, name, email, telefono })});
       console.log("Registro exitoso:", data)
 
