@@ -11,7 +11,9 @@ import { z } from 'zod';
 
 // Middlewares
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin:'*'
+}));
 app.use(express.json());
 
 
@@ -62,7 +64,9 @@ app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
 });
 
-app.get('/verificar', verificarToken, (req, res)=>res.sendStatus(200));
+app.get('/verificar', verificarToken, (req, res)=>{
+  //res.sendStatus(200)
+  return res.status(200).json(req.usuario);});
 
 //Ruta de Login
 app.post('/login', async (req, res) => {

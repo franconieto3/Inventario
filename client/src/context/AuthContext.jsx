@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState, useContext } from "react";
+import { apiCall } from "../services/api";
 
 const AuthContext = createContext();
 
@@ -17,11 +18,13 @@ export const AuthContextProvider = ({ children }) => {
 
   // 1. EFECTO: Verificar si ya hay sesión al cargar la página (Persistencia)
   useEffect(() => {
+    
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
-
+    
     const verifyToken = async ()=>{
       try{
+        /*
         const response = await fetch(`${API_URL}/verificar`, {
                   method: 'GET',
                   headers: {
@@ -33,8 +36,13 @@ export const AuthContextProvider = ({ children }) => {
             throw new Error("Token inválido o expirado");
         }
         setUser(JSON.parse(storedUser));
+        */
+       
+        const res = await apiCall(`${API_URL}/verificar`, {method: 'GET'});
+        setUser(JSON.parse(storedUser));
+
       }catch(error){
-        console.error("Sesión caducada:", error);
+        console.error(error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
@@ -54,7 +62,8 @@ export const AuthContextProvider = ({ children }) => {
   // 2. FUNCIÓN LOGIN: Conecta con tu backend
   const login = async (dni, password) => {
       try {
-          const response = await fetch("http://localhost:4000/login", {
+        
+          const response = await fetch(`${API_URL}/login`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ dni, password })
@@ -65,6 +74,8 @@ export const AuthContextProvider = ({ children }) => {
           if (!response.ok) {
               throw new Error(data.error || "Error al iniciar sesión");
           }
+
+          //const data = await apiCall(`${API_URL}/login`,{method:'POST',body: JSON.stringify({ dni, password })});
 
           // Guardamos en LocalStorage
           localStorage.setItem('token', data.token);

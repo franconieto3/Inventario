@@ -7,6 +7,7 @@ import NavBar from '../NavBar';
 import "../../styles/ProductDetail.css"
 import SubirArchivo from '../SubirArchivo';
 import { UserAuth } from '../../context/AuthContext';
+import { apiCall } from '../../services/api';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -53,6 +54,7 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     try{
+      /*
       const token = localStorage.getItem('token');
       
       // Llamamos al endpoint dinámico pasando el ID capturado
@@ -65,7 +67,9 @@ export default function ProductDetail() {
         throw new Error(err.message || 'Error al cargar producto');
       }
 
-      const data = await response.json();
+      const data = await response.json();*/
+
+      const data = await apiCall(`${API_URL}/productos/${id}`, {});
       setProducto(data);
       
     }catch(err){
@@ -140,7 +144,7 @@ export default function ProductDetail() {
       setLoading(true)
 
       const nombreLimpio = limpiarNombreArchivo(file.name);
-
+      /*
       const response = await fetch(`${API_URL}/subir-plano`, {
           method: 'POST',
           headers: {
@@ -156,6 +160,8 @@ export default function ProductDetail() {
       }
 
       const {signedUrl, path, uploadToken } = await response.json();
+      */
+      const { signedUrl, path, uploadToken } = await apiCall(`${API_URL}/subir-plano`, {method: 'POST', body: JSON.stringify({fileName:nombreLimpio, userId: user.id})})
 
       //Subir archivo al bucket con la url firmada
       const uploadResponse = await fetch(signedUrl,{
@@ -187,7 +193,7 @@ export default function ProductDetail() {
         },
         piezas:piezasPlano
       };
-
+      /*
       const res = await fetch(`${API_URL}/guardar-documento`, {
         method: 'POST',
         headers: {
@@ -202,7 +208,8 @@ export default function ProductDetail() {
         throw new Error(err.message || 'Error al generar URL de subida');
       }
 
-      const respuesta = await res.json();
+      const respuesta = await res.json();*/
+      const respuesta = await apiCall(`${API_URL}/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
       
       alert("Plano subido y asociado correctamente.");
       
@@ -237,6 +244,7 @@ export default function ProductDetail() {
   // Función para pedir la URL firmada y abrirla
   const handleVerPlano = async (pathArchivo) => {
     try {
+      /*
       const token = localStorage.getItem('token');
       if (!token) {
         logout();
@@ -259,8 +267,8 @@ export default function ProductDetail() {
       }
 
       const { signedUrl } = await response.json();
-
-      // 2. Abrir el PDF en una nueva pestaña nativa del navegador
+      */
+      const {signedUrl} = await apiCall(`${API_URL}/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
       window.open(signedUrl, '_blank');
 
     } catch (err) {

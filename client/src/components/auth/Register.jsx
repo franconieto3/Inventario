@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../NavBar';
+import { apiCall } from '../../services/api';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -57,6 +58,7 @@ export default function Register() {
     setLoading(true);
 
     try {
+      /*
       const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
@@ -71,7 +73,11 @@ export default function Register() {
         setServerError(data.error || "Error al registrar usuario");
       } else {
         console.log("Registro exitoso:", data);
-      }
+      }*/
+
+      const data = await apiCall(`${API_URL}/register`, {method:'POST', body: JSON.stringify({ dni, password, name, email, telefono })});
+      console.log("Registro exitoso:", data)
+
     } catch (error) {
       setServerError("No se pudo conectar con el servidor");
     } finally {

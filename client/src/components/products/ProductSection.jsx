@@ -9,6 +9,7 @@ import { useState , useEffect} from "react";
 import "../../styles/ProductSection.css"
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../context/AuthContext";
+import { apiCall } from "../../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -35,6 +36,7 @@ export default function ProductSection(){
 
             setLoadingData(true);
             try {
+                /*
                 // Hacemos ambas peticiones en paralelo
                 const [resRubros, resPM, resProductos] = await Promise.all([
                     fetch(`${API_URL}/rubros`, {
@@ -64,8 +66,14 @@ export default function ProductSection(){
 
                 const dataRubros = await resRubros.json();
                 const dataPM = await resPM.json();
-                const dataProductos = await resProductos.json();
+                const dataProductos = await resProductos.json();*/
 
+                
+                const [dataRubros, dataPM, dataProductos] = await Promise.all([
+                    apiCall(`${API_URL}/rubros`,{}),
+                    apiCall(`${API_URL}/registros-pm`,{}),
+                    apiCall(`${API_URL}/productos`,{})
+                ])
 
                 // 4. Actualizamos el estado
                 setRubros(dataRubros);
@@ -94,28 +102,27 @@ export default function ProductSection(){
                 return;
         }
 
-        try {
+        try {/*
             // 2. Petición al Backend
-            // Ajusta el puerto 4000 si tu servidor corre en otro
             const response = await fetch(`${API_URL}/productos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Header requerido por tu middleware 'verificarToken'
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload) // El payload ya viene limpio desde NewProduct
             });
 
             const data = await response.json();
-            console.log(data);
 
             // 3. Verificar si hubo error en el servidor
             if (!response.ok) {
                 throw new Error(data.error || "Error desconocido al crear producto");
-            }
+            }*/
 
+            const data = await apiCall(`${API_URL}/productos`, {method: 'POST', body: JSON.stringify(payload)});
             
-            // Opcional: Podrías hacer un fetch() nuevo para traer la lista real actualizada
+            // Opcional: Podrías hacer un fetch nuevo para traer la lista real actualizada
             setProductos(prev => [...prev, {"id_producto": data.id_producto, "nombre": data.nombre}]);
             
             setShowNewProduct(false); // Cerramos el modal
