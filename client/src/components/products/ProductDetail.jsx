@@ -124,15 +124,15 @@ export default function ProductDetail() {
       setError("Debe seleccionar al menos una pieza");
       return;
     }
+    const nombreLimpio = limpiarNombreArchivo(file.name);
 
-    
     try{
       setLoading(true)
 
-      const nombreLimpio = limpiarNombreArchivo(file.name);
+      //1. Solicitar la url firmada para la carga de archivos al servidor 
       const { signedUrl, path, uploadToken } = await apiCall(`${API_URL}/subir-plano`, {method: 'POST', body: JSON.stringify({fileName:nombreLimpio, userId: user.id})})
-
-      //Subir archivo al bucket con la url firmada
+      
+      //2. Subir archivo al bucket con la url firmada
       const uploadResponse = await fetch(signedUrl,{
         method: 'PUT',
         body: file,
@@ -144,8 +144,6 @@ export default function ProductDetail() {
       if (!uploadResponse.ok){
         throw new Error('Error al subir el archivo físico al almacenamiento. Intente nuevamente.')
       }
-
-      //Enviar los datos del formulario al backend
 
       const payload = {
         documento:{
@@ -163,13 +161,10 @@ export default function ProductDetail() {
         piezas:piezasPlano
       };
 
+      //3. Enviar los datos del plano al backend
       const respuesta = await apiCall(`${API_URL}/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
-      
       alert("Plano subido y asociado correctamente.");
-      
-      //limpiarFormulario();
       setAgregarPlanos(false);
-      
 
     }catch(err){
       console.error(err);
