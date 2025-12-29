@@ -353,7 +353,7 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
 });
 
 app.post('/subir-plano', verificarToken, async (req,res)=>{
-  const {fileName, userId} = req.body;
+  const {fileName} = req.body;
 
   //Validaciones
   //¿El usuario puede subir planos?

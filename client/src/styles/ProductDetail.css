@@ -123,20 +123,20 @@
 .delete-btn {
   right: 1rem;
   top: 50%;
-
+  
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  color: var(--muted-foreground);
+  /*background-color: red;*/
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s, color 0.2s;
 }
 
-.delete-btn:hover {
-  background-color: var(--muted);
+.delete-btn i:hover{
+  color: red;
 }
 
 .form-input{
