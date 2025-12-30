@@ -10,6 +10,7 @@ import "../../styles/ProductSection.css"
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../context/AuthContext";
 import { apiCall } from "../../services/api";
+import Buscador from "../Buscador";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -58,6 +59,8 @@ export default function ProductSection(){
         fetchAuxData();
     }, []);
 
+    useEffect(()=>console.log(productos),[productos])
+
     const handleAddProduct = async (payload) => {
         
         // 1. Obtener el token (asumiendo que lo guardaste en localStorage al loguear)
@@ -101,17 +104,31 @@ export default function ProductSection(){
                     <p className='products-count'>{`${productos.length}`} productos</p>
                     </div>
                 </div>
+                
 
+                
                 <div className='filters'>
                     <div className='search-box'>
+                        {/*
                         <input type='text' placeholder="Buscar productos..." />
                         <button className='btn-search'>
                             <span className="material-icons">search</span>
                         </button>
+                        */}
+                        <Buscador               
+                            opciones={productos}
+                            placeholder="Buscar productos..."
+                            keys={['id_producto','nombre']}
+                            onChange={(id)=>console.log(id)}
+                            idField="id_producto"
+                            displayField="nombre"
+                        />
                     </div>
                     <div className='button-container'>
-                        <button className='add-button'>Agregar registro de PM</button>
-                        <button className='add-button'>Agregar rubro</button>
+                        {/*
+                            <button className='add-button'>Agregar registro de PM</button>
+                            <button className='add-button'>Agregar rubro</button>
+                        */}
                         <button className='add-button' onClick={()=>setShowNewProduct(true)}>Agregar producto</button>
                     </div>
                 </div>

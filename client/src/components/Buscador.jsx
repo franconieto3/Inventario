@@ -38,7 +38,7 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
   }
 
   return (
-    <div style={{"marginBottom": "15px"}}>
+    <div style={{"marginBottom": "15px", "position": "relative"}}>
       <input 
         type="text" 
         placeholder={placeholder}
@@ -60,7 +60,7 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
             ))}
 
             {resultados.length === 0 && (
-            <li>No se encontraron resultados.</li>
+            <li style={{"marginTop": "8px", "marginBottom": "8px"}}>No se encontraron resultados.</li>
             )}
         </ul>
       </div>

@@ -11,9 +11,11 @@ import { z } from 'zod';
 
 // Middlewares
 const app = express();
+/*
 app.use(cors({
   origin:'*'
-}));
+}));*/
+app.use(cors());
 app.use(express.json());
 
 
