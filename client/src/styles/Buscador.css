@@ -13,8 +13,13 @@
     box-sizing: border-box; 
 }
 
-.search-option{
-    
+.search-option span{
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   flex: 1; 
+   text-align: left;
+   margin-left: 10px;
 }
 
 .search-option:hover{

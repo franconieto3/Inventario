@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import "../styles/Buscador.css"
 
-const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField }) => {
+const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField, showId }) => {
 
   const [busqueda, setBusqueda] = useState("");
   const [focus, setFocus] = useState(false);
@@ -38,7 +38,7 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
   }
 
   return (
-    <div style={{"marginBottom": "15px", "position": "relative"}}>
+    <div style={{"marginBottom": "15px", "position": "relative", "width":"100%"}}>
       <input 
         type="text" 
         placeholder={placeholder}
@@ -46,7 +46,7 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
         onChange={(e) => setBusqueda(e.target.value)}
         onFocus={()=>setFocus(true)}
         onBlur={()=>setFocus(false)}
-        style={{"marginTop": "5px", "marginBottom":"0px"}}
+        style={{"marginTop": "5px", "marginBottom":"0px","width":"100%"}}
       />
       <div className='option-container' style={focus?{'display':'block'}:{'display':'none'}}>
         <ul>
@@ -55,7 +55,9 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
             <li
               className="search-option"
               key={opcion[idField]} onMouseDown={()=>handleClick(opcion)} style={{"padding":"4px","display":"flex"}}>
-              <span style={{"marginLeft":"10px"}}>{opcion[idField]} - {opcion[displayField]}</span>
+              <span>
+                {showId? opcion[idField]+ " - ":null}{opcion[displayField]}
+              </span>
             </li>
             ))}
 

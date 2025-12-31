@@ -12,7 +12,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     //Estados de formulario
     const [version, setVersion] = useState(0);
     const [fecha, setFecha] = useState("");
-    const [resolucion, setResolucion] = useState("");
+    //const [resolucion, setResolucion] = useState("");
     const [commit, setCommit] = useState("");
     const [resetKey, setResetKey] = useState(0);
     const [piezasPlano, setPiezasPlano] = useState([]);
@@ -109,7 +109,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                 n_version: Number(version),
                 fecha_vigencia: fecha,
                 commit: commit,
-                resolucion:resolucion,
+                //resolucion:resolucion,
                 path: path
             },
             piezas:piezasPlano
@@ -161,7 +161,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         setFile(null);
         setVersion(0); // O el valor inicial que prefieras
         setFecha("");
-        setResolucion("");
+        //setResolucion("");
         setCommit("");
         setPiezasPlano([]);
         setResetKey(prev => prev + 1);
@@ -207,10 +207,12 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                 <label>Descripción de versión: </label>
                 <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
                 </div>
+                {/*
                 <div className="form-input">
                 <label>Resolución: </label>
                 <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
                 </div>
+                */}
             </form>
             </div>
             <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>

@@ -390,7 +390,7 @@ const DocumentoPayloadSchema = z.object({
       message: "Formato de fecha inválido (Use ISO 8601)"
     }),
     commit: z.string().optional(),
-    resolucion: z.string().optional(),
+    //resolucion: z.string().optional(),
     path: z.string().min(1, { message: "El path del archivo es obligatorio" })
   }),
   piezas: z.array(z.number().int()).optional().default([])

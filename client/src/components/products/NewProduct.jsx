@@ -118,6 +118,7 @@ export default function NewProduct(props) {
               onChange={(id)=>setPm(id)}
               idField="id_registro_pm"
               displayField="descripcion"
+              showId={true}
             />
             
             <label>Especificar rubro:</label>
@@ -128,6 +129,7 @@ export default function NewProduct(props) {
               onChange={(id)=>setRubro(id)} 
               idField="id_rubro" 
               displayField="descripcion"
+              showId={true}
             />
           </div>
           

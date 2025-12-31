@@ -59,8 +59,6 @@ export default function ProductSection(){
         fetchAuxData();
     }, []);
 
-    useEffect(()=>console.log(productos),[productos])
-
     const handleAddProduct = async (payload) => {
         
         // 1. Obtener el token (asumiendo que lo guardaste en localStorage al loguear)
@@ -100,7 +98,7 @@ export default function ProductSection(){
             <div className='body-container'>
                 <div className='title-container'>
                     <div>
-                    <p className='products-text'>Registro de productos</p>
+                    <p className='products-text'>Repositorio de productos</p>
                     <p className='products-count'>{`${productos.length}`} productos</p>
                     </div>
                 </div>
@@ -119,9 +117,10 @@ export default function ProductSection(){
                             opciones={productos}
                             placeholder="Buscar productos..."
                             keys={['id_producto','nombre']}
-                            onChange={(id)=>console.log(id)}
+                            onChange={(id)=>id!==0?navigate(`/producto/${id}`):null}
                             idField="id_producto"
                             displayField="nombre"
+                            showId={false}
                         />
                     </div>
                     <div className='button-container'>

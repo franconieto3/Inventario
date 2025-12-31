@@ -40,6 +40,7 @@
 .search-box{
   display: flex;
   gap: 10px;
+  width: 400px;
 }
 
 .search-box input{
