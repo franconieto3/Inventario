@@ -3,9 +3,10 @@ import "../../styles/NewProduct.css";
 import Buscador from "../Buscador";
 import NewPieza from "./NewPieza";
 import { useState } from "react";
+import { apiCall } from "../../services/api";
 
 const genId = () => `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export default function NewProduct(props) {
   const [nombre, setNombre] = useState("");
@@ -23,7 +24,9 @@ export default function NewProduct(props) {
     else if (name === "rubro") setRubro(value);
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
+    setError("");
+
     if (nombre.trim() === "") {
         setError("El nombre del producto es obligatorio.");
         return;
@@ -33,7 +36,6 @@ export default function NewProduct(props) {
         setError("Debe agregar al menos una pieza.");
         return;
     }
-
     //Se verifica que cada pieza tenga una denominación y sea única
     if(piezas.length > 1){
       //Falta de denominación
@@ -49,7 +51,6 @@ export default function NewProduct(props) {
         return;
       }
     }
-
     // 2. Preparar el Payload Único
       const payload = {
           nombre: nombre,
@@ -75,14 +76,23 @@ export default function NewProduct(props) {
       };
 
     setLoading(true);
-    
-    // Enviamos la "entidad" tal como estaba en la versión de clase
-    //props.onCreate({ nombre, pm, rubro, piezas });
-    props.onCreate(payload);
-    setNombre("");
-    setPiezas([{ id: genId(), codigoPieza: "", nombrePieza: "" }]);
-    setPm(0);
-    setRubro(0);
+
+    try{
+      const data = await apiCall(`${API_URL}/productos`, {method: 'POST', body: JSON.stringify(payload)});
+      
+      props.onSuccess(data);
+
+      setNombre("");
+      setPiezas([{ id: genId(), codigoPieza: "", nombrePieza: "" }]);
+      setPm(0);
+      setRubro(0);
+
+    }catch(err){
+      console.error("Error creando producto:", err);
+      setError(err.message || "Ocurrió un error al crear el producto.");
+    }finally{
+      setLoading(false);
+    }
   };
 
   const handlePartChange = (part, id) => {

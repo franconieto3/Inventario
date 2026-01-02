@@ -7,6 +7,7 @@ import { useState , useEffect} from "react";
 
 //Estilos
 import "../../styles/ProductSection.css"
+
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../context/AuthContext";
 import { apiCall } from "../../services/api";
@@ -34,7 +35,6 @@ export default function ProductSection(){
                  navigate('/login');
                  return;
             }
-
             setLoadingData(true);
             try {
                 const [dataRubros, dataPM, dataProductos] = await Promise.all([
@@ -42,15 +42,13 @@ export default function ProductSection(){
                     apiCall(`${API_URL}/registros-pm`,{}),
                     apiCall(`${API_URL}/productos`,{})
                 ])
-
-                // 4. Actualizamos el estado
+                
                 setRubros(dataRubros);
                 setRegistrosPM(dataPM);
                 setProductos(dataProductos);
 
             } catch (error) {
                 console.error("Error cargando listas:", error);
-                // Aquí podrías mostrar un toast o notificación
             } finally {
                 setLoadingData(false);
             }
@@ -59,29 +57,15 @@ export default function ProductSection(){
         fetchAuxData();
     }, []);
 
-    const handleAddProduct = async (payload) => {
-        
-        // 1. Obtener el token (asumiendo que lo guardaste en localStorage al loguear)
-        const token = localStorage.getItem('token'); 
-
-        if (!token) {
-                logout(); // Asegurar limpieza
-                navigate('/login');
-                return;
-        }
-
-        try {
-            const data = await apiCall(`${API_URL}/productos`, {method: 'POST', body: JSON.stringify(payload)});
-            
-            // Opcional: Podrías hacer un fetch nuevo para traer la lista real actualizada
-            setProductos(prev => [...prev, {"id_producto": data.id_producto, "nombre": data.nombre}]);
-            setShowNewProduct(false); // Cerramos el modal
-
-        } catch (error) {
-            console.error("Error al guardar:", error);
-            alert("Hubo un problema al guardar: " + error.message);
-        }
-    }
+    const handleProductCreated = (newProductData) => {
+        // 1. Actualizamos la lista localmente para evitar un re-fetch
+        setProductos(prev => [...prev, {
+            id_producto: newProductData.id_producto, 
+            nombre: newProductData.nombre
+        }]);
+        // 2. Cerramos el modal
+        setShowNewProduct(false);
+    };   
 
     const handleProductClick = (id) => {
         navigate(`/producto/${id}`); 
@@ -90,7 +74,6 @@ export default function ProductSection(){
     const items = productos.map((item) => (
         <ProductItem key={item.id_producto} id ={item.id_producto} name={item.nombre} onChange={handleProductClick}/>
     ));
-
 
     return (
         <>
@@ -102,17 +85,8 @@ export default function ProductSection(){
                     <p className='products-count'>{`${productos.length}`} productos</p>
                     </div>
                 </div>
-                
-
-                
                 <div className='filters'>
                     <div className='search-box'>
-                        {/*
-                        <input type='text' placeholder="Buscar productos..." />
-                        <button className='btn-search'>
-                            <span className="material-icons">search</span>
-                        </button>
-                        */}
                         <Buscador               
                             opciones={productos}
                             placeholder="Buscar productos..."
@@ -124,22 +98,19 @@ export default function ProductSection(){
                         />
                     </div>
                     <div className='button-container'>
-                        {/*
-                            <button className='add-button'>Agregar registro de PM</button>
-                            <button className='add-button'>Agregar rubro</button>
-                        */}
                         <button className='add-button' onClick={()=>setShowNewProduct(true)}>Agregar producto</button>
                     </div>
                 </div>
-
                 <div className='product-list'>
                     <div className='product-list-header'>Nombre</div>
                     {items}
                 </div>
-
-                
                 {showNewProduct && (
-                    <NewProduct onClose={()=>setShowNewProduct(false)} onCreate={handleAddProduct} registros = {registrosPM} rubros = {rubros}/>
+                    <NewProduct 
+                        onClose={()=>setShowNewProduct(false)} 
+                        onSuccess={handleProductCreated} 
+                        registros = {registrosPM} 
+                        rubros = {rubros}/>
                 )}
             </div>
         </>
