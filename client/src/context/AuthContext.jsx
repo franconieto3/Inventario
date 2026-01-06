@@ -48,7 +48,7 @@ export const AuthContextProvider = ({ children }) => {
   // 2. FUNCIÓN LOGIN: Conecta con tu backend
   const login = async (dni, password) => {
       try {
-          const data = await apiCall(`${API_URL}/login`,{method:'POST',body: JSON.stringify({ dni, password })});
+          const data = await apiCall(`${API_URL}/auth/login`,{method:'POST',body: JSON.stringify({ dni, password })});
 
           // Guardamos en LocalStorage
           localStorage.setItem('token', data.token);

@@ -7,62 +7,19 @@ import { createClient } from "@supabase/supabase-js";*/
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
-//import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import authRoutes from "./routes/auth.routes.js";
 
 import { z } from 'zod';
 
 import { supabase, supabaseAdmin } from "./config/supabase.js";
 import { verificarToken } from "./middlewares/auth.middleware.js";
 
+
 // Middlewares
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-/*
-// Middleware para verificar el token
-const verificarToken = (req, res, next) => {
-  // 1. Obtener el token del encabezado (Header)
-  // El formato estándar es: "Authorization: Bearer <token_aqui>"
-  
-  const authHeader = req.headers['authorization'];
-  
-  // Si no hay header, o no tiene el formato correcto, tomamos undefined
-  const token = authHeader && authHeader.split(' ')[1]; 
-
-  if (!token) {
-    return res.status(401).json({ error: "Acceso denegado. Token no proporcionado." });
-  }
-  
-  try {
-    // 2. Verificar el token con la misma clave secreta del login
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // 3. Si es válido, guardamos los datos del usuario en la request
-    // "verified" contiene lo que guardamos en el payload: { id, email }
-    req.usuario = verified;
-    
-    // 4. Continuar con la siguiente función (la ruta protegida)
-    next(); 
-  } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        console.log("El token expiró");
-        res.status(400).json({ error: "Token expirado" });
-      } else {
-        console.log("Token inválido:", error.message);
-        res.status(400).json({ error: "Token inválido" });
-      }
-    
-  }
-};*/
-
-/*
-// Configuración de Supabase
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_API_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-// Cliente ADMIN (ignora RLS)
-const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);*/
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
@@ -72,6 +29,7 @@ app.get('/verificar', verificarToken, (req, res)=>{
   //res.sendStatus(200)
   return res.status(200).json(req.usuario);});
 
+/*
 //Ruta de Login
 app.post('/login', async (req, res) => {
   try {
@@ -133,7 +91,9 @@ app.post('/login', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
-});
+});*/
+
+app.use("/auth", authRoutes);
 
 // Ruta de Registro
 app.post('/register', async (req, res) => {
