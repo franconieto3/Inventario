@@ -24,6 +24,7 @@ export default function ProductDetail() {
   const [mostrarPlanos, setMostrarPlanos] = useState(true);
   const [mostrarMateriales, setMostrarMateriales] = useState(true);
   const [mostrarProcesos, setMostrarProcesos] = useState(true);
+  const [mostrarElementos, setMostrarElementos] = useState(true);
 
   const fetchProduct = async () => {
     try{
@@ -125,6 +126,19 @@ export default function ProductDetail() {
           <div className='detail'>
             <div>
               <div className='detail-subtitle'>
+                <input type='checkbox' name="Elementos" onChange={()=>setMostrarElementos(!mostrarElementos)} checked={mostrarElementos}/>
+                <span>Elementos de control:</span>
+              </div>
+              <div className='add-span' style={!mostrarElementos?{"display":"none"}:{"display":"flex"}} >
+                <i className='material-icons' id="add-icon">add</i>
+                <h3 style={{"fontSize":"1rem"}}>Agregar elementos de control</h3>
+              </div>
+            </div>
+          </div>
+
+          <div className='detail'>
+            <div>
+              <div className='detail-subtitle'>
                 <input type='checkbox' name="Procesos" onChange={()=>setMostrarProcesos(!mostrarProcesos)} checked={mostrarProcesos}/>
                 <span>Procesos:</span>
               </div>
@@ -134,6 +148,7 @@ export default function ProductDetail() {
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </div>

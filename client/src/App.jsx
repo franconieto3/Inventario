@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter,Routes, Route, Link} from 'react-router-dom'
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import { AuthContextProvider } from './context/authContext';
+import { AuthContextProvider } from './context/AuthContext';
 import HomePage from './components/HomePage';
 import PrivateRoute from './components/PrivateRoute';
 import ProductDetail from "./components/products/ProductDetail";
@@ -12,12 +12,6 @@ import ProductDetail from "./components/products/ProductDetail";
 
 function App() {
   const [mensaje, setMensaje] = useState("");
-
-  useEffect(() => {
-    fetch("http://localhost:4000/")
-      .then(res => res.text())
-      .then(data => setMensaje(data));
-  }, []);
 
   return (  
         <>

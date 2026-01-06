@@ -1,24 +1,25 @@
 // server/index.js
+/*
 import dotenv from "dotenv";
 dotenv.config();
+import { createClient } from "@supabase/supabase-js";*/
 
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { createClient } from "@supabase/supabase-js";
+//import jwt from "jsonwebtoken";
+
 import { z } from 'zod';
+
+import { supabase, supabaseAdmin } from "./config/supabase.js";
+import { verificarToken } from "./middlewares/auth.middleware.js";
 
 // Middlewares
 const app = express();
-/*
-app.use(cors({
-  origin:'*'
-}));*/
 app.use(cors());
 app.use(express.json());
 
-
+/*
 // Middleware para verificar el token
 const verificarToken = (req, res, next) => {
   // 1. Obtener el token del encabezado (Header)
@@ -53,14 +54,15 @@ const verificarToken = (req, res, next) => {
       }
     
   }
-};
+};*/
 
+/*
 // Configuración de Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_API_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 // Cliente ADMIN (ignora RLS)
-const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);*/
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
