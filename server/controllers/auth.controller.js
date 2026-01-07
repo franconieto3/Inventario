@@ -35,64 +35,27 @@ export const login = async (req, res) => {
 
 export const register = async (req, res)=>{
     try {
-    // 1. Desestructurar los datos que vienen del frontend (Register.jsx)
-    const { dni, password, name, email, telefono } = req.body;
+      // 1. Desestructurar los datos que vienen del frontend (Register.jsx)
+      const { dni, password, name, email, telefono } = req.body;
 
-    // Validación básica del lado del servidor (opcional, pero recomendada como doble chequeo)
-    if (!dni || !password || !name || !email) {
-        return res.status(400).json({ error: "Faltan campos obligatorios" });
-    }
+      // Validación básica del lado del servidor (opcional, pero recomendada como doble chequeo)
+      if (!dni || !password || !name || !email) {
+          return res.status(400).json({ error: "Faltan campos obligatorios" });
+      }
 
-    // 2. Validar si el usuario ya existe (por DNI o Email)
-    // Esto evita errores de SQL y permite dar un mensaje más amigable
+      const data = await authService.registerUser(dni, password, name, email, telefono);
 
-    const { data: existingUser, error: searchError } = await supabase
-        .from('usuarios')
-        .select('id_usuario')
-        .or(`dni.eq.${dni},email.eq.${email}`)
-        .maybeSingle();
-        
-
-    if (existingUser) {
-        return res.status(409).json({ error: "El usuario con este DNI o Email ya existe." });
-    }
-
-    // 3. Encriptar la contraseña (Hashing)
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // 4. Insertar en Supabase
-    // NOTA: Mapeamos las variables del frontend a las columnas de la IMAGEN de la BD.
-    const { data, error } = await supabase
-        .from('usuarios') // Nombre exacto de la tabla en la imagen
-        .insert([
-        {
-            dni: parseInt(dni),    // La imagen dice que dni es 'int'
-            password: hashedPassword, // Columna 'contraseña', guardamos el hash
-            name: name,          // Columna 'nombre'
-            email: email,          // Columna 'email'
-            telefono: telefono     // Columna 'telefono'
-        }
-        ])
-        .select(); // .select() devuelve el registro creado
-
-    if (error) {
-        console.error("Error de Supabase:", error);
-        return res.status(500).json({ error: "Error al insertar en la base de datos" });
-    }
-
-    /*
-    const data = await authService.registerUser(dni, password, name, email, telefono);
-    */
-
-    // 5. Respuesta exitosa
-    res.status(201).json({ 
-        message: "Usuario registrado con éxito", 
-        user: data[0] 
-    });
+      //Respuesta exitosa
+      res.status(201).json({ 
+          message: "Usuario registrado con éxito", 
+          user: data[0] 
+      });
 
     } catch (err) {
-    console.error("Error del servidor:", err);
-    res.status(500).json({ error: "Error interno del servidor" });
+      if(err.message==="El usuario con este DNI o Email ya existe."){
+        res.status(409).json({error: err.message});
+      }
+      console.error("Error del servidor:", err);
+      res.status(500).json({ error: err.message });
     }
 }

@@ -27,9 +27,9 @@ export const loginUser = async (dni, password) => {
     return { token, user };
 };
 
-// ... Aquí agregarías registerUser también
-/*
 export const registerUser = async (dni, password, name, email, telefono)=>{
+    
+    //1. Validar si existe el usuario
 
     const { data: existingUser, error: searchError } = await supabase
       .from('usuarios')
@@ -39,10 +39,14 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
      
 
     if (existingUser) throw new Error("El usuario con este DNI o Email ya existe.");
-
+    if (searchError) throw new Error ("Error al verificar usuario");
+    
     //Encriptar la contraseña (Hashing)
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    //Insertar en supabase
 
     const { data, error } = await supabase
       .from('usuarios') // Nombre exacto de la tabla en la imagen
@@ -60,4 +64,4 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
     if (error) throw new Error ("Error al insertar en la base de datos" );
 
     return data;
-}*/
+}

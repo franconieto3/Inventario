@@ -59,7 +59,7 @@ export default function Register() {
 
     try {
       
-      const data = await apiCall(`${API_URL}/register`, {method:'POST', body: JSON.stringify({ dni, password, name, email, telefono })});
+      const data = await apiCall(`${API_URL}/auth/register`, {method:'POST', body: JSON.stringify({ dni, password, name, email, telefono })});
       console.log("Registro exitoso:", data)
 
     } catch (error) {

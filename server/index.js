@@ -94,9 +94,9 @@ app.post('/login', async (req, res) => {
 });*/
 
 app.use("/auth", authRoutes);
-
+/*
 // Ruta de Registro
-app.post('/register', async (req, res) => {
+app.post('/auth/register', async (req, res) => {
   try {
     // 1. Desestructurar los datos que vienen del frontend (Register.jsx)
     const { dni, password, name, email, telefono } = req.body;
@@ -154,7 +154,7 @@ app.post('/register', async (req, res) => {
     console.error("Error del servidor:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
-});
+});*/
 
 // Ruta protegida: Obtener datos del perfil
 app.get('/perfil', verificarToken, async (req, res) => {
