@@ -24,7 +24,7 @@ export const AuthContextProvider = ({ children }) => {
     
     const verifyToken = async ()=>{
       try{
-        const res = await apiCall(`${API_URL}/verificar`, {method: 'GET'});
+        const res = await apiCall(`${API_URL}/auth/verificar`, {method: 'GET'});
         setUser(JSON.parse(storedUser));
 
       }catch(error){
