@@ -25,9 +25,11 @@ app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
 });
 
+/*
 app.get('/verificar', verificarToken, (req, res)=>{
   //res.sendStatus(200)
   return res.status(200).json(req.usuario);});
+*/
 
 /*
 //Ruta de Login
@@ -93,7 +95,6 @@ app.post('/login', async (req, res) => {
   }
 });*/
 
-app.use("/auth", authRoutes);
 /*
 // Ruta de Registro
 app.post('/auth/register', async (req, res) => {
@@ -155,6 +156,8 @@ app.post('/auth/register', async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });*/
+
+app.use("/auth", authRoutes);
 
 // Ruta protegida: Obtener datos del perfil
 app.get('/perfil', verificarToken, async (req, res) => {
@@ -317,6 +320,8 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
     res.status(500).json({ error: "Error al obtener el detalle del producto" });
   }
 });
+
+
 
 app.post('/subir-plano', verificarToken, async (req,res)=>{
   const {fileName} = req.body;

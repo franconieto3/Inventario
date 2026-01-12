@@ -59,3 +59,7 @@ export const register = async (req, res)=>{
       res.status(500).json({ error: err.message });
     }
 }
+
+export const verificar = async (req, res)=>{
+  return res.status(200).json(req.usuario);
+}
