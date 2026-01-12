@@ -11,7 +11,7 @@ export default function HomePage(){
         <div>
             <NavBar />
             <div className='body-container'>
-                <h1 style={{"marginBottom":"30px"}}>¡Bienvenido!</h1>
+                <h1 style={{"marginBottom":"30px", "fontFamily":"Inter", "fontWeight":"300","fontSize":"2.5rem", "fontStyle":"normal"}}>¡Bienvenido!</h1>
                 <div className="cards-container">
                     <div className="card" onClick={()=>navigate("/products")}>
                         <div className='icons-container'>

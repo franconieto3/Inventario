@@ -16,10 +16,15 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  flex:1;
+  min-width: 0;
 }
 
 .product-name span{
   font-size: 14px;
+  white-space: nowrap;      /* Evita que el texto salte al siguiente renglón */
+  overflow: hidden;         /* Oculta lo que se desborde */
+  text-overflow: ellipsis;  /* Agrega los "..." al final */
 }
 
 .product-name span:hover{
@@ -29,4 +34,5 @@
 
 .product-name i{
   font-size: 20px;
+  flex-shrink: 0;
 }

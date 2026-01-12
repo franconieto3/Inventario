@@ -63,7 +63,7 @@ export default function ProductDetail() {
     <div className='body-container'>
       <div className='detail-container'>
         <h1>{producto.nombre}</h1>
-        <p>Registro PM: {producto.registro_pm.descripcion}</p>
+        <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
         <div>
           <div className='detail'>

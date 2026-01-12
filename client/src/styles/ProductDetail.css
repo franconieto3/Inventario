@@ -4,6 +4,10 @@
 .detail-container h1{
     text-align: start;
     margin-bottom: 20px;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .detail-container p{

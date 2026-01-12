@@ -312,7 +312,7 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
       ...productoRes.data,
       planos: documentosRes.data || []
     };
-    console.log(respuestaFinal);
+    
     res.json(respuestaFinal);
 
   } catch (err) {
