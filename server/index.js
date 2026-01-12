@@ -277,7 +277,9 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
         .from('producto')
         .select(`
           *,
-          pieza (*) 
+          pieza (*),
+          rubro (descripcion),
+          registro_pm(descripcion) 
         `)
         .eq('id_producto', id)
         .single(),

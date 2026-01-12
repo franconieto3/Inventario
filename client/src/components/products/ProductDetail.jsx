@@ -25,6 +25,7 @@ export default function ProductDetail() {
   const [mostrarMateriales, setMostrarMateriales] = useState(true);
   const [mostrarProcesos, setMostrarProcesos] = useState(true);
   const [mostrarElementos, setMostrarElementos] = useState(true);
+  const [mostrarComponentes, setMostrarComponentes] = useState(true);
 
   const fetchProduct = async () => {
     try{
@@ -36,6 +37,8 @@ export default function ProductDetail() {
       console.error(err.message);
     }
   };
+
+  //useEffect(()=>{console.log(producto)},[producto])
 
   useEffect(() => {
     fetchProduct();
@@ -60,8 +63,8 @@ export default function ProductDetail() {
     <div className='body-container'>
       <div className='detail-container'>
         <h1>{producto.nombre}</h1>
-        <p>Registro PM: {producto.id_registro_pm}</p>
-        <p>Rubro: {producto.id_rubro}</p>
+        <p>Registro PM: {producto.registro_pm.descripcion}</p>
+        <p>Rubro: {producto.rubro.descripcion}</p>
         <div>
           <div className='detail'>
             <div>
@@ -106,6 +109,18 @@ export default function ProductDetail() {
                 </ul>
 
                 <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+              </div>
+            </div>
+          </div>
+          <div className='detail'>
+            <div>
+              <div className='detail-subtitle'>
+                <input type='checkbox' name="Componentes" onChange={()=>setMostrarComponentes(!mostrarComponentes)} checked={mostrarComponentes}/>
+                <span>Componentes:</span>
+              </div>
+              <div className='add-span' style={!mostrarComponentes?{"display":"none"}:{"display":"flex"}} >
+                <i className='material-icons' id="add-icon">add</i>
+                <h3 style={{"fontSize":"1rem"}}>Agregar componentes</h3>
               </div>
             </div>
           </div>

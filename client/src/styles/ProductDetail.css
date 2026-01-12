@@ -33,18 +33,26 @@
 
 
 .part-list{
-  list-style-type: none;
+  /*list-style-type: none;*/
   padding-left: 0;
   margin-top: 10px;
   margin-left: 25px;
 }
 
+.part-list li{
+  margin-top: 10px;
+}
 
 /*Pestaña de planos*/
 
 .planos-list{
   list-style-type: none;
   margin-bottom: 20px;
+  margin-left: 10px;
+}
+
+.planos-list li{
+  margin-top: 10px;
 }
 
 .upload-container{
