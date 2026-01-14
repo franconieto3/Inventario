@@ -38,9 +38,9 @@ export default function ProductSection(){
             setLoadingData(true);
             try {
                 const [dataRubros, dataPM, dataProductos] = await Promise.all([
-                    apiCall(`${API_URL}/rubros`,{}),
-                    apiCall(`${API_URL}/registros-pm`,{}),
-                    apiCall(`${API_URL}/productos`,{})
+                    apiCall(`${API_URL}/api/productos/rubros`,{}),
+                    apiCall(`${API_URL}/api/productos/registros-pm`,{}),
+                    apiCall(`${API_URL}/api/productos`,{})
                 ])
                 
                 setRubros(dataRubros);

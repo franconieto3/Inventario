@@ -9,6 +9,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authRoutes from "./routes/auth.routes.js";
+import productRoutes from "./routes/product.routes.js"
 
 import { z } from 'zod';
 
@@ -184,8 +185,9 @@ app.get('/perfil', verificarToken, async (req, res) => {
   }
 });
 
+/*
 // Obtener Rubros
-app.get('/rubros', verificarToken, async (req, res) => {
+app.get('/api/productos/rubros', verificarToken, async (req, res) => {
   try {
     
     const { data, error } = await supabase
@@ -197,8 +199,11 @@ app.get('/rubros', verificarToken, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Error al obtener rubros" });
   }
-});
+});*/
 
+app.use("/api/productos", productRoutes);
+
+/*
 // Obtener Registros PM
 app.get('/registros-pm', verificarToken, async (req, res) => {
   try {
@@ -213,8 +218,9 @@ app.get('/registros-pm', verificarToken, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error al obtener registros PM" });
   }
-});
+});*/
 
+/*
 //Obtener productos
 app.get('/productos', verificarToken, async (req, res)=>{
   try{
@@ -226,8 +232,9 @@ app.get('/productos', verificarToken, async (req, res)=>{
     console.error(err);
     res.status(500).json({error:"Error al obtener productos"});
   }
-})
+})*/
 
+/*
 // Ruta para crear Producto + Piezas (Transaccional)
 app.post('/productos', verificarToken, async (req, res) => {
   try {
@@ -265,7 +272,7 @@ app.post('/productos', verificarToken, async (req, res) => {
     console.error("Error del servidor:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
-});
+});*/
 
 
 // Ruta para obtener el detalle de UN producto específico por su ID

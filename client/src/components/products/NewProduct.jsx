@@ -78,7 +78,7 @@ export default function NewProduct(props) {
     setLoading(true);
 
     try{
-      const data = await apiCall(`${API_URL}/productos`, {method: 'POST', body: JSON.stringify(payload)});
+      const data = await apiCall(`${API_URL}/api/productos`, {method: 'POST', body: JSON.stringify(payload)});
       
       props.onSuccess(data);
 
