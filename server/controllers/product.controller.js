@@ -57,3 +57,28 @@ export const nuevoProducto = async (req, res) =>{
         res.status(500).json({ error: err.message});
     }
 }
+
+export const producto = async (req, res)=>{
+    try {
+
+        const { id } = req.params;
+
+        const [productoRes, documentosRes] = await productService.obtenerProducto(id);
+
+        // Combinamos los datos
+        const respuestaFinal = {
+            ...productoRes.data,
+            planos: documentosRes.data || []
+        };
+        
+        res.json(respuestaFinal);
+
+    } catch (err) {
+        console.error(err);
+        if(err.message === 'PGRST116'){
+            res.status(404).json({ error: "Producto no encontrado" });
+        }else{
+            res.status(500).json({ error: "Error al obtener el detalle del producto" });
+        }
+    }
+}

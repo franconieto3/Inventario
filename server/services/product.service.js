@@ -42,3 +42,38 @@ export const cargarProductos = async (nombre, id_registro_pm, id_rubro, piezas)=
 
     return data;
 }
+
+export const obtenerProducto = async (id)=>{
+
+    const [productoRes, documentosRes] = await Promise.all([
+        supabase
+        .from('producto')
+        .select(`
+            *,
+            pieza (*),
+            rubro (descripcion),
+            registro_pm(descripcion) 
+        `)
+        .eq('id_producto', id)
+        .single(),
+        
+        // Llamada a tu función personalizada de SQL
+        supabase.rpc('obtener_ultima_version_por_documento', {
+        p_id_producto: id
+        })
+    ]);
+
+    // Manejo de errores de la consulta de producto
+    if (productoRes.error) {
+        if (productoRes.error.code === 'PGRST116') {throw new Error('PGRST116');}
+        else{throw productoRes.error;} 
+    }
+
+    // Manejo de errores de la función RPC (opcional, podrías devolver [] si falla)
+    if (documentosRes.error) {
+        console.error("Error al obtener documentos:", documentosRes.error);
+        return [productoRes, []];
+    }
+
+    return [productoRes, documentosRes];
+}

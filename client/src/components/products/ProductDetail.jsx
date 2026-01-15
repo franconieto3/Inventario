@@ -30,7 +30,7 @@ export default function ProductDetail() {
   const fetchProduct = async () => {
     try{
 
-      const data = await apiCall(`${API_URL}/productos/${id}`, {});
+      const data = await apiCall(`${API_URL}/api/productos/${id}`, {});
       setProducto(data);
       
     }catch(err){

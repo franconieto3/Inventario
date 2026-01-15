@@ -274,7 +274,7 @@ app.post('/productos', verificarToken, async (req, res) => {
   }
 });*/
 
-
+/*
 // Ruta para obtener el detalle de UN producto específico por su ID
 app.get('/productos/:id', verificarToken, async (req, res) => {
   try {
@@ -327,7 +327,7 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
     res.status(500).json({ error: "Error al obtener el detalle del producto" });
   }
 });
-
+*/
 
 
 app.post('/subir-plano', verificarToken, async (req,res)=>{
