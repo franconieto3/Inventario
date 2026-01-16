@@ -6,8 +6,8 @@ import { createClient } from "@supabase/supabase-js";*/
 
 import express from "express";
 import cors from "cors";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+//import bcrypt from "bcrypt";
+//import jwt from "jsonwebtoken";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js"
 

@@ -41,7 +41,7 @@ export const nuevoProducto = async (req, res) =>{
             return res.status(400).json({ error: "Datos incompletos" });
         }
 
-        const data = await productService.cargarProductos();
+        const data = await productService.cargarProductos(nombre, id_registro_pm, id_rubro, piezas);
 
         // Si todo salió bien
         res.status(201).json({ 
