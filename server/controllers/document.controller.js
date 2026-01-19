@@ -1,7 +1,8 @@
 import {DocumentoPayloadSchema} from "../schemas/document.schemas.js"
-import { signedUrl, guardarDocumento } from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl} from "../services/document.service.js";
+import { z } from "zod";
 
-export const crearSignedUrl = async (req, res)=>{
+export const subirPlano = async (req, res)=>{
     try{
         const {fileName} = req.body;
 
@@ -11,7 +12,7 @@ export const crearSignedUrl = async (req, res)=>{
         //Validar piezas 
 
         const path = `planos/${Date.now()}-${fileName}`;
-        const data = await signedUrl(fileName, path);
+        const data = await signedUploadUrl(path);
         return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: path });
     }
     catch(err){
@@ -19,7 +20,7 @@ export const crearSignedUrl = async (req, res)=>{
     }                    
 }
 
-export const documento = async ()=>{
+export const documento = async (req, res)=>{
     try{
         const datosValidado = DocumentoPayloadSchema.parse(req.body);
 
@@ -27,41 +28,10 @@ export const documento = async ()=>{
         const BUCKET_NAME = 'planos';
         const filePath = datosValidado.version.path;
 
-        const { data: fileData, error: fileError } = await supabaseAdmin
-            .storage
-            .from(BUCKET_NAME)
-            .list(filePath.split('/').slice(0, -1).join('/'), { // Listamos la carpeta contenedora
-            limit: 100,
-            search: filePath.split('/').pop() // Buscamos el nombre exacto del archivo
-        });
-
-        if (fileError || !fileData || fileData.length === 0) {
-            return res.status(400).json({ 
-            error: "Validación de Archivo Fallida", 
-            message: `El archivo '${filePath}' no fue encontrado en el bucket '${BUCKET_NAME}'. Súbelo primero.` 
-            });
-        }
-
-        // Ejecutar la Función SQL (RPC)
-        /*
-        const { data: idVersionCreada, error: rpcError } = await supabase
-            .rpc('crear_documento_version_piezas', { 
-            payload: datosValidado 
-            });
-
-        if (rpcError) {
-            // Manejamos errores específicos de SQL
-            console.error("❌ Error SQL:", rpcError);
-            
-            // Si es el error que lanzamos manualmente en SQL o constraint unique
-            if (rpcError.code === 'P0001' || rpcError.code === '23505') { 
-                return res.status(409).json({ error: "Conflicto", message: rpcError.message });
-            }
-            
-            return res.status(500).json({ error: "Error de Base de Datos", details: rpcError.message });
-        }*/
-
-        const idVersionCreada = guadarDocumento(datosValidado);
+        const fileData = await obtenerMetadatos(BUCKET_NAME, filePath);
+        
+        //Guardado del documento
+        const idVersionCreada = await guardarDocumento(datosValidado);
 
         // ÉXITO
         return res.status(201).json({
@@ -73,7 +43,7 @@ export const documento = async ()=>{
         if (err instanceof z.ZodError) {
             return res.status(400).json({ 
             error: "Datos inválidos", 
-            detalles: error.errors.map(e => ({ campo: e.path.join('.'), mensaje: e.message })) 
+            detalles: err.errors.map(e => ({ campo: e.path.join('.'), mensaje: e.message })) 
             });
         }
         if(err.statusCode){
@@ -85,3 +55,23 @@ export const documento = async ()=>{
     }
 }
 
+export const visualizarPlano = async (req, res)=>{
+    try {
+        const { path } = req.body;
+
+        if (!path) {
+            return res.status(400).json({ error: "El path del archivo es obligatorio" });
+        }
+
+        const data = await signedUrl(path);
+        res.json({ signedUrl: data.signedUrl });
+
+    } catch (err) {
+        console.error(err);
+        if(err.statusCode){
+            return res.status(err.statusCode).json({ error: err.message });
+        }else{
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    }
+}

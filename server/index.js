@@ -10,6 +10,7 @@ import cors from "cors";
 //import jwt from "jsonwebtoken";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js"
+import documentRoutes from "./routes/document.routes.js";
 
 import { z } from 'zod';
 
@@ -329,8 +330,10 @@ app.get('/productos/:id', verificarToken, async (req, res) => {
 });
 */
 
+//Endpoints de documentos
 
-app.post('/subir-plano', verificarToken, async (req,res)=>{
+/*
+app.post('/api/documentos/subir-plano', verificarToken, async (req,res)=>{
   const {fileName} = req.body;
 
   //Validaciones
@@ -372,7 +375,7 @@ const DocumentoPayloadSchema = z.object({
   piezas: z.array(z.number().int()).optional().default([])
 });
 
-app.post('/guardar-documento', verificarToken, async (req, res)=>{
+app.post('api/documentos/guardar-documento', verificarToken, async (req, res)=>{
   try{
     const datosValidado = DocumentoPayloadSchema.parse(req.body);
 
@@ -434,7 +437,7 @@ app.post('/guardar-documento', verificarToken, async (req, res)=>{
   }
 })
 
-app.post('/obtener-url-plano', verificarToken, async (req, res) => {
+app.post('/api/documentos/obtener-url-plano', verificarToken, async (req, res) => {
   try {
     const { path } = req.body;
 
@@ -460,7 +463,9 @@ app.post('/obtener-url-plano', verificarToken, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
-});
+});*/
+
+app.use('/api/documentos', documentRoutes);
 
 
 const PORT = 4000;

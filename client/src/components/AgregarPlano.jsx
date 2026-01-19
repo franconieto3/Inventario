@@ -84,7 +84,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             setLoading(true)
             
             //1. Solicitar la url firmada para la carga de archivos al servidor 
-            const { signedUrl, path, uploadToken } = await apiCall(`${API_URL}/subir-plano`, {method: 'POST', body: JSON.stringify({fileName:nombreLimpio})})
+            const { signedUrl, path, uploadToken } = await apiCall(`${API_URL}/api/documentos/subir-plano`, {method: 'POST', body: JSON.stringify({fileName:nombreLimpio})})
             
             //2. Subir archivo al bucket con la url firmada
             const uploadResponse = await fetch(signedUrl,{
@@ -117,7 +117,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             console.log(payload);
             
             //3. Enviar los datos del plano al backend
-            const respuesta = await apiCall(`${API_URL}/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
+            const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
             
             alert("Plano subido y asociado correctamente.");
             setAgregarPlanos(false);

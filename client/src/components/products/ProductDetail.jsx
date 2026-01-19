@@ -47,7 +47,7 @@ export default function ProductDetail() {
   // Función para pedir la URL firmada y abrirla
   const handleVerPlano = async (pathArchivo) => {
     try {
-      const {signedUrl} = await apiCall(`${API_URL}/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
+      const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
       window.open(signedUrl, '_blank');
 
     } catch (err) {

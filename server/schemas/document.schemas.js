@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const DocumentoPayloadSchema = z.object({
+export const DocumentoPayloadSchema = z.object({
   documento: z.object({
     id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
     descripcion: z.string().min(3, { message: "La denominación es muy corta" }),
