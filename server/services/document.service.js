@@ -31,6 +31,16 @@ export const obtenerMetadatos = async (BUCKET_NAME, filePath)=>{
     return fileData;
 }
 
+export const moverArchivoAPermanente = async (tempPath, finalPath) => {
+    const { data, error } = await supabaseAdmin
+        .storage
+        .from('planos')
+        .move(tempPath, finalPath);
+
+    if (error) throw new Error("Error moviendo el archivo a almacenamiento permanente");
+    return data;
+}
+
 export const guardarDocumento = async (datos)=>{
 
     const { data: idVersionCreada, error: rpcError } = await supabase

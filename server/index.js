@@ -1,18 +1,8 @@
-// server/index.js
-/*
-import dotenv from "dotenv";
-dotenv.config();
-import { createClient } from "@supabase/supabase-js";*/
-
 import express from "express";
 import cors from "cors";
-//import bcrypt from "bcrypt";
-//import jwt from "jsonwebtoken";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js"
 import documentRoutes from "./routes/document.routes.js";
-
-
 
 import { supabase, supabaseAdmin } from "./config/supabase.js";
 import { verificarToken } from "./middlewares/auth.middleware.js";
@@ -33,6 +23,7 @@ app.use("/auth", authRoutes);
 // Ruta protegida: Obtener datos del perfil
 app.get('/perfil', verificarToken, async (req, res) => {
   try {
+    
     // Gracias al middleware, ahora tenemos acceso a req.usuario.id
     const userId = req.usuario.id;
 

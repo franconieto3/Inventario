@@ -4,16 +4,31 @@ import { z } from "zod";
 
 export const subirPlano = async (req, res)=>{
     try{
-        const {fileName} = req.body;
+        const {fileName, fileType, fileSize } = req.body;
 
-        //Validaciones
-        //¿El usuario puede subir planos?
-        //¿El archivo cumple con el tipo y tamaño permitidos?
-        //Validar piezas 
+        //Validaciones (esquemas)
 
-        const path = `planos/${Date.now()}-${fileName}`;
+        //¿El usuario puede subir planos? (Middleware)
+
+        //¿El archivo cumple con el tipo y tamaño permitidos? (esquemas)
+        const allowedTypes = ['application/pdf'];
+        if (!allowedTypes.includes(fileType)) {
+            return res.status(400).json({ error: "Tipo de archivo no permitido" });
+        }
+
+        const MAX_SIZE = 50 * 1024 * 1024; 
+        if (fileSize > MAX_SIZE) {
+             return res.status(400).json({ error: "El archivo excede los 50MB" });
+        }
+
+        //Validar piezas (servicios)
+
+        //Creación de path temporal 
+        const path = `temp/${Date.now()}-${fileName}`;
+
         const data = await signedUploadUrl(path);
         return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: path });
+
     }
     catch(err){
         return res.status(500).json({ error: err.message });
@@ -26,11 +41,20 @@ export const documento = async (req, res)=>{
 
         // Intentamos obtener los metadatos del archivo para ver si existe
         const BUCKET_NAME = 'planos';
-        const filePath = datosValidado.version.path;
-
-        const fileData = await obtenerMetadatos(BUCKET_NAME, filePath);
+        //Path temporal
+        const tempPath = datosValidado.version.path;
         
-        //Guardado del documento
+        await obtenerMetadatos(tempPath);
+        
+        //Definir path final
+        const finalPath = `productos/${datosValidado.documento.id_producto}/${datosValidado.version.path.split('/').pop()}`
+        
+        // Mover archivo (Atomocidad lógica)
+        await moverArchivoAPermanente(tempPath, finalPath);
+
+        datosValidado.version.path = finalPath;
+
+        //Guardado del documento en SQL
         const idVersionCreada = await guardarDocumento(datosValidado);
 
         // ÉXITO

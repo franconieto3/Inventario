@@ -21,7 +21,7 @@ export default function HomePage(){
                             <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
                         </div>
                         <div className='card-title'>
-                            <h1>Información de productos</h1>
+                            <h1 style={{"fontFamily":"Inter","fontWeight":"500"}}>Registro maestro de productos</h1>
                         </div>
                         <p className='card-description'>Acceder a información básica de productos: piezas, planos, materiales y procesos</p>
 
@@ -35,7 +35,7 @@ export default function HomePage(){
                             <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
                         </div>
                         <div className='card-title'>
-                            <h1>Usuarios</h1>
+                            <h1 style={{"fontFamily":"Inter","fontWeight":"500"}}>Usuarios</h1>
                         </div>
                         <p className='card-description'>Registrar nuevos usuarios</p>
                     </div>
