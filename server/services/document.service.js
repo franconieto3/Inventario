@@ -16,7 +16,7 @@ export const obtenerMetadatos = async (filePath)=>{
 
     const { data: fileData, error: fileError } = await supabaseAdmin
             .storage
-            .from('temp')
+            .from('planos')
             .list(filePath.split('/').slice(0, -1).join('/'), { // Listamos la carpeta contenedora
             limit: 100,
             search: filePath.split('/').pop() // Buscamos el nombre exacto del archivo

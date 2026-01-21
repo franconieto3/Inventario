@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente} from "../services/document.service.js";
 import { z } from "zod";
 
 export const subirPlano = async (req, res)=>{
@@ -9,7 +9,7 @@ export const subirPlano = async (req, res)=>{
         //Adaptar a distintos tipos de archivos según el tipo de documento
         
         //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos?
-        datosValidados = SolicitudSubidaSchema.parse(req.body);
+        const datosValidados = SolicitudSubidaSchema.parse(req.body);
 
         //Validar piezas (servicios)
 
@@ -39,10 +39,10 @@ export const documento = async (req, res)=>{
         await obtenerMetadatos(tempPath);
         
         //Definir path final
-        const finalPath = `productos/${datosValidado.documento.id_producto}/${datosValidado.version.path.split('/').pop()}`
+        const finalPath = `planos/productos/${datosValidado.documento.id_producto}/${datosValidado.version.path.split('/').pop()}`
         
         // Mover archivo (Atomocidad lógica)
-        await moverArchivoAPermanente(tempPath, finalPath);
+        const data = await moverArchivoAPermanente(tempPath, finalPath);
 
         datosValidado.version.path = finalPath;
 
@@ -56,6 +56,7 @@ export const documento = async (req, res)=>{
         });
 
     }catch(err){
+        console.log(err);
         if (err instanceof z.ZodError) {
             return res.status(400).json({ 
             error: "Datos inválidos", 
