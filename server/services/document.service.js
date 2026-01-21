@@ -12,23 +12,22 @@ export const signedUploadUrl = async (path)=>{
     return data;
 }
 
-export const obtenerMetadatos = async (BUCKET_NAME, filePath)=>{
+export const obtenerMetadatos = async (filePath)=>{
 
     const { data: fileData, error: fileError } = await supabaseAdmin
             .storage
-            .from(BUCKET_NAME)
+            .from('temp')
             .list(filePath.split('/').slice(0, -1).join('/'), { // Listamos la carpeta contenedora
             limit: 100,
             search: filePath.split('/').pop() // Buscamos el nombre exacto del archivo
         });
 
     if (fileError || !fileData || fileData.length === 0) {
-        const error = new Error(`El archivo '${filePath}' no fue encontrado en el bucket '${BUCKET_NAME}'. Súbelo primero.`);
+        const error = new Error(`El archivo '${filePath}' no fue encontrado. Súbelo primero.`);
         error.statusCode = 400;
         throw error;
     }
 
-    return fileData;
 }
 
 export const moverArchivoAPermanente = async (tempPath, finalPath) => {

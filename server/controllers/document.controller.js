@@ -1,36 +1,29 @@
-import {DocumentoPayloadSchema} from "../schemas/document.schemas.js"
+import {DocumentoPayloadSchema, SolicitudSubidaSchema} from "../schemas/document.schemas.js"
 import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl} from "../services/document.service.js";
 import { z } from "zod";
 
 export const subirPlano = async (req, res)=>{
     try{
-        const {fileName, fileType, fileSize } = req.body;
-
-        //Validaciones (esquemas)
-
         //¿El usuario puede subir planos? (Middleware)
 
-        //¿El archivo cumple con el tipo y tamaño permitidos? (esquemas)
-        const allowedTypes = ['application/pdf'];
-        if (!allowedTypes.includes(fileType)) {
-            return res.status(400).json({ error: "Tipo de archivo no permitido" });
-        }
-
-        const MAX_SIZE = 50 * 1024 * 1024; 
-        if (fileSize > MAX_SIZE) {
-             return res.status(400).json({ error: "El archivo excede los 50MB" });
-        }
+        //Adaptar a distintos tipos de archivos según el tipo de documento
+        
+        //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos?
+        datosValidados = SolicitudSubidaSchema.parse(req.body);
 
         //Validar piezas (servicios)
 
         //Creación de path temporal 
-        const path = `temp/${Date.now()}-${fileName}`;
+        const path = `temp/${Date.now()}-${datosValidados.fileName}`;
 
         const data = await signedUploadUrl(path);
         return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: path });
 
     }
     catch(err){
+        if (err instanceof z.ZodError) {
+            return res.status(400).json({ error: err.errors[0].message });
+        }
         return res.status(500).json({ error: err.message });
     }                    
 }
@@ -39,11 +32,10 @@ export const documento = async (req, res)=>{
     try{
         const datosValidado = DocumentoPayloadSchema.parse(req.body);
 
-        // Intentamos obtener los metadatos del archivo para ver si existe
-        const BUCKET_NAME = 'planos';
         //Path temporal
         const tempPath = datosValidado.version.path;
-        
+
+        // Intentamos obtener los metadatos del archivo para ver si existe
         await obtenerMetadatos(tempPath);
         
         //Definir path final

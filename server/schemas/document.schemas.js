@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+export const SolicitudSubidaSchema = z.object({
+    fileName: z.string().min(1, "El nombre es requerido"),
+    fileType: z.enum(['application/pdf'], {
+      errorMap: () => ({ message: "Tipo de archivo no permitido. Solo PDF." })
+    }),
+    fileSize: z.number().max(50 * 1024 * 1024, "El archivo excede los 50MB"),
+    idProducto: z.number().optional() // Útil si quieres organizar temp por producto
+});
+
 export const DocumentoPayloadSchema = z.object({
   documento: z.object({
     id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
