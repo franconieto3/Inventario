@@ -11,11 +11,12 @@ export const subirPlano = async (req, res)=>{
         //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos?
         const datosValidados = SolicitudSubidaSchema.parse(req.body);
 
-        //Validar piezas (servicios)
+        //Validar piezas? (servicios)
 
-        //Creación de path temporal 
+        //Creación de path temporal(servicio) 
         const path = `temp/${Date.now()}-${datosValidados.fileName}`;
-
+        
+        //Generación de url de carga
         const data = await signedUploadUrl(path);
         return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: path });
 
