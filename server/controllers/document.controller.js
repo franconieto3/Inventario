@@ -1,14 +1,17 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, documentTypes} from "../services/document.service.js";
 import { z } from "zod";
 
-export const subirPlano = async (req, res)=>{
+export const subirDocumento = async (req, res)=>{
     try{
         //¿El usuario puede subir planos? (Middleware)
 
-        //Adaptar a distintos tipos de archivos según el tipo de documento
+        //Adaptar a distintos tipos de archivos según el tipo de documento: pedir a supabase los distintos tipos de documentos y pasarlos al schema
+        const docTypes = await DocumentTypes();
+
+        //Verificar si coincide el tipo de dato con alguno de los ingresados en la base de datos (metodo find)
         
-        //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos?
+        //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos? Agregar el esquema en una función que lo modifique según los tipos de datos
         const datosValidados = SolicitudSubidaSchema.parse(req.body);
 
         //Validar piezas? (servicios)
@@ -73,7 +76,7 @@ export const documento = async (req, res)=>{
     }
 }
 
-export const visualizarPlano = async (req, res)=>{
+export const visualizarDocumento = async (req, res)=>{
     try {
         const { path } = req.body;
 

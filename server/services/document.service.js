@@ -1,5 +1,15 @@
 import { supabase, supabaseAdmin } from "../config/supabase.js";
 
+export const documentTypes = async ()=>{
+    const {data, error} = await supabase.from('tipo_documento').select('*');
+    if(error){
+        console.error();
+        const err = new Error("No se pudo recuperar los tipos de documentos");
+        err.statusCode = 500;
+        throw err;
+    }
+}
+
 export const signedUploadUrl = async (path)=>{
 
     const {data,error} = await supabaseAdmin
