@@ -21,7 +21,7 @@ export const signedUploadUrl = async (path)=>{
 
     const {data,error} = await supabaseAdmin
                             .storage
-                            .from('planos')
+                            .from('gestion_documental_privada')
                             .createSignedUploadUrl(path, { upsert: false });
 
     if (error) throw new Error("No se pudo generar la URL de subida");
@@ -33,7 +33,7 @@ export const obtenerMetadatos = async (filePath)=>{
 
     const { data: fileData, error: fileError } = await supabaseAdmin
             .storage
-            .from('planos')
+            .from('gestion_documental_privada')
             .list(filePath.split('/').slice(0, -1).join('/'), { // Listamos la carpeta contenedora
             limit: 100,
             search: filePath.split('/').pop() // Buscamos el nombre exacto del archivo
@@ -50,7 +50,7 @@ export const obtenerMetadatos = async (filePath)=>{
 export const moverArchivoAPermanente = async (tempPath, finalPath) => {
     const { data, error } = await supabaseAdmin
         .storage
-        .from('planos')
+        .from('gestion_documental_privada')
         .move(tempPath, finalPath);
 
     if (error) throw new Error("Error moviendo el archivo a almacenamiento permanente");
@@ -88,7 +88,7 @@ export const signedUrl = async (path)=>{
     // Expira en 60 segundos. El usuario solo necesita el link para iniciar la carga en el navegador.
     const { data, error } = await supabaseAdmin
         .storage
-        .from('planos')
+        .from('gestion_documental_privada')
         .createSignedUrl(path, 60); 
 
     if (error) {

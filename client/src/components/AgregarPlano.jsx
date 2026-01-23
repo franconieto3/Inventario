@@ -89,7 +89,8 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                  {method: 'POST', 
                   body: JSON.stringify({fileName:nombreLimpio, 
                   fileType: file.type, 
-                  fileSize: file.size})
+                  fileSize: file.size,
+                  idTipoDocumento: 1})
                 })
             
             //2. Subir archivo al bucket con la url firmada
@@ -110,14 +111,14 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                 descripcion: file.name,
                 id_tipo_documento: 1,
                 id_producto: producto.id_producto
-            },/*
+            },
             version:{
-                n_version: Number(version),
+                //n_version: Number(version),
                 fecha_vigencia: fecha,
                 commit: commit,
                 //resolucion:resolucion,
                 path: path
-            },*/
+            },
             piezas:piezasPlano
             };
             console.log(payload);

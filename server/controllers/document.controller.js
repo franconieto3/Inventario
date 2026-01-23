@@ -50,6 +50,7 @@ export const subirDocumento = async (req, res)=>{
 }
 
 export const documento = async (req, res)=>{
+    //Lógica de subida de documentos relacionados a productos
     try{
         const datosValidado = DocumentoPayloadSchema.parse(req.body);
 

@@ -20,7 +20,7 @@ export const DocumentoPayloadSchema = z.object({
     id_producto: z.number().int().positive({ message: "ID de producto inválido" })
   }),
   version: z.object({
-    n_version: z.number().int().nonnegative(),
+    //n_version: z.number().int().nonnegative(),
     fecha_vigencia: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Formato de fecha inválido (Use ISO 8601)"
     }),
