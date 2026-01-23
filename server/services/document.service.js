@@ -1,13 +1,20 @@
 import { supabase, supabaseAdmin } from "../config/supabase.js";
 
-export const documentTypes = async ()=>{
-    const {data, error} = await supabase.from('tipo_documento').select('*');
-    if(error){
-        console.error();
-        const err = new Error("No se pudo recuperar los tipos de documentos");
-        err.statusCode = 500;
+
+export const obtenerConfiguracionTipoDocumento = async (idTipoDocumento) => {
+    const { data, error } = await supabase
+        .from('tipo_documento')
+        .select('bucket_folder, tipos_permitidos') // Asumo que estas columnas ya existen
+        .eq('id_tipo_documento', idTipoDocumento)
+        .single();
+
+    if (error || !data) {
+        const err = new Error("Tipo de documento no válido o no encontrado");
+        err.statusCode = 404; // Not Found
         throw err;
     }
+
+    return data;
 }
 
 export const signedUploadUrl = async (path)=>{

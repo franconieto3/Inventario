@@ -1,18 +1,24 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, documentTypes} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento} from "../services/document.service.js";
 import { z } from "zod";
 
 export const subirDocumento = async (req, res)=>{
     try{
-        //¿El usuario puede subir planos? (Middleware)
+        //¿El usuario puede subir documentos? (Middleware)
 
-        //Adaptar a distintos tipos de archivos según el tipo de documento: pedir a supabase los distintos tipos de documentos y pasarlos al schema
-        const docTypes = await DocumentTypes();
+        const { idTipoDocumento } = req.body;
 
-        //Verificar si coincide el tipo de dato con alguno de los ingresados en la base de datos (metodo find)
-        
+        if (!idTipoDocumento) {
+            return res.status(400).json({ error: "Es obligatorio especificar el tipo de documento a subir" });
+        }
+        //Obtener configuración dinámica desde Supabase
+        const config = await obtenerConfiguracionTipoDocumento(idTipoDocumento);
+
+        //Generación de esquema dinámico
+        const esquemaDinamico = SolicitudSubidaSchema(config.tipos_permitidos);
+
         //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos? Agregar el esquema en una función que lo modifique según los tipos de datos
-        const datosValidados = SolicitudSubidaSchema.parse(req.body);
+        const datosValidados = esquemaDinamico.parse(req.body);
 
         //Validar piezas? (servicios)
 
@@ -21,13 +27,24 @@ export const subirDocumento = async (req, res)=>{
         
         //Generación de url de carga
         const data = await signedUploadUrl(path);
-        return res.json({ signedUrl: data.signedUrl, uploadToken: data.token, path: path });
+        return res.json({
+            signedUrl: data.signedUrl,
+            uploadToken: data.token,
+            path: path,
+            meta: {
+                destinationFolder: config.bucket_folder
+            }
+        });
 
     }
     catch(err){
         if (err instanceof z.ZodError) {
             return res.status(400).json({ error: err.errors[0].message });
         }
+        if (err.statusCode) {
+            return res.status(err.statusCode).json({ error: err.message });
+        }
+        console.error(err);
         return res.status(500).json({ error: err.message });
     }                    
 }
@@ -36,6 +53,7 @@ export const documento = async (req, res)=>{
     try{
         const datosValidado = DocumentoPayloadSchema.parse(req.body);
 
+        const config = await obtenerConfiguracionTipoDocumento(datosValidado.documento.id_tipo_documento);
         //Path temporal
         const tempPath = datosValidado.version.path;
 
@@ -43,7 +61,7 @@ export const documento = async (req, res)=>{
         await obtenerMetadatos(tempPath);
         
         //Definir path final
-        const finalPath = `planos/productos/${datosValidado.documento.id_producto}/${datosValidado.version.path.split('/').pop()}`
+        const finalPath = `${config.bucket_folder}/productos/${datosValidado.documento.id_producto}/${datosValidado.version.path.split('/').pop()}`
         
         // Mover archivo (Atomocidad lógica)
         const data = await moverArchivoAPermanente(tempPath, finalPath);

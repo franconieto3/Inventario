@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export default function AgregarPlano({producto, onUploadSuccess}){
 
     //Estados de formulario
-    const [version, setVersion] = useState(0);
+    //const [version, setVersion] = useState(0);
     const [fecha, setFecha] = useState("");
     //const [resolucion, setResolucion] = useState("");
     const [commit, setCommit] = useState("");
@@ -54,11 +54,11 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             setError("Por favor, selecciona un archivo PDF.");
             return;
         }
-
+/*
         if (version < 0 || !Number.isInteger(Number(version))) {
             setError("El número de versión debe ser un número entero igual o mayor a 0.");
             return;
-        }
+        }*/
 
         if (!fecha) {
             setError("La fecha de vigencia es obligatoria.");
@@ -110,14 +110,14 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                 descripcion: file.name,
                 id_tipo_documento: 1,
                 id_producto: producto.id_producto
-            },
+            },/*
             version:{
                 n_version: Number(version),
                 fecha_vigencia: fecha,
                 commit: commit,
                 //resolucion:resolucion,
                 path: path
-            },
+            },*/
             piezas:piezasPlano
             };
             console.log(payload);
@@ -165,7 +165,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
 
     const limpiarFormulario = () => {
         setFile(null);
-        setVersion(0); // O el valor inicial que prefieras
+        //setVersion(0); // O el valor inicial que prefieras
         setFecha("");
         //setResolucion("");
         setCommit("");
@@ -201,17 +201,17 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
             <div className='upload-content'>
             <form>
+                {/*<div className="form-input">
+                    <label>Versión (*): </label>
+                    <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
+                </div>*/}
                 <div className="form-input">
-                <label>Versión (*): </label>
-                <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
+                    <label>Fecha de vigencia (*): </label>
+                    <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
                 </div>
-                <div className="form-input">
-                <label>Fecha de vigencia (*): </label>
-                <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
-                </div>
-                <div className="form-input">
-                <label>Descripción de versión: </label>
-                <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
+                    <div className="form-input">
+                    <label>Descripción de versión: </label>
+                    <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
                 </div>
                 {/*
                 <div className="form-input">
