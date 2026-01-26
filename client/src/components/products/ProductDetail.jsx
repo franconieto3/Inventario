@@ -9,6 +9,7 @@ import SubirArchivo from '../SubirArchivo';
 import { UserAuth } from '../../context/AuthContext';
 import { apiCall } from '../../services/api';
 import AgregarPlano from '../AgregarPlano';
+import { PartDetail } from './PartDetail';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -65,6 +66,7 @@ export default function ProductDetail() {
         <h1>{producto.nombre}</h1>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
+         
         <div>
           <div className='detail'>
             <div>
@@ -165,6 +167,12 @@ export default function ProductDetail() {
           </div>
           
         </div>
+        
+        {/* 
+          {producto.pieza && producto.pieza.map(p => (
+            <PartDetail nombreProducto={producto.nombre} nombrePieza={p.nombre} />        
+          ))}
+        */}
       </div>
     </div>
     </>
