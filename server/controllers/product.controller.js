@@ -82,3 +82,23 @@ export const producto = async (req, res)=>{
         }
     }
 }
+
+export const pieza = async (req, res) =>{
+    try{
+        const {id} = req.params;
+        
+        const [piezaRes, documentosRes] = await productService.obtenerInfoPieza(id); 
+
+        const respuestaFinal = {
+            ...piezaRes.data,
+            planos: documentosRes.data || []
+        };
+
+        res.status(201).json(respuestaFinal);
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json({error: err.message});
+    }
+
+}

@@ -63,6 +63,14 @@ export const guardarDocumento = async (datos)=>{
         .rpc('crear_documento_version_piezas', { 
         payload: datos 
         });
+    
+        
+    /*
+    const { data: idVersionCreada, error: rpcError } = await supabase
+    .rpc('cargar_version_documento_pieza', { 
+    payload: datos 
+    });
+    */
 
     if (rpcError) {
         console.error("❌ Error SQL:", rpcError);

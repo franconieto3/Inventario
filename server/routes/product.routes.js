@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { rubros, registrosPM, productos, nuevoProducto, producto} from '../controllers/product.controller.js';
+import { rubros, registrosPM, productos, nuevoProducto, producto, pieza} from '../controllers/product.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -9,5 +9,7 @@ router.get('/registros-pm', verificarToken, registrosPM);
 router.post('/', verificarToken, nuevoProducto);
 router.get('/',verificarToken, productos);
 router.get('/:id',verificarToken, producto);
+
+router.get('/pieza/:id',verificarToken, pieza);
 
 export default router;

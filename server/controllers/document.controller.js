@@ -55,6 +55,8 @@ export const documento = async (req, res)=>{
         const datosValidado = DocumentoPayloadSchema.parse(req.body);
 
         const config = await obtenerConfiguracionTipoDocumento(datosValidado.documento.id_tipo_documento);
+        //const config = await obtenerConfiguracionTipoDocumento(datosValidado.version.id_tipo_documento);
+        
         //Path temporal
         const tempPath = datosValidado.version.path;
 

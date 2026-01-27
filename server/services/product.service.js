@@ -77,3 +77,29 @@ export const obtenerProducto = async (id)=>{
 
     return [productoRes, documentosRes];
 }
+
+export const obtenerInfoPieza = async (idPieza) => {
+    [piezaRes, documentosRes] = await Promise.all([
+        supabase
+        .select('*')
+        .from('pieza')
+        .eq('id_pieza')
+        .single(),
+        supabase.rpc('obtener_ultima_version_documentos')
+    ]);
+
+    // Manejo de errores de la consulta de producto
+    if (piezaRes.error) {
+        if (piezaRes.error.code === 'PGRST116') {throw new Error('PGRST116');}
+        else{throw piezaRes.error;} 
+    }
+
+    // Manejo de errores de la función RPC (opcional, podrías devolver [] si falla)
+    if (documentosRes.error) {
+        console.error("Error al obtener documentos:", documentosRes.error);
+        return [piezaRes, []];
+    }
+
+    return [piezaRes, documentosRes];
+    
+}

@@ -14,13 +14,14 @@ export const SolicitudSubidaSchema = (tiposPermitidos)=>{
 }
 
 export const DocumentoPayloadSchema = z.object({
+  //Borrar todo el índice documento
   documento: z.object({
     id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
     descripcion: z.string().min(3, { message: "La denominación es muy corta" }),
     id_producto: z.number().int().positive({ message: "ID de producto inválido" })
   }),
   version: z.object({
-    //n_version: z.number().int().nonnegative(),
+    //id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
     fecha_vigencia: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Formato de fecha inválido (Use ISO 8601)"
     }),
