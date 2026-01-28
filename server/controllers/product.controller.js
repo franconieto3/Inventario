@@ -91,14 +91,18 @@ export const pieza = async (req, res) =>{
 
         const respuestaFinal = {
             ...piezaRes.data,
-            planos: documentosRes.data || []
+            documentos: documentosRes.data || []
         };
 
-        res.status(201).json(respuestaFinal);
+        res.status(200).json(respuestaFinal);
 
     }catch(err){
         console.error(err);
-        res.status(500).json({error: err.message});
+        if (err.message === 'PGRST116') {
+            res.status(404).json({ error: "Pieza no encontrada" });
+        } else {
+            res.status(500).json({ error: "Error al obtener el detalle de la pieza" });
+        }
     }
 
 }

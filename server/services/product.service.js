@@ -79,13 +79,13 @@ export const obtenerProducto = async (id)=>{
 }
 
 export const obtenerInfoPieza = async (idPieza) => {
-    [piezaRes, documentosRes] = await Promise.all([
+    const [piezaRes, documentosRes] = await Promise.all([
         supabase
-        .select('*')
         .from('pieza')
-        .eq('id_pieza')
+        .select('*')
+        .eq('id_pieza', idPieza)
         .single(),
-        supabase.rpc('obtener_ultima_version_documentos')
+        supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza})
     ]);
 
     // Manejo de errores de la consulta de producto

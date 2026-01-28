@@ -44,18 +44,18 @@ export default function ProductDetail() {
   useEffect(() => {
     fetchProduct();
   }, [id]); // El efecto se ejecuta si cambia el ID
+  /*
+    // Función para pedir la URL firmada y abrirla
+    const handleVerPlano = async (pathArchivo) => {
+      try {
+        const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
+        window.open(signedUrl, '_blank');
 
-  // Función para pedir la URL firmada y abrirla
-  const handleVerPlano = async (pathArchivo) => {
-    try {
-      const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
-      window.open(signedUrl, '_blank');
-
-    } catch (err) {
-      alert(err.message); // O usa un estado setError para mostrarlo bonito
-    }
-  };
-
+      } catch (err) {
+        alert(err.message); // O usa un estado setError para mostrarlo bonito
+      }
+    };
+  */
   if (!producto) return <div>Cargando...</div>;
 
   return (
@@ -66,7 +66,7 @@ export default function ProductDetail() {
         <h1>{producto.nombre}</h1>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
-         
+        {/* 
         <div>
           <div className='detail'>
             <div>
@@ -164,15 +164,14 @@ export default function ProductDetail() {
                 <h3 style={{"fontSize":"1rem"}}>Agregar procesos</h3>
               </div>
             </div>
-          </div>
-          
+          </div>  
         </div>
-        
-        {/* 
-          {producto.pieza && producto.pieza.map(p => (
-            <PartDetail nombreProducto={producto.nombre} nombrePieza={p.nombre} />        
-          ))}
         */}
+        
+          {producto.pieza && producto.pieza.map(p => (
+            <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} />        
+          ))}
+        
       </div>
     </div>
     </>
