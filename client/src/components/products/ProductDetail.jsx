@@ -83,7 +83,7 @@ export default function ProductDetail() {
               </ul>
             </div>
           </div>
-
+          */}
           <div className='detail'>
             <div>
               <div className='detail-subtitle'>
@@ -114,6 +114,7 @@ export default function ProductDetail() {
               </div>
             </div>
           </div>
+          {/*
           <div className='detail'>
             <div>
               <div className='detail-subtitle'>

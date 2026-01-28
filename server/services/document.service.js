@@ -58,23 +58,21 @@ export const moverArchivoAPermanente = async (tempPath, finalPath) => {
 }
 
 export const guardarDocumento = async (datos)=>{
-
+    /*
     const { data: idVersionCreada, error: rpcError } = await supabase
         .rpc('crear_documento_version_piezas', { 
         payload: datos 
         });
-    
-        
-    /*
+    */
     const { data: idVersionCreada, error: rpcError } = await supabase
     .rpc('cargar_version_documento_pieza', { 
     payload: datos 
     });
-    */
+    
 
     if (rpcError) {
         console.error("❌ Error SQL:", rpcError);
-
+        console.log(rpcError);
         const error = new Error("Error al guardar el producto");
         
         if (rpcError.code === 'P0001' || rpcError.code === '23505') {

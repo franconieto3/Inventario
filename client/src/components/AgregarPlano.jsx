@@ -107,17 +107,19 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             }
             
             const payload = {
+            /*
             documento:{
                 descripcion: file.name,
                 id_tipo_documento: 1,
                 id_producto: producto.id_producto
-            },
+            },*/
             version:{
                 //n_version: Number(version),
                 fecha_vigencia: fecha,
                 commit: commit,
                 //resolucion:resolucion,
-                path: path
+                path: path,
+                id_tipo_documento: 1
             },
             piezas:piezasPlano
             };

@@ -63,20 +63,27 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza }) {
                                     Código comercial: {`${pieza.codigo_am}`}
                                     </p>
                                 </div>
+                                
                                 <div>
                                     <p>Documentos: </p>
-                                    {pieza.documentos? pieza.documentos.map((d)=>(
-                                        <a                         
-                                        onClick={() => handleVerPlano(d.path)} 
-                                        style={{
-                                        cursor: 'pointer', 
-                                        color: 'blue', 
-                                        textDecoration: 'underline'
-                                        }}>
-                                            Ver {d.descripcion}
-                                        </a>)) 
-                                        : null}
-                                </div>  
+                                    <div className=''>
+                                        {pieza.documentos? pieza.documentos.map((d)=>(
+                                            <div>
+                                                <a                         
+                                                onClick={() => handleVerPlano(d.path)} 
+                                                style={{
+                                                cursor: 'pointer', 
+                                                color: 'blue', 
+                                                textDecoration: 'underline'
+                                                }}>
+                                                    Ver {d.descripcion}
+                                                </a>
+                                                <span className='material-icons'>history</span>
+                                            </div>
+                                            )) 
+                                            : null}
+                                    </div>
+                                </div> 
                             </>
                         )}
                     </div>
