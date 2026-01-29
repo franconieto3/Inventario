@@ -84,6 +84,7 @@ export default function ProductDetail() {
             </div>
           </div>
           */}
+          {/*
           <div className='detail'>
             <div>
               <div className='detail-subtitle'>
@@ -114,6 +115,7 @@ export default function ProductDetail() {
               </div>
             </div>
           </div>
+          */}
           {/*
           <div className='detail'>
             <div>
@@ -170,7 +172,7 @@ export default function ProductDetail() {
         */}
         
           {producto.pieza && producto.pieza.map(p => (
-            <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} />        
+            <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} codigoPieza={p.codigo_am} />        
           ))}
         
       </div>

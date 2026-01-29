@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import "../../styles/ProductDetail.css"
 import { apiCall } from '../../services/api';
+import "../../styles/PartDetail.css"
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function PartDetail({ nombreProducto, idPieza, nombrePieza }) {
+export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }) {
 
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
@@ -43,14 +45,14 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza }) {
     return (
         <>
             <div className='detail'>
-                <div className='detail-subtitle'>
+                <div className='part-title'>
                     <input 
                         type='checkbox' 
                         name="Piezas" 
                         onChange={() => setMostrar(!mostrar)} 
                         checked={mostrar} 
                     />
-                    <span>{nombreProducto + " " + nombrePieza}</span>
+                    <span>{nombreProducto + " " + nombrePieza + " · Código: " + codigoPieza}</span>
                 </div>
                 {mostrar && (
                     <div className="pieza-info">
@@ -58,30 +60,31 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza }) {
                         
                         {!loading && pieza && (
                             <>
-                                <div>
-                                    <p>
-                                    Código comercial: {`${pieza.codigo_am}`}
+                                <div className='detalle-documentos' style={pieza.documentos?{'display':'block'}:{'display':'none'}}>
+                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
+                                        <i className='material-icons'>file_open</i>    
+                                        Documentos: 
                                     </p>
-                                </div>
-                                
-                                <div>
-                                    <p>Documentos: </p>
                                     <div className=''>
-                                        {pieza.documentos? pieza.documentos.map((d)=>(
-                                            <div>
-                                                <a                         
-                                                onClick={() => handleVerPlano(d.path)} 
-                                                style={{
-                                                cursor: 'pointer', 
-                                                color: 'blue', 
-                                                textDecoration: 'underline'
-                                                }}>
-                                                    Ver {d.descripcion}
-                                                </a>
-                                                <span className='material-icons'>history</span>
+                                        {pieza.documentos.map((d)=>(
+                                            <div className='display-documento'>
+                                                <div style={{'cursor':'pointer'}} onClick={() => handleVerPlano(d.path)} >
+                                                    <i className='material-icons'>open_in_new</i>
+                                                    <a                         
+                                                    style={{
+                                                    color: 'blue', 
+                                                    textDecoration: 'underline'
+                                                    }}>
+                                                        Ver {d.descripcion}
+                                                    </a>
+                                                </div>
+                                                <div>
+                                                    <span className='material-icons'>history</span>
+                                                    <span className='material-icons'>more_vert</span>
+                                                </div>
                                             </div>
                                             )) 
-                                            : null}
+                                        }
                                     </div>
                                 </div> 
                             </>
