@@ -29,9 +29,6 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
         }
     }, [mostrar, idPieza]); // CORRECCIÓN: Agregado idPieza a dependencias
 
-
-    useEffect(()=>{console.log(pieza)},[pieza]);
-
     const handleVerPlano = async (pathArchivo) => {
         try {
             const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
@@ -59,7 +56,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                         {loading && <p>Cargando...</p>}
                         
                         {!loading && pieza && (
-                            <>
+                            <div style={{'display':'flex', 'gap':'15px', 'flexWrap':'wrap'}}>
                                 <div className='detalle-documentos' style={pieza.documentos?{'display':'block'}:{'display':'none'}}>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>file_open</i>    
@@ -67,7 +64,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                     </p>
                                     <div className=''>
                                         {pieza.documentos.map((d)=>(
-                                            <div className='display-documento'>
+                                            <div key={d.id_tipo_documento} className='display-documento'>
                                                 <div style={{'cursor':'pointer'}} onClick={() => handleVerPlano(d.path)} >
                                                     <i className='material-icons'>open_in_new</i>
                                                     <a                         
@@ -87,7 +84,22 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                         }
                                     </div>
                                 </div> 
-                            </>
+
+                                <div className='detalle-documentos'>
+                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
+                                        <i className='material-icons'>grid_view</i>    
+                                        Componentes: 
+                                    </p>
+
+                                </div>
+                                <div className='detalle-documentos'>
+                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
+                                        <i className='material-icons'>list</i>    
+                                        Materiales: 
+                                    </p>
+                                </div>
+
+                            </div>
                         )}
                     </div>
                 )}
