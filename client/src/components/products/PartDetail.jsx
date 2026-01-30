@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import "../../styles/ProductDetail.css"
 import { apiCall } from '../../services/api';
 import "../../styles/PartDetail.css"
+import { HistorialVersiones } from './HistorialVersiones';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -9,8 +10,11 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
 
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
-    const [loading, setLoading] = useState(false); // Opcional: para feedback visual
-    const [versiones, setVersiones] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const [mostrarHistorial, setMostrarHistorial] = useState(false);
+    const [docSeleccionado, setDocSeleccionado] = useState(null);
+    const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
 
     useEffect(() => {
         const fetchPart = async () => {
@@ -41,13 +45,9 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
     };
 
     const verHistorialVersiones = async (idPieza, idTipoDocumento) =>{
-        try{
-            const url = `${API_URL}/api/documentos/historial-versiones-pieza?idPieza=${idPieza}&idTipoDocumento=${idTipoDocumento}`;
-            const data = await apiCall(url, {method: 'GET'});
-            setVersiones(data);
-        }catch(err){
-            console.log(err.message);
-        }
+        setPiezaSeleccionada(idPieza);
+        setDocSeleccionado(idTipoDocumento);
+        setMostrarHistorial(true);
     }
 
     return (
@@ -88,7 +88,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                                 </div>
                                                 <div>
                                                     <span className='material-icons' style={{'cursor':'pointer'}} onClick={() => verHistorialVersiones(idPieza, d.id_tipo_documento)}>history</span>
-                                                    <span className='material-icons'>more_vert</span>
+                                                    <span className='material-icons'style={{'cursor':'pointer'}}>more_vert</span>
                                                 </div>
                                             </div>
                                             )) 
@@ -101,8 +101,8 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                         <i className='material-icons'>grid_view</i>    
                                         Componentes: 
                                     </p>
-
                                 </div>
+
                                 <div className='detalle-documentos'>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>list</i>    
@@ -110,8 +110,23 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                     </p>
                                 </div>
 
+                                <div className='detalle-documentos'>
+                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
+                                        <i className='material-icons'>factory</i>    
+                                        Procesos: 
+                                    </p>
+                                </div>
+
+                                <div className='detalle-documentos'>
+                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
+                                        <i className='material-icons'>straighten</i>    
+                                        Elementos de control: 
+                                    </p>
+                                </div>
+                                
                             </div>
                         )}
+                    {mostrarHistorial && <HistorialVersiones idPieza={piezaSeleccionada} idTipoDocumento={docSeleccionado} closeHistoryModal={()=>setMostrarHistorial(false)} verDocumento={handleVerPlano}/>}  
                     </div>
                 )}
             </div>

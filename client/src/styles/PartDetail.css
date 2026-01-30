@@ -1,7 +1,7 @@
 .detalle-documentos{
     border-radius: 10px;
     padding: 5px;
-    width: calc((100% / 3) - 10px);
+    width: calc((100% / 5) - 12px);
     min-width: 250px;
     padding: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);

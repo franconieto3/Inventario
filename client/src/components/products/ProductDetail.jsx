@@ -39,23 +39,11 @@ export default function ProductDetail() {
     }
   };
 
-  //useEffect(()=>{console.log(producto)},[producto])
 
   useEffect(() => {
     fetchProduct();
   }, [id]); // El efecto se ejecuta si cambia el ID
-  /*
-    // Función para pedir la URL firmada y abrirla
-    const handleVerPlano = async (pathArchivo) => {
-      try {
-        const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
-        window.open(signedUrl, '_blank');
-
-      } catch (err) {
-        alert(err.message); // O usa un estado setError para mostrarlo bonito
-      }
-    };
-  */
+ 
   if (!producto) return <div>Cargando...</div>;
 
   return (
@@ -66,56 +54,7 @@ export default function ProductDetail() {
         <h1>{producto.nombre}</h1>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
-        {/* 
-        <div>
-          <div className='detail'>
-            <div>
-              <div className='detail-subtitle'>
-                <input type='checkbox' name="Piezas" onChange={()=>setMostrarPiezas(!mostrarPiezas)} checked={mostrarPiezas}/>
-                <span>Piezas:</span>
-              </div>
-              <ul className='part-list' style={mostrarPiezas?{"display":"block"}:{"display":"none"}}>
-                {producto.pieza && producto.pieza.map(p => (
-                  <li key={p.id_pieza}>
-                  Código: {p.codigo_am} - {producto.nombre + " " + p.nombre}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          */}
-          {/*
-          <div className='detail'>
-            <div>
-              <div className='detail-subtitle'>
-                <input type='checkbox' name="Planos" onChange={()=>setMostrarPlanos(!mostrarPlanos)} checked={mostrarPlanos}/>
-                <span>Planos:</span>
-              </div>
 
-              <div style={mostrarPlanos?{"display":"block"}:{"display":"none"}}>
-
-                <ul className='planos-list'>
-                  {producto.planos && producto.planos.map(plano => (
-                    <li key={plano.id_version}>
-                      <span 
-                        onClick={() => handleVerPlano(plano.path)} 
-                        style={{
-                          cursor: 'pointer', 
-                          color: 'blue', 
-                          textDecoration: 'underline'
-                        }}
-                      >
-                        {plano.descripcion}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
-              </div>
-            </div>
-          </div>
-          */}
           {/*
           <div className='detail'>
             <div>
@@ -170,11 +109,11 @@ export default function ProductDetail() {
           </div>  
         </div>
         */}
-        
+          <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
           {producto.pieza && producto.pieza.map(p => (
             <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} codigoPieza={p.codigo_am} />        
           ))}
-          <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+          
       </div>
     </div>
     </>
