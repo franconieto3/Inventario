@@ -10,6 +10,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
     const [loading, setLoading] = useState(false); // Opcional: para feedback visual
+    const [versiones, setVersiones] = useState(null);
 
     useEffect(() => {
         const fetchPart = async () => {
@@ -27,7 +28,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
         if (mostrar && idPieza) {
             fetchPart();
         }
-    }, [mostrar, idPieza]); // CORRECCIÓN: Agregado idPieza a dependencias
+    }, [mostrar, idPieza]);
 
     const handleVerPlano = async (pathArchivo) => {
         try {
@@ -38,6 +39,16 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
             alert(err.message); // O usa un estado setError para mostrarlo bonito
         }
     };
+
+    const verHistorialVersiones = async (idPieza, idTipoDocumento) =>{
+        try{
+            const url = `${API_URL}/api/documentos/historial-versiones-pieza?idPieza=${idPieza}&idTipoDocumento=${idTipoDocumento}`;
+            const data = await apiCall(url, {method: 'GET'});
+            setVersiones(data);
+        }catch(err){
+            console.log(err.message);
+        }
+    }
 
     return (
         <>
@@ -76,7 +87,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                                     </a>
                                                 </div>
                                                 <div>
-                                                    <span className='material-icons'>history</span>
+                                                    <span className='material-icons' style={{'cursor':'pointer'}} onClick={() => verHistorialVersiones(idPieza, d.id_tipo_documento)}>history</span>
                                                     <span className='material-icons'>more_vert</span>
                                                 </div>
                                             </div>

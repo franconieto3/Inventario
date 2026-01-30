@@ -10,12 +10,11 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export default function AgregarPlano({producto, onUploadSuccess}){
 
     //Estados de formulario
-    //const [version, setVersion] = useState(0);
     const [fecha, setFecha] = useState("");
-    //const [resolucion, setResolucion] = useState("");
     const [commit, setCommit] = useState("");
     const [resetKey, setResetKey] = useState(0);
     const [piezasPlano, setPiezasPlano] = useState([]);
+    const [tiposDocumento, setTiposDocumento] = useState([]);
 
     const [file, setFile] = useState(null);
     
@@ -36,6 +35,18 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         });
     };
 
+    
+    useEffect(()=>{
+        const fetchTipos = async ()=>{
+            const data = await apiCall(`${API_URL}/api/documentos/tipo-documento`,{method:'GET'});
+            setTiposDocumento(data);    
+        }
+        fetchTipos();
+    },[])
+
+    useEffect(()=>{console.log(tiposDocumento)},[tiposDocumento]);
+    
+
     useEffect(()=>{
         if(file){
         setSeleccionarPiezas(true);
@@ -54,18 +65,11 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             setError("Por favor, selecciona un archivo PDF.");
             return;
         }
-/*
-        if (version < 0 || !Number.isInteger(Number(version))) {
-            setError("El número de versión debe ser un número entero igual o mayor a 0.");
-            return;
-        }*/
 
         if (!fecha) {
             setError("La fecha de vigencia es obligatoria.");
             return;
         }
-
-        //Validar que no se haya ingresado una fecha futura (opcional)
 
         // Validación simple de formato de fecha (el input type="date" suele garantizar YYYY-MM-DD)
         const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -109,15 +113,11 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             const payload = {
             
             documento:{
-                //descripcion: file.name,
-                //id_tipo_documento: 1,
                 id_producto: producto.id_producto
             },
             version:{
-                //n_version: Number(version),
                 fecha_vigencia: fecha,
                 commit: commit,
-                //resolucion:resolucion,
                 path: path,
                 id_tipo_documento: 1
             },
@@ -168,9 +168,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
 
     const limpiarFormulario = () => {
         setFile(null);
-        //setVersion(0); // O el valor inicial que prefieras
         setFecha("");
-        //setResolucion("");
         setCommit("");
         setPiezasPlano([]);
         setResetKey(prev => prev + 1);
@@ -204,10 +202,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
             <div className='upload-content'>
             <form>
-                {/*<div className="form-input">
-                    <label>Versión (*): </label>
-                    <input type="number" value={version} onChange={(e)=>setVersion(e.target.value)}/>
-                </div>*/}
                 <div className="form-input">
                     <label>Fecha de vigencia (*): </label>
                     <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
@@ -216,12 +210,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                     <label>Descripción de versión: </label>
                     <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
                 </div>
-                {/*
-                <div className="form-input">
-                <label>Resolución: </label>
-                <input type="text" value={resolucion} onChange={(e)=>setResolucion(e.target.value)}/>
-                </div>
-                */}
             </form>
             </div>
             <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>

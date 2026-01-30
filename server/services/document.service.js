@@ -6,7 +6,7 @@ export const obtenerConfiguracionTipoDocumento = async (idTipoDocumento) => {
         .from('tipo_documento')
         .select('bucket_folder, tipos_permitidos') // Asumo que estas columnas ya existen
         .eq('id_tipo_documento', idTipoDocumento)
-        .single();
+        .maybeSingle();
 
     if (error || !data) {
         const err = new Error("Tipo de documento no válido o no encontrado");
@@ -14,6 +14,16 @@ export const obtenerConfiguracionTipoDocumento = async (idTipoDocumento) => {
         throw err;
     }
 
+    return data;
+}
+
+export const obtenerTiposDocumento = async()=>{
+    const {data, error} = await supabase.from('tipo_documento').select('*');
+    if (error || !data){
+        const err = new Error("Tipos de documentos no encontrados");
+        err.statusCode = 404; // Not Found
+        throw err;
+    }
     return data;
 }
 
@@ -102,6 +112,26 @@ export const signedUrl = async (path)=>{
         const error = new Error("No se pudo obtener el documento");
         error.statusCode = 500;
         throw error;
+    }
+
+    return data;
+}
+
+export const obtenerHistorialVersiones = async (idPieza, idTipoDocumento) =>{
+    
+    const {data, error} = await supabase.rpc(
+        'obtener_historial_versiones', 
+        {
+            p_id_pieza: idPieza,
+            p_id_tipo_documento: idTipoDocumento
+        }
+    );
+
+    if(error){
+        console.error("Error obteniendo historial de versiones: ", error);
+        const err = new Error("No se pudo recuperar el historial de versiones"); 
+        err.statusCode = 500
+        throw err;
     }
 
     return data;

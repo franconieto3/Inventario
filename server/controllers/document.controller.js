@@ -1,6 +1,21 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones} from "../services/document.service.js";
 import { z } from "zod";
+
+export const tiposDocumento = async (req, res)=>{
+    try{
+        const data = await obtenerTiposDocumento();
+        res.json(data);
+    }catch(err){
+                
+        if(err.statusCode){
+            res.status(err.statusCode).json({error: err.message});
+        }
+        else{
+            res.status(500).json({error: "No se pudo recuperar el listado de tipos de documentos"});
+        }
+    }
+}
 
 export const subirDocumento = async (req, res)=>{
     try{
@@ -116,4 +131,22 @@ export const visualizarDocumento = async (req, res)=>{
             res.status(500).json({ error: "Error interno del servidor" });
         }
     }
+}
+
+export const historialDocumentos = async (req, res) =>{
+    try{
+        const {idPieza, idTipoDocumento} = req.query;
+        const data = await obtenerHistorialVersiones(idPieza, idTipoDocumento);
+        res.json(data);
+
+    }catch(err){
+        
+        if(err.statusCode){
+            res.status(err.statusCode).json({error: err.message});
+        }
+        else{
+            res.status(500).json({error: "No se pudo recuperar el historial de documentos"});
+        }
+    }
+    
 }
