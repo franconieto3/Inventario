@@ -37,7 +37,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                         <h4>Historial de Versiones</h4>
                         {versiones.length > 0 ? (
                             versiones.map((v) => (
-                                <div key={v.id_version} style={{ borderBottom: '1px solid #ccc','padding':'15px' , 'width':'100%', 'display':'flex','justifyContent': 'space-between', 'alignItems':'center','gap':'15px', 'border-radius':'10px','cursor': 'pointer'}} onClick={()=>verDocumento(v.path)}>
+                                <div key={v.id_version} style={{ borderBottom: '1px solid #ccc','padding':'15px' , 'width':'100%', 'display':'flex','justifyContent': 'space-between', 'alignItems':'center','gap':'15px', 'borderRadius':'10px','cursor': 'pointer'}} onClick={()=>verDocumento(v.path)}>
                                     <div>
                                         <i className="material-icons">open_in_new</i>
                                     </div>

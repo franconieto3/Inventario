@@ -19,7 +19,6 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
     useEffect(() => {
         const fetchPart = async () => {
             setLoading(true);
-            console.log("Enviando petición");
             try {
                 const data = await apiCall(`${API_URL}/api/productos/pieza/${idPieza}`,{});
                 setPieza(data);

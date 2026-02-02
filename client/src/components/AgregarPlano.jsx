@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { apiCall } from "../services/api";
 
 import "../styles/ProductDetail.css"
+import "../styles/AgregarDocumento.css"
 
 import SubirArchivo from "./SubirArchivo";
 
@@ -15,16 +16,31 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     const [resetKey, setResetKey] = useState(0);
     const [piezasPlano, setPiezasPlano] = useState([]);
     const [tiposDocumento, setTiposDocumento] = useState([]);
+    const [idTipoDocumento, setIdTipoDocumento] = useState("");
 
     const [file, setFile] = useState(null);
     
     //Estado de visualización
     const [seleccionarPiezas,setSeleccionarPiezas] = useState(false);
     const [agregarPlanos, setAgregarPlanos] = useState(false);
+    const [mostrarFecha, setMostrarFecha] = useState(null);
 
     //Estado de carga
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+
+
+    // Lógica para obtener los tipos permitidos del documento seleccionado
+    // Buscamos el objeto completo en el array 'tiposDocumento' usando el ID seleccionado
+    const tipoDocumentoSeleccionado = tiposDocumento.find(
+        t => String(t.id_tipo_documento) === String(idTipoDocumento)
+    );
+    
+    // Extraemos el array, o usamos vacío si no hay selección
+    const formatosPermitidos = tipoDocumentoSeleccionado?.tipos_permitidos || []; 
+    
+    
 
     const togglePieza = (id) => {
         setPiezasPlano(prev => {
@@ -43,10 +59,14 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         }
         fetchTipos();
     },[])
-
-    useEffect(()=>{console.log(tiposDocumento)},[tiposDocumento]);
+/*
+    useEffect(()=>
+        {
+            console.log(tiposDocumento)
+        }
+    ,[tiposDocumento]);
     
-
+*/
     useEffect(()=>{
         if(file){
         setSeleccionarPiezas(true);
@@ -72,10 +92,13 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         }
 
         // Validación simple de formato de fecha (el input type="date" suele garantizar YYYY-MM-DD)
-        const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!fechaRegex.test(fecha)) {
-            setError("Formato de fecha inválido.");
-            return;
+
+        if (mostrarFecha === true) {
+            const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!fechaRegex.test(fecha)) {
+                setError("Formato de fecha inválido.");
+                return;
+            }
         }
 
         if(piezasPlano.length===0){
@@ -173,6 +196,8 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         setPiezasPlano([]);
         setResetKey(prev => prev + 1);
         setSeleccionarPiezas(false); 
+        setIdTipoDocumento("");
+        setMostrarFecha(null);
     };
     
     useEffect(()=>{
@@ -181,58 +206,103 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         }
     },[agregarPlanos])
 
+    /*
+
+    useEffect(()=>{
+        if(mostrarFecha==false) setFecha(Date.now());
+    },[mostrarFecha])
+
+*/
     return(
     <>
         <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
             <i className='material-icons' id="add-icon">add</i>
-            <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
+            <h3 style={{"fontSize":"1rem"}}>Agregar documento</h3>
         </div>
-        {agregarPlanos && <div className="overlay">
-            <div className="modal">
+        {agregarPlanos && <div className="overlay-documento">
+            <div className="modal-documento">
                 <div style={agregarPlanos?{"display":"flex","gap":"8px"}:{"display":"none"}}>
-                    <i className='material-icons' id='close-button' onClick={()=>{setAgregarPlanos(false)}}>close</i>
+                    <i className='material-icons' id='close-button' onClick={()=>setAgregarPlanos(false)}>close</i>
                     <div className='upload-container' >
+
                         <div className='upload-header'>
-                            <h3 style={{"fontSize":"1rem"}}>Agregar plano</h3>
+                            <h3 style={{"fontSize":"1rem", "textAlign":'start'}}>Agregar documento</h3>
                             <p className="card-description">
-                            Sube el archivo, completa el formulario y asigna las piezas asociadas al plano 
+                            Sube el archivo, completa el formulario y asigna las piezas asociadas al documento 
                             </p>
                         </div>
+                        <select value={idTipoDocumento} onChange={(e) => setIdTipoDocumento(e.target.value)}>
+                            <option value="" disabled>
+                                Seleccione el tipo de documento a subir
+                            </option>
+                            {tiposDocumento.map((td)=><option key={td.id_tipo_documento} value={td.id_tipo_documento}>{td.descripcion}</option>)}
+                        </select>
 
-                        <SubirArchivo key={resetKey} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>
-                        <div style={seleccionarPiezas?{"display":"block"}:{"display":"none"}}>
+                        {idTipoDocumento && <SubirArchivo key={resetKey} acceptedFileTypes={formatosPermitidos} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>}
+
+                        {seleccionarPiezas && <div className="inputs-documentos">
                             <div className='upload-content'>
                                 <form>
+                                    <div style={{"marginBottom":"10px"}}>
+                                        <label>¿Es una nueva versión?</label>
+                                        <div style={{"marginBottom": "5px"}}>
+                                            <input 
+                                                type="radio" 
+                                                name="mostrarFecha" 
+                                                checked={mostrarFecha===false} 
+                                                onChange={()=>{
+                                                    setMostrarFecha(false);
+                                                    setFecha(new Date().toISOString());
+                                                }}/>
+                                            <span> Sí </span>
+                                        </div>
+                                        <div style={{"marginBottom": "5px"}}>
+                                            <input 
+                                                type="radio" 
+                                                name="mostrarFecha" 
+                                                checked={mostrarFecha===true} 
+                                                onChange={()=>{
+                                                    setMostrarFecha(true);
+                                                    setFecha("");
+                                                }}/>
+                                            <span> No </span>
+                                        </div>
+                                    </div>
+
+                                    {mostrarFecha && 
                                     <div className="form-input">
                                         <label>Fecha de vigencia (*): </label>
                                         <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
-                                    </div>
+                                    </div>}
                                     <div className="form-input">
                                         <label>Descripción de versión: </label>
                                         <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
                                     </div>
                                 </form>
                             </div>
-                            <div style={{"marginTop":"10px"}}>Seleccione una pieza: </div>
-                            {<ul className="part-list" style={{"marginBottom":"10px", "marginTop":"10px"}}>
-                                {producto.pieza && producto.pieza.map(p => (
-                                    <li key={p.id_pieza} style={{
-                                                                "marginBottom":"5px",
-                                                                "fontSize": "0.875rem"}}>
-                                    <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
-                                    <span>{" "+producto.nombre + " " + p.nombre}</span>
-                                    </li>
-                                ))}
+                            <div style={{"marginTop":"10px"}}>Seleccione una o más piezas: </div>
+
+                            {<ul className="part-list" style={{"marginBottom":"10px", "marginTop":"10px","listStyleType": "none", "marginLeft":"0px"}}>
                                 <li>
                                     <button onClick={handleSelectAll}>
                                     {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
                                     </button>
                                 </li>
+                                {producto.pieza && producto.pieza.map(p => (
+                                    <li key={p.id_pieza} style={{/*"display":"flex",*/
+                                                                "marginBottom":"5px",
+                                                                "fontSize": "0.875rem"}}>
+
+                                        <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
+
+                                        <span>{" "+producto.nombre + " " + p.nombre}</span>
+                                    </li>
+                                ))}
                             </ul>}
                             <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
 
                             {error && <p style={{"color":"red"}}>{error}</p>}
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>

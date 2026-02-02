@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function SubirArchivo( {onUpload} ){
+export default function SubirArchivo( {onUpload, acceptedFiles} ){
     const [selected, setSelected] = useState([]);
 
     useEffect(()=>onUpload(selected),[selected])
+    
+    useEffect(()=>console.log(acceptedFiles),[]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,

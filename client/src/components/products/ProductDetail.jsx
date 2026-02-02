@@ -20,14 +20,6 @@ export default function ProductDetail() {
 
   const [producto, setProducto] = useState(null);
 
-  //Estados de visualización 
-  const [mostrarPiezas, setMostrarPiezas] = useState(true);
-  const [mostrarPlanos, setMostrarPlanos] = useState(true);
-  const [mostrarMateriales, setMostrarMateriales] = useState(true);
-  const [mostrarProcesos, setMostrarProcesos] = useState(true);
-  const [mostrarElementos, setMostrarElementos] = useState(true);
-  const [mostrarComponentes, setMostrarComponentes] = useState(true);
-
   const fetchProduct = async () => {
     try{
 
@@ -55,65 +47,12 @@ export default function ProductDetail() {
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
 
-          {/*
-          <div className='detail'>
-            <div>
-              <div className='detail-subtitle'>
-                <input type='checkbox' name="Componentes" onChange={()=>setMostrarComponentes(!mostrarComponentes)} checked={mostrarComponentes}/>
-                <span>Componentes:</span>
-              </div>
-              <div className='add-span' style={!mostrarComponentes?{"display":"none"}:{"display":"flex"}} >
-                <i className='material-icons' id="add-icon">add</i>
-                <h3 style={{"fontSize":"1rem"}}>Agregar componentes</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className='detail'>
-            <div>
-              <div className='detail-subtitle'>
-                <input type='checkbox' name="Materiales" onChange={()=>setMostrarMateriales(!mostrarMateriales)} checked={mostrarMateriales}/>
-                <span>Materiales:</span>
-              </div>
-              <div className='add-span' style={!mostrarMateriales?{"display":"none"}:{"display":"flex"}} >
-                <i className='material-icons' id="add-icon">add</i>
-                <h3 style={{"fontSize":"1rem"}}>Agregar materiales</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className='detail'>
-            <div>
-              <div className='detail-subtitle'>
-                <input type='checkbox' name="Elementos" onChange={()=>setMostrarElementos(!mostrarElementos)} checked={mostrarElementos}/>
-                <span>Elementos de control:</span>
-              </div>
-              <div className='add-span' style={!mostrarElementos?{"display":"none"}:{"display":"flex"}} >
-                <i className='material-icons' id="add-icon">add</i>
-                <h3 style={{"fontSize":"1rem"}}>Agregar elementos de control</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className='detail'>
-            <div>
-              <div className='detail-subtitle'>
-                <input type='checkbox' name="Procesos" onChange={()=>setMostrarProcesos(!mostrarProcesos)} checked={mostrarProcesos}/>
-                <span>Procesos:</span>
-              </div>
-              <div className='add-span' style={!mostrarProcesos?{"display":"none"}:{"display":"flex"}} >
-                <i className='material-icons' id="add-icon">add</i>
-                <h3 style={{"fontSize":"1rem"}}>Agregar procesos</h3>
-              </div>
-            </div>
-          </div>  
-        </div>
-        */}
-          <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+        <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+        <div style={{'marginTop':'20px'}}>
           {producto.pieza && producto.pieza.map(p => (
             <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} codigoPieza={p.codigo_am} />        
           ))}
-          
+        </div>
       </div>
     </div>
     </>
