@@ -59,6 +59,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         }
         fetchTipos();
     },[])
+
 /*
     useEffect(()=>
         {
@@ -67,6 +68,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     ,[tiposDocumento]);
     
 */
+
     useEffect(()=>{
         if(file){
         setSeleccionarPiezas(true);
@@ -196,13 +198,14 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         setPiezasPlano([]);
         setResetKey(prev => prev + 1);
         setSeleccionarPiezas(false); 
-        setIdTipoDocumento("");
+        
         setMostrarFecha(null);
     };
     
     useEffect(()=>{
         if(!agregarPlanos){
         limpiarFormulario();
+        setIdTipoDocumento("");
         }
     },[agregarPlanos])
 
@@ -212,7 +215,9 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         if(mostrarFecha==false) setFecha(Date.now());
     },[mostrarFecha])
 
-*/
+    */
+
+
     return(
     <>
         <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
@@ -238,7 +243,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                             {tiposDocumento.map((td)=><option key={td.id_tipo_documento} value={td.id_tipo_documento}>{td.descripcion}</option>)}
                         </select>
 
-                        {idTipoDocumento && <SubirArchivo key={resetKey} acceptedFileTypes={formatosPermitidos} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)}/>}
+                        {idTipoDocumento && <SubirArchivo key={resetKey} acceptedFileTypes={formatosPermitidos} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)} onRemove={limpiarFormulario}/>}
 
                         {seleccionarPiezas && <div className="inputs-documentos">
                             <div className='upload-content'>
@@ -289,8 +294,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                                     </button>
                                 </li>
                                 {producto.pieza && producto.pieza.map(p => (
-                                    <li key={p.id_pieza} style={{/*"display":"flex",*/
-                                                                "marginBottom":"5px",
+                                    <li key={p.id_pieza} style={{"marginBottom":"5px",
                                                                 "fontSize": "0.875rem"}}>
 
                                         <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>

@@ -1,26 +1,40 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function SubirArchivo( {onUpload, acceptedFiles} ){
+export default function SubirArchivo( {onUpload, acceptedFileTypes, onRemove} ){
     const [selected, setSelected] = useState([]);
 
     useEffect(()=>onUpload(selected),[selected])
-    
-    useEffect(()=>console.log(acceptedFiles),[]);
+
+    // 1. Transformar el array de tipos ["application/pdf", ...] al objeto { "application/pdf": [] }
+    const dropzoneAccept = useMemo(() => {
+        if (acceptedFileTypes && acceptedFileTypes.length > 0) {
+            return acceptedFileTypes.reduce((acc, type) => {
+                acc[type] = []; // Asignamos array vacío a cada MIME type
+                return acc;
+            }, {});
+        }
+        // Fallback por defecto si no vienen props
+        return { "application/pdf": [] }; 
+    }, [acceptedFileTypes]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     maxFiles: 1,
-    accept: {
-        "application/pdf": [] 
-    },
+    accept: dropzoneAccept,
     onDrop: (acceptedFiles) => setSelected(acceptedFiles),
     });
 
     const removeFile = (fileName) => {
-    setSelected((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+        setSelected((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+        onRemove();
     };
     
+    // Helper para mostrar extensiones legibles en el UI
+    const extensionesTexto = acceptedFileTypes && acceptedFileTypes.length > 0 
+        ? acceptedFileTypes.map(t => t.split('/')[1]).join(', ') 
+        : 'pdf';
+
     return(
         <>
         {/* Dropzone */}
@@ -39,7 +53,7 @@ export default function SubirArchivo( {onUpload, acceptedFiles} ){
                 </div>
                 )}
             </div>
-            <p className="card-description">Solo los archivos .pdf están permitidos</p>
+            <p className="card-description">Formatos permitidos: {extensionesTexto}</p>
         </div>
         {selected.length > 0 && (
         <ul className="file-list">
