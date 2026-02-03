@@ -3,6 +3,8 @@ import { apiCall } from '../../services/api';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 import "../../styles/HistorialVersiones.css";
 
+import { DropdownMenu } from '../DropdownMenu';
+
 export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal, verDocumento} ){
 
     const [versiones, setVersiones]= useState([]);
@@ -41,6 +43,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+    
 
     const toggleMenu = (e, idVersion) => {
         e.stopPropagation(); // Evita que el evento llegue al document y cierre el menú inmediatamente
@@ -53,8 +56,8 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
 
     // Funciones placeholders para las acciones
     const handleReestablecer = async (v) => {
-        if(confirm(`¿Deseas reestablecer la versión del ${new Date(version.fecha_vigencia).toISOString().split("T")[0]}?`)){
-            console.log("Reestableciendo versión:", version.id_version);
+        if(confirm(`¿Deseas reestablecer la versión del ${new Date(v.fecha_vigencia).toISOString().split("T")[0]}?`)){
+            console.log("Reestableciendo versión:", v.id_version);
             setActiveMenuId(null);
             // Aquí tu lógica de API call
             /*
@@ -101,10 +104,28 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                             <p>Cargando...</p>
                         </div>)}
                         {versiones.length > 0 &&
-                            versiones.map((v) => (
-                                <div 
-                                    key={v.id_version} 
-                                    style={{ borderBottom: '1px solid #ccc','padding':'15px' , 'width':'100%', 'display':'flex','justifyContent': 'space-between', 'alignItems':'center', 'borderRadius':'10px','gap':'15px'}} >
+                            versiones.map((v) => {
+
+                            // Definimos las opciones específicas para ESTE ítem
+                            const menuOptions = [
+                                { 
+                                    label: "Restablecer esta versión", 
+                                    icon: "restore", 
+                                    onClick: () => handleReestablecer(v) 
+                                },
+                                { 
+                                    separator: true 
+                                },
+                                { 
+                                    label: "Eliminar versión", 
+                                    icon: "delete", 
+                                    color: "red", // Pasamos el color dinámicamente
+                                    onClick: () => handleEliminar(v) 
+                                }
+                            ];
+
+                            return (
+                                <div key={v.id_version} style={{ borderBottom: '1px solid #ccc','padding':'15px' , 'width':'100%', 'display':'flex','justifyContent': 'space-between', 'alignItems':'center', 'borderRadius':'10px','gap':'15px'}}>
                                     <div 
                                         style={{'display':'flex','justifyContent': 'space-between', 'alignItems':'center','gap':'15px','cursor': 'pointer'}}
                                         onClick={()=>verDocumento(v.path)}
@@ -118,33 +139,16 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                         </div>
                                     </div>
                                     
-                                    <div className="menu-container">
-                                        <i 
-                                            className={`material-icons version-options-btn ${activeMenuId === v.id_version ? 'active' : ''}`}
-                                            onClick={(e) => toggleMenu(e, v.id_version)}
-                                        >
-                                            more_vert
-                                        </i>
-
-                                        {/* Renderizado condicional del menú solo para la fila activa */}
-                                        {activeMenuId === v.id_version && (
-                                            <div className="dropdown-menu">
-                                                <div className="dropdown-item" onClick={() => handleReestablecer(v)}>
-                                                    <i className="material-icons">restore</i>
-                                                    <span>Restablecer esta versión</span>
-                                                </div>
-                                                
-                                                <div className="menu-separator"></div>
-
-                                                <div className="dropdown-item" style={{"color":"red"}} onClick={() => handleEliminar(v)}>
-                                                    <i className="material-icons" style={{"color":"red"}}>delete</i>
-                                                    <span>Eliminar versión</span>
-                                                </div>
-                                            </div>
-                                        )}
+                                    <div ref={activeMenuId === v.id_version ? menuRef : null}>
+                                        <DropdownMenu 
+                                            isOpen={activeMenuId === v.id_version} 
+                                            onToggle={(e) => toggleMenu(e, v.id_version)} 
+                                            items={menuOptions} // <--- Aquí la magia
+                                        />
                                     </div>
                                 </div>
-                            ))
+                            );
+                        })
                         }
                         {error && <p>Ocurrió un error. No se recuperaron versiones anteriores.</p>}
                     </div>

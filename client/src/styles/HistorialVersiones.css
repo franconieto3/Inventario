@@ -48,7 +48,6 @@
     cursor: pointer;
     font-family: Roboto, Arial, sans-serif;
     font-size: 14px;
-    color: #3c4043;
     transition: background-color 0.1s;
 }
 
@@ -58,7 +57,6 @@
 
 .dropdown-item i {
     font-size: 20px;
-    color: #5f6368;
 }
 
 .dropdown-item span {

@@ -148,5 +148,26 @@ export const historialDocumentos = async (req, res) =>{
             res.status(500).json({error: "No se pudo recuperar el historial de documentos"});
         }
     }
-    
+}
+
+const reestablecerVersion = async(req, res)=>{
+    try{
+        const data = req.body;
+
+        await obtenerMetadatos(path);
+
+        //Generar la fecha de vigencia y el commit desde el backend
+        
+        //Guardado de la version en SQL
+        const idVersionCreada = await guardarDocumento(datosValidado);
+
+        // ÉXITO
+        return res.status(201).json({
+            message: "Documento y versión creados exitosamente",
+            id_version: idVersionCreada
+        });
+
+    }catch(err){
+
+    }
 }
