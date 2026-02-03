@@ -60,15 +60,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         fetchTipos();
     },[])
 
-/*
-    useEffect(()=>
-        {
-            console.log(tiposDocumento)
-        }
-    ,[tiposDocumento]);
-    
-*/
-
     useEffect(()=>{
         if(file){
         setSeleccionarPiezas(true);
