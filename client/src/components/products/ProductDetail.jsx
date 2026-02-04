@@ -10,6 +10,7 @@ import { UserAuth } from '../../context/AuthContext';
 import { apiCall } from '../../services/api';
 import AgregarPlano from '../AgregarPlano';
 import { PartDetail } from './PartDetail';
+import { AgregarPieza } from './AgregarPieza';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -46,12 +47,13 @@ export default function ProductDetail() {
         <h1>{producto.nombre}</h1>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
-
+{/*
         <div className='add-span'>
             <i className='material-icons' id="add-icon">add</i>
             <h3 style={{"fontSize":"1rem"}}>Agregar pieza</h3>
         </div>
-
+*/}
+        <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
         <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
 
         <div style={{'marginTop':'20px'}}>

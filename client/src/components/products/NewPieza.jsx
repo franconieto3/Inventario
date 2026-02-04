@@ -42,16 +42,16 @@ function NewPieza({ id, data = {}, onChange, onDelete, rubro, producto }) {
             </div>
           </div>
 
-          <div className="input-descripcion">
-            <span>Descripción: {" " + producto}</span>
-            <input
-              className="input-text"
-              type="text"
-              name="nombrePieza"
-              value={data.nombrePieza ?? ""}
-              onChange={handleChange}
-            />
-          </div>
+            <div className="input-descripcion">
+              <span>Descripción: {" " + producto}</span>
+              <input
+                className="input-text"
+                type="text"
+                name="nombrePieza"
+                value={data.nombrePieza ?? ""}
+                onChange={handleChange}
+              />
+            </div>
         </div>
         <div className="delete" onClick={() => onDelete(id)}>
           <i className="material-icons">delete</i>

@@ -103,3 +103,36 @@ export const obtenerInfoPieza = async (idPieza) => {
     return [piezaRes, documentosRes];
     
 }
+
+export const crearPieza = async (nombre, codigo_am, id_producto) => {
+    const { data, error } = await supabase.rpc('agregar_pieza', {
+        p_nombre: nombre,
+        p_codigo_am: codigo_am,
+        p_id_producto: id_producto
+    });
+
+    if (error) {
+        // Creamos el objeto de error con un mensaje base
+        const err = new Error(error.message);
+        err.originalError = error;
+
+        switch (error.code) {
+            case '23503':
+                err.message = "El producto seleccionado no existe en la base de datos.";
+                err.statusCode = 400; // Bad Request
+                break;
+            case '42P01':
+                err.message = "Error de configuración: La tabla no fue encontrada.";
+                err.statusCode = 500;
+                break;
+            default:
+                err.message = `Error inesperado: ${error.message}`;
+                err.statusCode = 500;
+        }
+
+        throw err;
+    }
+
+    console.log("Pieza procesada con éxito. ID:", data);
+    return data; 
+}

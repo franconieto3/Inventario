@@ -106,3 +106,17 @@ export const pieza = async (req, res) =>{
     }
 
 }
+
+export const agregarPieza = async (req, res)=>{
+    try{
+        const {nombrePieza, codigoAm, idProducto } = req.body;
+
+        const idPiezaCreada = await productService.crearPieza(nombrePieza, codigoAm, idProducto);
+        
+        res.status(200).json();
+
+    }catch(err){
+        console.error(err);
+        res.status(err.statusCode? err.statusCode: 500).json(err.message);
+    }
+}
