@@ -135,7 +135,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                 fecha_vigencia: fecha,
                 commit: commit,
                 path: path,
-                id_tipo_documento: 1
+                id_tipo_documento: idTipoDocumento
             },
             piezas:piezasPlano
             };
@@ -200,22 +200,16 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         }
     },[agregarPlanos])
 
-    /*
-
-    useEffect(()=>{
-        if(mostrarFecha==false) setFecha(Date.now());
-    },[mostrarFecha])
-
-    */
-
 
     return(
     <>
-        <div className='add-span' style={agregarPlanos?{"display":"none"}:{"display":"flex"}} onClick={()=>{setAgregarPlanos(true)}}>
+        {!agregarPlanos && 
+        <div className='add-span' onClick={()=>{setAgregarPlanos(true)}}>
             <i className='material-icons' id="add-icon">add</i>
             <h3 style={{"fontSize":"1rem"}}>Agregar documento</h3>
-        </div>
-        {agregarPlanos && <div className="overlay-documento">
+        </div>}
+        {agregarPlanos && 
+        <div className="overlay-documento">
             <div className="modal-documento">
                 <div style={agregarPlanos?{"display":"flex","gap":"8px"}:{"display":"none"}}>
                     <i className='material-icons' id='close-button' onClick={()=>setAgregarPlanos(false)}>close</i>

@@ -18,7 +18,7 @@ export const DropdownMenu = ({
             </i>
 
             {isOpen && (
-                <div className="dropdown-menu">
+                <div className="dropdown-menu" >
                     {items.map((item, index) => {
                         
                         // Si es un separador
@@ -36,7 +36,7 @@ export const DropdownMenu = ({
                                     item.onClick();
                                     // Opcional: onToggle(e); // Cerrar menú automáticamente tras click
                                 }}
-                                style={{ color: item.color || 'inherit' }}
+                                style={{ color: item.color || 'inherit'}}
                             >
                                 {item.icon && (
                                     <i 

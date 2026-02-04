@@ -57,30 +57,26 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
     // Funciones placeholders para las acciones
     const handleReestablecer = async (v) => {
         if(confirm(`¿Deseas reestablecer la versión del ${new Date(v.fecha_vigencia).toISOString().split("T")[0]}?`)){
-            console.log("Reestableciendo versión:", v.id_version);
             setActiveMenuId(null);
             // Aquí tu lógica de API call
-            /*
-            const payload = {
-            
-            documento:{
-                id_producto: producto.id_producto
-            },
-            version:{
-                fecha_vigencia: v.fecha_vigencia,
-                commit: v.commit,
-                path: v.path,
-                id_tipo_documento: v.id_tipo_documento
-            },
-            piezas:piezasPlano
-            };
-            console.log(payload);
-            
-            //3. Enviar los datos del plano al backend
-            const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
-            
-            alert("Plano subido y asociado correctamente.");
-            setAgregarPlanos(false);*/
+            try{
+                const payload = {
+                    fecha_vigencia: v.fecha_vigencia,
+                    commit: v.commit,
+                    path: v.path,
+                    id_tipo_documento: v.id_tipo_documento
+                };
+
+                console.log(payload);
+                
+                //3. Enviar los datos del plano al backend
+                const respuesta = await apiCall(`${API_URL}/api/documentos/recuperar-version`, {method: 'POST', body: JSON.stringify(payload)});
+                
+                alert("Plano subido y asociado correctamente.");
+                
+            }catch(err){
+                alert(err.message);
+            }
 
         }
     };

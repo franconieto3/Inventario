@@ -68,12 +68,7 @@ export const moverArchivoAPermanente = async (tempPath, finalPath) => {
 }
 
 export const guardarDocumento = async (datos)=>{
-    /*
-    const { data: idVersionCreada, error: rpcError } = await supabase
-        .rpc('crear_documento_version_piezas', { 
-        payload: datos 
-        });
-    */
+
     const { data: idVersionCreada, error: rpcError } = await supabase
     .rpc('cargar_version_documento_pieza', { 
     payload: datos 

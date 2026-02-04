@@ -47,7 +47,13 @@ export default function ProductDetail() {
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
 
+        <div className='add-span'>
+            <i className='material-icons' id="add-icon">add</i>
+            <h3 style={{"fontSize":"1rem"}}>Agregar pieza</h3>
+        </div>
+
         <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+
         <div style={{'marginTop':'20px'}}>
           {producto.pieza && producto.pieza.map(p => (
             <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} codigoPieza={p.codigo_am} />        

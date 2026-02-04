@@ -3,6 +3,7 @@ import "../../styles/ProductDetail.css"
 import { apiCall } from '../../services/api';
 import "../../styles/PartDetail.css"
 import { HistorialVersiones } from './HistorialVersiones';
+import { DropdownMenu } from '../DropdownMenu';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -15,6 +16,9 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
     const [mostrarHistorial, setMostrarHistorial] = useState(false);
     const [docSeleccionado, setDocSeleccionado] = useState(null);
     const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
+
+    // 2. Estado para controlar qué menú desplegable está abierto (por ID de documento)
+    const [activeMenuId, setActiveMenuId] = useState(null);
 
     useEffect(() => {
         const fetchPart = async () => {
@@ -48,6 +52,21 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
         setDocSeleccionado(idTipoDocumento);
         setMostrarHistorial(true);
     }
+
+    // 3. Función vacía para la acción del menú
+    const handleEliminarVersion = (idDocumento) => {
+        console.log("Eliminando versión del documento:", idDocumento);
+        // Lógica futura aquí...
+    };
+
+    // Helper para abrir/cerrar menú específico
+    const toggleMenu = (id) => {
+        if (activeMenuId === id) {
+            setActiveMenuId(null); // Si ya está abierto, lo cierra
+        } else {
+            setActiveMenuId(id); // Si no, lo abre y cierra los demás
+        }
+    };
 
     return (
         <>
@@ -87,7 +106,19 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                                                 </div>
                                                 <div>
                                                     <span className='material-icons' style={{'cursor':'pointer'}} onClick={() => verHistorialVersiones(idPieza, d.id_tipo_documento)}>history</span>
-                                                    <span className='material-icons'style={{'cursor':'pointer'}}>more_vert</span>
+                                                    {/* 4. Implementación del DropdownMenu */}
+                                                    <DropdownMenu 
+                                                        isOpen={activeMenuId === d.id_tipo_documento}
+                                                        onToggle={() => toggleMenu(d.id_tipo_documento)}
+                                                        items={[
+                                                            {
+                                                                label: 'Eliminar versión',
+                                                                icon: 'delete',
+                                                                color: 'red', // Opcional: para indicar peligro
+                                                                onClick: () => handleEliminarVersion(d.id_version)
+                                                            }
+                                                        ]}
+                                                    />
                                                 </div>
                                             </div>
                                             )) 

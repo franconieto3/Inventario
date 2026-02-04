@@ -1,4 +1,4 @@
-import {DocumentoPayloadSchema, SolicitudSubidaSchema} from "../schemas/document.schemas.js"
+import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
 import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones} from "../services/document.service.js";
 import { z } from "zod";
 
@@ -150,14 +150,27 @@ export const historialDocumentos = async (req, res) =>{
     }
 }
 
-const reestablecerVersion = async(req, res)=>{
+export const reestablecerVersion = async(req, res)=>{
     try{
-        const data = req.body;
-
-        await obtenerMetadatos(path);
+        //Validaciones
+        const datosValidados = ReestablecerVersionSchema.parse(req.body);
+        
+        //Obtención de los metadatos del archivo para verificar que exista
+        await obtenerMetadatos(datosValidados.path);
 
         //Generar la fecha de vigencia y el commit desde el backend
-        
+        const nueva_fecha_vigencia = new Date().toISOString();
+        const nuevo_commit = `Se recupera la versión del ${new Date(datosValidados.fecha_vigencia).toISOString().split("T")[0]}`;
+
+        const payload = {
+            fecha_vigencia: nueva_fecha_vigencia,
+            commit: nuevo_commit,
+            path: datosValidados.path,
+            id_tipo_documento: datosValidados.id_tipo_documento
+        }
+
+        console.log(payload);
+
         //Guardado de la version en SQL
         const idVersionCreada = await guardarDocumento(datosValidado);
 
@@ -168,6 +181,6 @@ const reestablecerVersion = async(req, res)=>{
         });
 
     }catch(err){
-
+        res.status(500).json({error: err.message});
     }
 }

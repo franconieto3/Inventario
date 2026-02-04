@@ -23,11 +23,20 @@ export const DocumentoPayloadSchema = z.object({
   }),
   version: z.object({
     id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
-    fecha_vigencia: z.string().refine((date) => !isNaN(Date.parse(date)), {
-      message: "Formato de fecha inválido (Use ISO 8601)"
+    fecha_vigencia: z.coerce.date({
+      invalid_type_error: "Fecha inválida",
     }),
     commit: z.string().optional(),
     path: z.string().min(1, { message: "El path del archivo es obligatorio" })
   }),
   piezas: z.array(z.number().int()).optional().default([])
+});
+
+export const ReestablecerVersionSchema = z.object({
+  fecha_vigencia: z.coerce.date({
+    invalid_type_error: "Fecha inválida",
+  }),
+  commit: z.string().optional(),
+  path: z.string().min(1, { message: "El path del archivo es obligatorio" }),
+  id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" })
 });
