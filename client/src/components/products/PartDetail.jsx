@@ -71,14 +71,17 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
     return (
         <>
             <div className='detail'>
-                <div className='part-title'>
-                    <input 
-                        type='checkbox' 
-                        name="Piezas" 
-                        onChange={() => setMostrar(!mostrar)} 
-                        checked={mostrar} 
-                    />
-                    <span>{nombreProducto + " " + nombrePieza + " · Código: " + codigoPieza}</span>
+                <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
+                    <div className='part-title'>
+                        <input 
+                            type='checkbox' 
+                            name="Piezas" 
+                            onChange={() => setMostrar(!mostrar)} 
+                            checked={mostrar} 
+                        />
+                        <span>{nombreProducto + " " + nombrePieza + " · Código: " + codigoPieza}</span>
+                    </div>
+                    <i className='material-icons' style={{'fontSize':'1.2rem', 'cursor':'pointer'}}>edit</i>
                 </div>
                 {mostrar && (
                     <div className="pieza-info">

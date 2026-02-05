@@ -109,7 +109,10 @@ export const pieza = async (req, res) =>{
 
 export const agregarPieza = async (req, res)=>{
     try{
+
         const {nombrePieza, codigoAm, idProducto } = req.body;
+
+        //Verificar que no estén repetidos los códigos o los nombres
 
         const idPiezaCreada = await productService.crearPieza(nombrePieza, codigoAm, idProducto);
         

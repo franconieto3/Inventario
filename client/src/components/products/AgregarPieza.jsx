@@ -10,22 +10,43 @@ export function AgregarPieza({producto, onUploadSuccess}){
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+/*
     useEffect(()=>{
         console.log(producto);
     },[])
+*/
+    const handleSubmit = async (e)=>{
+        e.preventDefault();
+        setError("");
+        setLoading(true);
 
-    const handleSubmit = async ()=>{
         try{
-            setLoading(true)
+            if(!nombrePieza) throw new Error("El nombre de la pieza es obligatorio")
+
+            let codigoFinal = null;
+
+            if (codigo && codigo.trim() !== "") {
+                codigoFinal = 
+                    String(producto.id_rubro).padStart(2, "0") +
+                    "-" +
+                    codigo.padStart(3, "0") +
+                    "-XX";
+            }
+
+            
             const payload = {
                 nombrePieza: nombrePieza,
-                codigoAm: codigo,
-                idProducto: producto.id_pruducto
+                codigoAm: codigoFinal, 
+                idProducto: producto.id_producto
             }
-            const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
+
+            //const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
             
             alert("Pieza creada exitosamente.");
+
+            // Reset de formulario y cierre
+            setCodigo("");
+            setNombrePieza("");
             setAgregarPieza(false);
 
             if (onUploadSuccess) {
@@ -33,6 +54,9 @@ export function AgregarPieza({producto, onUploadSuccess}){
             }
         }catch(err){
             setError(err.message);
+        }finally{
+            setLoading(false);
+
         }
     }
 
@@ -46,14 +70,14 @@ export function AgregarPieza({producto, onUploadSuccess}){
         }
         {agregarPieza &&
         <div className='overlay'>
-            <div className='modal'>
+            <div className='modal' style={{'width':'350px'}}>
                 <div style={{'display':'flex', "gap":"8px"}}>
                     <i className='material-icons' id='close-button' onClick={()=>setAgregarPieza(false)}>close</i>
-                    <div>
-                        <h3 style={{"fontSize":"1rem", "textAlign":'start'}}>Agregar nueva pieza</h3>
-                        <form onSubmit={handleSubmit}>
+                    <div style={{'width':'100%'}}>
+                        <h3 style={{"fontSize":"1rem", "textAlign":'start','paddingTop':'10px', 'paddingBottom':'10px'}}>Agregar nueva pieza</h3>
+                        <form onSubmit={handleSubmit} >
                             <div className="input-codigo">
-                                <div>Código de pieza: </div>
+                                <div style={{'width':'50%', 'textAlign':'start'}}>Código de pieza: </div>
                                 <div className="input-wrapper">
                                     <span className="prefix">{String(producto.id_rubro).padStart(2, "0")} - </span>
                                     <input
@@ -63,24 +87,26 @@ export function AgregarPieza({producto, onUploadSuccess}){
                                         min="1" 
                                         step="1" 
                                         value={codigo}
-                                        onChange={()=>setCodigo(e.target.value)}
+                                        onChange={(e)=>setCodigo(e.target.value)}
                                     />
                                     <span className="suffix">- XX</span>
                                 </div>
                             </div>
-                            <div className="input-descripcion">
-                                <span>{producto.nombre}</span>
+                            <div className="input-descripcion" style={{'width':'100%', 'justifyContent':'space-between'}}>
+                                <span style={{'width':'50%', 'textAlign':'start'}}>{producto.nombre}</span>
                                 <input
                                     placeholder='Descripción...'
                                     className="input-text"
                                     type="text"
                                     name="nombrePieza"
                                     value={nombrePieza}
-                                    onChange={()=>setNombrePieza(e.target.value)}
+                                    onChange={(e)=>setNombrePieza(e.target.value)}
                                 />
                             </div>
-                            <button type="submit" disabled={loading?true:false}>Guardar</button>
-                            {error && <p>{error}</p>}
+                            <div style={{'textAlign':'start', 'paddingTop':'10px', 'paddingBottom':'10px'}}>
+                                <button style={{'backgroundColor':'#033545','color':'white','borderRadius':'8px'}} type="submit" disabled={loading?true:false}>{loading?'Cargando':'Guardar'}</button>
+                            </div>
+                            {error && <p style={{'color':'red'}}>{error}</p>}
                         </form>
                     </div>
                 </div>
