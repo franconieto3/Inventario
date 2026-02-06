@@ -44,7 +44,7 @@ export default function NewProduct(props) {
         return;
       }
 
-      //Duplicados
+      //Nombres duplicados
       const nombres = piezas.map(p => p.nombrePieza);
       if (new Set(nombres).size !== nombres.length) {
         setError("Hay al menos dos piezas con la misma denominación");
@@ -57,32 +57,21 @@ export default function NewProduct(props) {
           id_registro_pm: pm,
           id_rubro: rubro,
           piezas: piezas.map(p => {
-              let codigoFinal = null;
-
-              // Solo si el usuario escribió algo en el input 'raw', lo formateamos
-              if (p.codigoPiezaRaw && p.codigoPiezaRaw.trim() !== "") {
-                  codigoFinal = 
-                      String(rubro).padStart(2, "0") +
-                      "-" +
-                      p.codigoPiezaRaw.padStart(3, "0") +
-                      "-XX";
-              }
-
-              return {
-                  nombre: p.nombrePieza,
-                  codigo_am: codigoFinal // Será el código formateado O null
-              };
+           return{
+            nombre: p.nombrePieza,
+            codigo: Number(p.codigoPiezaRaw)
+           }
           })
       };
 
     setLoading(true);
 
     try{
-      const data = await apiCall(`${API_URL}/api/productos`, {method: 'POST', body: JSON.stringify(payload)});
+      const data = await apiCall(`${API_URL}/api/productos/new`, {method: 'POST', body: JSON.stringify(payload)});
       
       props.onSuccess(data);
 
-      setNombre("");
+      setNombre("");      
       setPiezas([{ id: genId(), codigoPieza: "", nombrePieza: "" }]);
       setPm(0);
       setRubro(0);
@@ -100,7 +89,7 @@ export default function NewProduct(props) {
   };
 
   const addPart = () => {
-    setPiezas(prev => [...prev, { id: genId(), codigoPieza: "", nombrePieza: "" }]);
+    setPiezas(prev => [...prev, { id: genId(), codigoPiezaRaw: "", codigoPieza: "", nombrePieza: "" }]);
   };
 
   const deletePart = (id) => {
@@ -162,7 +151,7 @@ export default function NewProduct(props) {
 
           <div className="buttons">
             <button className="cancel" onClick={props.onClose}>Cancelar</button>
-            <button className="create" onClick={handleCreate}>Crear</button>
+            <button className="create" onClick={handleCreate} disabled={loading?true:false}>{loading?'Guardando...':'Crear'}</button>
           </div>
         </div>
       </div>

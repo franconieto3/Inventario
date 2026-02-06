@@ -38,7 +38,9 @@ export const cargarProductos = async (nombre, id_registro_pm, id_rubro, piezas)=
         piezas_json: piezas 
     });
 
-    if (error)throw new Error("Error al guardar el producto en la base de datos.");
+    if (error){
+        console.error("Error Supabase RPC:", error);
+        throw new Error("Error al guardar el producto en la base de datos.");}
 
     return data;
 }
@@ -71,7 +73,7 @@ export const obtenerProducto = async (id)=>{
 
     // Manejo de errores de la función RPC (opcional, podrías devolver [] si falla)
     if (documentosRes.error) {
-        console.error("Error al obtener documentos:", documentosRes.error);
+        //console.error("Error al obtener documentos:", documentosRes.error);
         return [productoRes, []];
     }
 
@@ -104,10 +106,10 @@ export const obtenerInfoPieza = async (idPieza) => {
     
 }
 
-export const crearPieza = async (nombre, codigo_am, id_producto) => {
+export const crearPieza = async (nombre, codigo, id_producto) => {
     const { data, error } = await supabase.rpc('agregar_pieza', {
         p_nombre: nombre,
-        p_codigo_am: codigo_am,
+        p_codigo: codigo,
         p_id_producto: id_producto
     });
 

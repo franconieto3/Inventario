@@ -12,7 +12,6 @@ function NewPieza({ id, data = {}, onChange, onDelete, rubro, producto }) {
        onChange({
         ...data,
         codigoPiezaRaw: value,
-        // Ya no calculamos 'codigoPieza' aquí
       }, id);
     }
     else if(name === "nombrePieza"){

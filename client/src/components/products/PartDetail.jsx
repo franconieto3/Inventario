@@ -4,10 +4,11 @@ import { apiCall } from '../../services/api';
 import "../../styles/PartDetail.css"
 import { HistorialVersiones } from './HistorialVersiones';
 import { DropdownMenu } from '../DropdownMenu';
+import formatearCodigo from '../../services/formatearCodigo';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }) {
+export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigoPieza }) {
 
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
@@ -79,7 +80,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, codigoPieza }
                             onChange={() => setMostrar(!mostrar)} 
                             checked={mostrar} 
                         />
-                        <span>{nombreProducto + " " + nombrePieza + " · Código: " + codigoPieza}</span>
+                        <span>{nombreProducto + " " + nombrePieza + " · Código: " + formatearCodigo(rubro, codigoPieza)}</span>
                     </div>
                     <i className='material-icons' style={{'fontSize':'1.2rem', 'cursor':'pointer'}}>edit</i>
                 </div>

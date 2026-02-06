@@ -32,10 +32,11 @@ export default function ProductDetail() {
     }
   };
 
-
+  
   useEffect(() => {
     fetchProduct();
   }, [id]); // El efecto se ejecuta si cambia el ID
+
  
   if (!producto) return <div>Cargando...</div>;
 
@@ -58,7 +59,7 @@ export default function ProductDetail() {
 
         <div style={{'marginTop':'20px'}}>
           {producto.pieza && producto.pieza.map(p => (
-            <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} codigoPieza={p.codigo_am} />        
+            <PartDetail key={p.id_pieza} nombreProducto={producto.nombre} nombrePieza={p.nombre} idPieza={p.id_pieza} rubro={producto.id_rubro} codigoPieza={p.codigo} />        
           ))}
         </div>
       </div>

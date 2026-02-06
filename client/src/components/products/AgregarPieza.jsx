@@ -10,11 +10,7 @@ export function AgregarPieza({producto, onUploadSuccess}){
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-/*
-    useEffect(()=>{
-        console.log(producto);
-    },[])
-*/
+    
     const handleSubmit = async (e)=>{
         e.preventDefault();
         setError("");
@@ -22,26 +18,14 @@ export function AgregarPieza({producto, onUploadSuccess}){
 
         try{
             if(!nombrePieza) throw new Error("El nombre de la pieza es obligatorio")
-
-            let codigoFinal = null;
-
-            if (codigo && codigo.trim() !== "") {
-                codigoFinal = 
-                    String(producto.id_rubro).padStart(2, "0") +
-                    "-" +
-                    codigo.padStart(3, "0") +
-                    "-XX";
-            }
-
             
             const payload = {
                 nombrePieza: nombrePieza,
-                codigoAm: codigoFinal, 
+                codigo: codigo? Number(codigo) : null, 
                 idProducto: producto.id_producto
             }
 
-            //const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
-            
+            const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
             alert("Pieza creada exitosamente.");
 
             // Reset de formulario y cierre
