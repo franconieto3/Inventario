@@ -112,14 +112,38 @@ export const agregarPieza = async (req, res)=>{
 
         const {nombrePieza, codigo, idProducto } = req.body;
 
+        // 1. Validación básica de presencia de datos
+        if (!nombrePieza || !codigo || !idProducto) {
+            return res.status(400).json({ error: "Faltan campos obligatorios" });
+        }
+
         //Verificar que no estén repetidos los códigos o los nombres
+        await productService.verificarPieza(nombrePieza, codigo, idProducto);
 
         const idPiezaCreada = await productService.crearPieza(nombrePieza, codigo, idProducto);
         
-        res.status(200).json();
+        res.status(201).json({
+            message: "Pieza creada exitosamente",
+            id: idPiezaCreada});
 
     }catch(err){
         console.error(err);
         res.status(err.statusCode? err.statusCode: 500).json(err.message);
+    }
+}
+
+export const edicionPieza = async (req, res)=>{
+    try{
+        //
+    }catch(err){
+
+    }
+}
+
+export const edicionProducto = async(req,res)=>{
+    try{
+
+    }catch(err){
+        
     }
 }

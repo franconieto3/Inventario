@@ -106,6 +106,32 @@ export const obtenerInfoPieza = async (idPieza) => {
     
 }
 
+export const verificarPieza = async (nombrePieza, codigo, idProducto) => {
+    // 1. Ejecutamos la consulta con filtros combinados
+    const { data, error } = await supabase
+        .from('pieza')
+        .select('id')
+        .eq('id_producto', idProducto)
+        // Usamos comillas para evitar errores si el nombre tiene espacios
+        .or(`nombre.eq."${nombrePieza}",codigo.eq."${codigo}"`)
+        .maybeSingle();
+
+    // 2. Manejo de errores de conexión o permisos
+    if (error) {
+        console.error("Error en Supabase:", error.message);
+        throw new Error("Error al validar la existencia de la pieza");
+    }
+
+    // 3. Si 'data' existe, significa que encontró una coincidencia
+    if (data) {
+        const err = new Error('La pieza ya se encuentra registrada (nombre o código duplicado)');
+        err.statusCode = 400;
+        throw err;
+    }
+    
+    return true; // Todo en orden
+};
+
 export const crearPieza = async (nombre, codigo, id_producto) => {
     const { data, error } = await supabase.rpc('agregar_pieza', {
         p_nombre: nombre,
@@ -137,4 +163,67 @@ export const crearPieza = async (nombre, codigo, id_producto) => {
 
     console.log("Pieza procesada con éxito. ID:", data);
     return data; 
+}
+
+export const editarPieza = async (idPieza, nombrePieza, codigoPieza, esEnsamble)=>{
+    const {data, error} = await supabase.rpc('actualizar_pieza',{
+        p_id_pieza: idPieza,
+        p_nombre: nombrePieza,
+        p_codigo: codigoPieza,
+        p_es_ensamble: esEnsamble});
+    
+    if(error){
+        console.error("Detalle del error:", error.message);
+        const err = new Error("Ocurrió un error. No se pudo actualizar la pieza");
+        err.statusCode = 500;
+        throw err;
+    }
+
+    return data;
+}
+
+export const editarProducto = async (idProducto, nombreProducto, idRegistroPm, idRubro)=>{
+    
+    const {data, error} = await supabase.rpc('actualizar_producto',{
+        p_id_producto: idProducto,
+        p_nombre: nombreProducto,
+        p_id_registro_pm: idRegistroPm,
+        p_id_rubro: idRubro    
+    });
+
+    if(error){
+        console.error("Detalle del error:", error.message);
+        const err = new Error("Ocurrió un error. No se pudo actualizar el producto");
+        err.statusCode(500);
+        throw err;
+    }
+
+    return data;
+}
+
+export const eliminarPieza = async(idPieza)=>{
+
+    const {data, error} = await supabase.rpc('eliminar_pieza', {p_id_pieza: idPieza})
+    
+    if(error){
+        console.error("Detalle del error:", error.message);
+        const err = new Error("Ocurrió un error. No se pudo eliminar la pieza");
+        err.statusCode(500);
+        throw err;
+    }
+
+    return data;
+}
+
+export const eliminarProducto = async(idProducto)=>{
+    const {data, error} = await supabase.rpc('eliminar_producto', {p_id_producto: idProducto})
+    
+    if(error){
+        console.error("Detalle del error:", error.message);
+        const err = new Error("Ocurrió un error. No se pudo eliminar el producto");
+        err.statusCode(500);
+        throw err;
+    }
+
+    return data;
 }
