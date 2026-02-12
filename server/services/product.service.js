@@ -22,7 +22,7 @@ export const obtenerRegistrosPm = async ()=>{
 }
 
 export const obtenerProductos = async ()=>{
-    const {data, error} = await supabase.from('producto').select('*');
+    const {data, error} = await supabase.from('producto').select('*').eq('id_estado_producto', 1);
     if (error) throw new Error("Error al obtener los productos");
 
     return data;
@@ -57,6 +57,7 @@ export const obtenerProducto = async (id)=>{
             registro_pm(descripcion) 
         `)
         .eq('id_producto', id)
+        .eq('pieza.id_estado_pieza', 1)
         .single(),
         
         // Llamada a tu función personalizada de SQL
@@ -106,25 +107,40 @@ export const obtenerInfoPieza = async (idPieza) => {
     
 }
 
-export const verificarPieza = async (nombrePieza, codigo, idProducto) => {
+export const verificarPieza = async (nombrePieza, codigo, idProducto, idPieza = null ) => {
     // 1. Ejecutamos la consulta con filtros combinados
-    const { data, error } = await supabase
-        .from('pieza')
-        .select('id')
-        .eq('id_producto', idProducto)
-        // Usamos comillas para evitar errores si el nombre tiene espacios
-        .or(`nombre.eq."${nombrePieza}",codigo.eq."${codigo}"`)
-        .maybeSingle();
 
-    // 2. Manejo de errores de conexión o permisos
+    const {data, error} = await supabase.rpc('validar_pieza', {
+        p_id_producto: idProducto,
+        p_codigo: codigo || null,
+        p_nombre: nombrePieza || null
+    });
+
     if (error) {
-        console.error("Error en Supabase:", error.message);
+        console.log(error);
+        //console.error("Error en Supabase:", error.message);
         throw new Error("Error al validar la existencia de la pieza");
     }
 
-    // 3. Si 'data' existe, significa que encontró una coincidencia
-    if (data) {
+    if (!data || data.length === 0) {
+        return true; // No hay duplicados
+    }
+
+    // Creación: Si 'data' existe, significa que encontró una coincidencia
+    if (idPieza === null) {
         const err = new Error('La pieza ya se encuentra registrada (nombre o código duplicado)');
+        err.statusCode = 400;
+        throw err;
+    }
+
+    //Edicion: Si se encuentra una coincidencia cuyo id_pieza es distinto a idPieza, arrojar una excepción
+    console.log("Datos recibidos", nombrePieza, codigo, idProducto, idPieza);
+    console.log("Respuesta de supabase", data);
+
+    const existeConflicto = data.some(row => row.id_pieza !== idPieza);
+
+    if (existeConflicto) {
+        const err = new Error('Otras piezas del mismo producto tienen el mismo nombre o código');
         err.statusCode = 400;
         throw err;
     }

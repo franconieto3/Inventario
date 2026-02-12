@@ -5,10 +5,11 @@ import "../../styles/PartDetail.css"
 import { HistorialVersiones } from './HistorialVersiones';
 import { DropdownMenu } from '../DropdownMenu';
 import formatearCodigo from '../../services/formatearCodigo';
+import EdicionPieza from './EdicionPieza';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigoPieza }) {
+export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
 
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
@@ -16,6 +17,11 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigo
 
     const [mostrarHistorial, setMostrarHistorial] = useState(false);
     const [docSeleccionado, setDocSeleccionado] = useState(null);
+
+    const [menuPiezaOpen, setMenuPiezaOpen] = useState(false);
+
+    const [mostrarEdicion, setMostrarEdicion] = useState(false);
+
     const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
 
     // 2. Estado para controlar qué menú desplegable está abierto (por ID de documento)
@@ -55,9 +61,19 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigo
     }
 
     // 3. Función vacía para la acción del menú
-    const handleEliminarVersion = (idDocumento) => {
-        console.log("Eliminando versión del documento:", idDocumento);
-        // Lógica futura aquí...
+    const handleEliminarVersion = async (idDocumento) => {
+        if (window.confirm("¿Desea eliminar este documento?")){
+            try{
+            console.log("Eliminando versión del documento:", idDocumento);
+            
+            const res = await apiCall(`${API_URL}/api/documentos/eliminar/${idDocumento}`,{'method':'DELETE'});
+            alert("Documento eliminado exitosamente");
+            window.location.reload();
+
+            }catch(err){
+                alert(err.message);
+            }
+        }
     };
 
     // Helper para abrir/cerrar menú específico
@@ -68,6 +84,25 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigo
             setActiveMenuId(id); // Si no, lo abre y cierra los demás
         }
     };
+
+    const abrirModalEdicion=(id)=>{
+        setPiezaSeleccionada(id)
+        setMostrarEdicion(true);
+    }
+
+    const handleEliminarPieza = async (id) => {
+        if(window.confirm("¿Seguro que deseas eliminar esta pieza?")) {
+            console.log("Eliminando pieza", id);
+            try{
+                const res = await apiCall(`${API_URL}/api/productos/pieza/eliminacion/${id}`, {method:'DELETE'})
+                alert("Pieza eliminada exitosamente");
+                window.location.reload();
+
+            }catch(err){
+                alert("Ocurrió un error: ", err.message);
+            }
+        }
+    }
 
     return (
         <>
@@ -80,10 +115,45 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigo
                             onChange={() => setMostrar(!mostrar)} 
                             checked={mostrar} 
                         />
-                        <span>{nombreProducto + " " + nombrePieza + " · Código: " + formatearCodigo(rubro, codigoPieza)}</span>
+                        <span>{producto.nombre + " " + nombrePieza + " · Código: " + formatearCodigo(producto.id_rubro, codigoPieza)}</span>
                     </div>
-                    <i className='material-icons' style={{'fontSize':'1.2rem', 'cursor':'pointer'}}>edit</i>
+                    <DropdownMenu
+                        isOpen={menuPiezaOpen}
+                        onToggle={() => setMenuPiezaOpen(!menuPiezaOpen)}
+                        items={[
+                            {
+                                label: 'Editar pieza',
+                                icon: 'edit',
+                                onClick: () => abrirModalEdicion(idPieza)
+                            },
+                            {
+                                label: 'Eliminar pieza',
+                                icon: 'delete',
+                                color: 'red', // Opcional: para indicar peligro
+                                onClick: () => handleEliminarPieza(idPieza)
+                            }
+                                                    
+                        ]}
+                    />
+
                 </div>
+
+                {mostrarEdicion && 
+                    <EdicionPieza 
+                        idPieza={piezaSeleccionada}
+                        producto={producto} 
+                        nombreInicial={nombrePieza} 
+                        codigoInicial={codigoPieza} 
+                        onClose={()=>{
+                            setMostrarEdicion(false); 
+                            setPiezaSeleccionada(null)}} 
+                        onUploadSuccess={()=>{
+                            setMostrarEdicion(false); 
+                            setPiezaSeleccionada(null);
+                            window.location.reload();
+                        }}
+                    />}
+
                 {mostrar && (
                     <div className="pieza-info">
                         {loading && <p>Cargando...</p>}
@@ -109,7 +179,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigo
                                                     </a>
                                                 </div>
                                                 <div>
-                                                    <span className='material-icons' style={{'cursor':'pointer'}} onClick={() => verHistorialVersiones(idPieza, d.id_tipo_documento)}>history</span>
+                                                    <span className={`material-icons version-options-btn`} onClick={() => verHistorialVersiones(idPieza, d.id_tipo_documento)}> history</span>
                                                     {/* 4. Implementación del DropdownMenu */}
                                                     <DropdownMenu 
                                                         isOpen={activeMenuId === d.id_tipo_documento}
@@ -161,6 +231,7 @@ export function PartDetail({ nombreProducto, idPieza, nombrePieza, rubro, codigo
                             </div>
                         )}
                     {mostrarHistorial && <HistorialVersiones idPieza={piezaSeleccionada} idTipoDocumento={docSeleccionado} closeHistoryModal={()=>setMostrarHistorial(false)} verDocumento={handleVerPlano}/>}  
+                    
                     </div>
                 )}
             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState} from "react";
 import { apiCall } from '../../services/api';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 import "../../styles/HistorialVersiones.css";
@@ -9,7 +9,6 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
 
     const [versiones, setVersiones]= useState([]);
     const [activeMenuId, setActiveMenuId] = useState(null); 
-    const menuRef = useRef(null); // Referencia para detectar clics fuera
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     
@@ -28,25 +27,9 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
             }
         }
         fetchVersiones();
-    },[idPieza, idTipoDocumento]);
+    },[idPieza, idTipoDocumento]); 
 
-    // Lógica para cerrar el menú si se hace clic fuera de él
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setActiveMenuId(null);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-    
-
-    const toggleMenu = (e, idVersion) => {
-        e.stopPropagation(); // Evita que el evento llegue al document y cierre el menú inmediatamente
+    const toggleMenu = (idVersion) => {
         if (activeMenuId === idVersion) {
             setActiveMenuId(null); // Si ya está abierto, lo cierra
         } else {
@@ -81,11 +64,21 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
         }
     };
 
-    const handleEliminar = (version) => {
+    const handleEliminar = async (version) => {
         if(confirm("¿Estás seguro de eliminar esta versión del historial?")){
             console.log("Eliminando versión:", version.id_version);
             setActiveMenuId(null);
             // Aquí tu lógica de API call
+            try{
+            console.log("Eliminando versión del documento:", version.id_version);
+            
+            const res = await apiCall(`${API_URL}/api/documentos/eliminar/${version.id_version}`,{'method':'DELETE'});
+            alert("Documento eliminado exitosamente");
+            window.location.reload();
+
+            }catch(err){
+                alert(err.message);
+            }
         }
     };
 
@@ -115,7 +108,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                 { 
                                     label: "Eliminar versión", 
                                     icon: "delete", 
-                                    color: "red", // Pasamos el color dinámicamente
+                                    color: "red",
                                     onClick: () => handleEliminar(v) 
                                 }
                             ];
@@ -135,10 +128,10 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                         </div>
                                     </div>
                                     
-                                    <div ref={activeMenuId === v.id_version ? menuRef : null}>
+                                    <div>
                                         <DropdownMenu 
                                             isOpen={activeMenuId === v.id_version} 
-                                            onToggle={(e) => toggleMenu(e, v.id_version)} 
+                                            onToggle={() => toggleMenu(v.id_version)} 
                                             items={menuOptions} // <--- Aquí la magia
                                         />
                                     </div>

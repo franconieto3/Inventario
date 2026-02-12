@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import "../styles/Buscador.css"
 
-const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField, showId }) => {
+const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField, showId, valorInicial }) => {
 
   const [busqueda, setBusqueda] = useState("");
   const [focus, setFocus] = useState(false);
@@ -11,6 +11,19 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
   useEffect(()=>{
     onChange(value)
   },[value])
+
+  useEffect(() => {
+    // Verificamos que exista un valorInicial y que tengamos opciones donde buscar
+    if (valorInicial !== undefined && valorInicial !== null && opciones?.length > 0) {
+      
+      const encontrado = opciones.find(op => op[idField] === valorInicial);
+      
+      if (encontrado) {
+        setValue(encontrado[idField]);
+        setBusqueda(encontrado[displayField]);
+      }
+    }
+  }, [valorInicial, opciones, idField, displayField]);
 
   // 1. Configuramos Fuse (useMemo para no instanciarlo en cada render)
   const fuse = useMemo(() => {
@@ -45,7 +58,7 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
         onFocus={()=>setFocus(true)}
-        onBlur={()=>setFocus(false)}
+        onBlur={() => setTimeout(() => setFocus(false), 200)}
         style={{"marginTop": "5px", "marginBottom":"0px","width":"100%"}}
       />
       <div className='option-container' style={focus?{'display':'block'}:{'display':'none'}}>

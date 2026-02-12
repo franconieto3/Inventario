@@ -11,6 +11,7 @@ import "../../styles/ProductSection.css"
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../context/AuthContext";
 import { apiCall } from "../../services/api";
+import EdicionProducto from "./EdicionProducto";
 import Buscador from "../Buscador";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -22,6 +23,9 @@ export default function ProductSection(){
     const [registrosPM, setRegistrosPM] = useState([]);
     const [rubros, setRubros] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
+
+    const [mostrarEdicion, setMostrarEdicion] = useState(false);
+    const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
     const { logout } = UserAuth();
     const navigate = useNavigate();
@@ -71,8 +75,18 @@ export default function ProductSection(){
         navigate(`/producto/${id}`); 
     };
 
+    const abrirModalEdicion = (producto)=>{
+        setProductoSeleccionado(producto)
+        setMostrarEdicion(true);
+    }
+
+    const cerrarModalEdicion =()=>{
+        setMostrarEdicion(false);
+        setProductoSeleccionado(null);
+    }
+
     const items = productos.map((item) => (
-        <ProductItem key={item.id_producto} id ={item.id_producto} name={item.nombre} onChange={handleProductClick}/>
+        <ProductItem key={item.id_producto} producto={item} onChange={handleProductClick} onEdit={abrirModalEdicion}/>
     ));
 
     return (
@@ -112,6 +126,17 @@ export default function ProductSection(){
                         registros = {registrosPM} 
                         rubros = {rubros}/>
                 )}
+                {mostrarEdicion &&
+                    <EdicionProducto 
+                        producto={productoSeleccionado} 
+                        rubros={rubros} 
+                        registrosPM={registrosPM} 
+                        onUploadSuccess={()=>{
+                            cerrarModalEdicion(); 
+                            window.location.reload();}} 
+                        onClose={cerrarModalEdicion}
+                    />
+                }
             </div>
         </>
     );

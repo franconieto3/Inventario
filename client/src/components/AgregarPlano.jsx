@@ -204,15 +204,17 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     return(
     <>
         {!agregarPlanos && 
-        <div className='add-span' onClick={()=>{setAgregarPlanos(true)}}>
+        <button className='add-span' onClick={()=>{setAgregarPlanos(true)}}>
             <i className='material-icons' id="add-icon">add</i>
-            <h3 style={{"fontSize":"1rem"}}>Agregar documento</h3>
-        </div>}
+            Agregar documento
+        </button>}
         {agregarPlanos && 
         <div className="overlay-documento">
             <div className="modal-documento">
                 <div style={{"display":"flex","gap":"8px"}}>
-                    <i className='material-icons' id='close-button' onClick={()=>setAgregarPlanos(false)}>close</i>
+                    <div>
+                        <i className='material-icons' id='close-button' onClick={()=>setAgregarPlanos(false)}>close</i>
+                    </div>
                     <div className='upload-container' >
 
                         <div className='upload-header'>

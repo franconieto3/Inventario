@@ -131,3 +131,19 @@ export const obtenerHistorialVersiones = async (idPieza, idTipoDocumento) =>{
 
     return data;
 }
+
+export const eliminarVersion = async (idVersion)=>{
+    const {data, error} = await supabase.rpc(
+        'eliminar_version_pieza',
+        {
+            p_id_version: idVersion
+        }
+    );
+    if(error){
+        console.error(err);
+        const err = new Error("Ocurrió un error eliminando la versión");
+        err.statusCode = 500;
+        throw err;
+    }
+    return data;
+}

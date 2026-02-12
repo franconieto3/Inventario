@@ -1,4 +1,8 @@
 import {useState, useEffect} from 'react'
+import { apiCall } from "../../services/api";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 
 export function AgregarPieza({producto, onUploadSuccess}){
 
@@ -21,12 +25,12 @@ export function AgregarPieza({producto, onUploadSuccess}){
             
             const payload = {
                 nombrePieza: nombrePieza,
-                codigo: codigo? Number(codigo) : null, 
+                codigo: codigo === "" ? null : Number(codigo), 
                 idProducto: producto.id_producto
             }
 
-            const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
-            alert("Pieza creada exitosamente.");
+            const respuesta = await apiCall(`${API_URL}/api/productos/pieza/crear`, {method: 'POST', body: JSON.stringify(payload)});
+            //alert("Pieza creada exitosamente.");
 
             // Reset de formulario y cierre
             setCodigo("");
@@ -47,16 +51,18 @@ export function AgregarPieza({producto, onUploadSuccess}){
     return(
         <>
         {!agregarPieza &&
-        <div className='add-span' onClick={()=>setAgregarPieza(true)}>
+        <button className='add-span' onClick={()=>{setAgregarPieza(true)}}>
             <i className='material-icons' id="add-icon">add</i>
-            <h3 style={{"fontSize":"1rem"}}>Agregar pieza</h3>
-        </div>
+            Agregar pieza
+        </button>
         }
         {agregarPieza &&
         <div className='overlay'>
             <div className='modal' style={{'width':'350px'}}>
                 <div style={{'display':'flex', "gap":"8px"}}>
-                    <i className='material-icons' id='close-button' onClick={()=>setAgregarPieza(false)}>close</i>
+                    <div>
+                        <i className='material-icons' id='close-button' onClick={()=>setAgregarPieza(false)}>close</i>
+                    </div>
                     <div style={{'width':'100%'}}>
                         <h3 style={{"fontSize":"1rem", "textAlign":'start','paddingTop':'10px', 'paddingBottom':'10px'}}>Agregar nueva pieza</h3>
                         <form onSubmit={handleSubmit} >

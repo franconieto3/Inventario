@@ -169,8 +169,6 @@ export const reestablecerVersion = async(req, res)=>{
             id_tipo_documento: datosValidados.id_tipo_documento
         }
 
-        console.log(payload);
-
         //Guardado de la version en SQL
         const idVersionCreada = await guardarDocumento(datosValidado);
 
@@ -182,5 +180,16 @@ export const reestablecerVersion = async(req, res)=>{
 
     }catch(err){
         res.status(500).json({error: err.message});
+    }
+}
+
+export const eliminacionVersion = async (req, res)=>{
+    try{    
+        const {id} = req.params;
+        const data = await eliminacionVersion(id);
+
+        res.status(200).json({message: "Versión eliminada exitosamente"});
+    }catch(err){
+        res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
     }
 }

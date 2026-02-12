@@ -1,15 +1,40 @@
-import React from 'react';
+
+import React, { useEffect, useRef } from 'react';
 
 export const DropdownMenu = ({ 
     isOpen, 
     onToggle, 
-    items = [] // Array de objetos: { label, icon, onClick, color, separator }
+    items = [] 
 }) => {
+
+    const menuRef = useRef(null);
+
+    useEffect(() => {
+        // Función que se ejecuta en cada clic
+        const handleClickOutside = (event) => {
+            // Si el menú está abierto, la referencia existe, 
+            // y el elemento clickeado NO está dentro del menú:
+            if (isOpen && menuRef.current && !menuRef.current.contains(event.target)) {
+                onToggle(); // Cerramos el menú
+            }
+        };
+
+        // Activamos el listener solo si el menú está abierto para ahorrar recursos
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        // Limpieza: quitamos el listener cuando el componente se desmonta o el menú se cierra
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen, onToggle]);
+
     
     // Si no está abierto, retornamos solo el botón o null según tu lógica de estructura
     // Aquí mantengo tu estructura original
     return (
-        <div className="menu-container">
+        <div className="menu-container" ref={menuRef}>
             <i 
                 className={`material-icons version-options-btn ${isOpen ? 'active' : ''}`}
                 onClick={onToggle}
@@ -34,7 +59,7 @@ export const DropdownMenu = ({
                                 onClick={(e) => {
                                     e.stopPropagation(); // Evitar burbujeo
                                     item.onClick();
-                                    // Opcional: onToggle(e); // Cerrar menú automáticamente tras click
+                                    onToggle(e);
                                 }}
                                 style={{ color: item.color || 'inherit'}}
                             >
