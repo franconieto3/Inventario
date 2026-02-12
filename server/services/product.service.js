@@ -210,7 +210,7 @@ export const editarProducto = async (idProducto, nombreProducto, idRegistroPm, i
     if(error){
         console.error("Detalle del error:", error.message);
         const err = new Error("Ocurrió un error. No se pudo actualizar el producto");
-        err.statusCode(500);
+        err.statusCode = 500;
         throw err;
     }
 
@@ -224,7 +224,7 @@ export const eliminarPieza = async(idPieza)=>{
     if(error){
         console.error("Detalle del error:", error.message);
         const err = new Error("Ocurrió un error. No se pudo eliminar la pieza");
-        err.statusCode(500);
+        err.statusCode =500;
         throw err;
     }
 
@@ -237,7 +237,7 @@ export const eliminarProducto = async(idProducto)=>{
     if(error){
         console.error("Detalle del error:", error.message);
         const err = new Error("Ocurrió un error. No se pudo eliminar el producto");
-        err.statusCode(500);
+        err.statusCode =500;
         throw err;
     }
 

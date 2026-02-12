@@ -62,8 +62,10 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
 
     // 3. Función vacía para la acción del menú
     const handleEliminarVersion = async (idDocumento) => {
+        
         if (window.confirm("¿Desea eliminar este documento?")){
             try{
+
             console.log("Eliminando versión del documento:", idDocumento);
             
             const res = await apiCall(`${API_URL}/api/documentos/eliminar/${idDocumento}`,{'method':'DELETE'});
@@ -103,6 +105,8 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
             }
         }
     }
+
+    useEffect(()=>console.log(pieza),[pieza]);
 
     return (
         <>

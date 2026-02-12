@@ -151,7 +151,7 @@ export const agregarPieza = async (req, res)=>{
 
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json(err.message);
+        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
     }
 }
 
@@ -176,7 +176,7 @@ export const edicionPieza = async (req, res)=>{
     
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json(err.message);
+        res.status(err.statusCode? err.statusCode: 500).json({error:err.message});
     }
 }
 
@@ -197,7 +197,7 @@ export const edicionProducto = async(req,res)=>{
     
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json(err.message);
+        res.status(err.statusCode? err.statusCode: 500).json({error : err.message});
     }    
     
 }
@@ -218,7 +218,7 @@ export const eliminacionPieza = async (req,res)=>{
 
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json(err.message);
+        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
     }
 }
 
@@ -238,6 +238,6 @@ export const eliminacionProducto = async (req, res)=>{
 
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json(err.message);
+        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
     }
 }

@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion} from "../services/document.service.js";
 import { z } from "zod";
 
 export const tiposDocumento = async (req, res)=>{
@@ -186,8 +186,7 @@ export const reestablecerVersion = async(req, res)=>{
 export const eliminacionVersion = async (req, res)=>{
     try{    
         const {id} = req.params;
-        const data = await eliminacionVersion(id);
-
+        const data = await eliminarVersion(id);
         res.status(200).json({message: "Versión eliminada exitosamente"});
     }catch(err){
         res.status(err.statusCode? err.statusCode : 500).json({error: err.message});

@@ -11,6 +11,9 @@ import { apiCall } from '../../services/api';
 import AgregarPlano from '../AgregarPlano';
 import { PartDetail } from './PartDetail';
 import { AgregarPieza } from './AgregarPieza';
+import { DropdownMenu } from '../DropdownMenu';
+import EdicionProducto from './EdicionProducto';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -20,6 +23,11 @@ export default function ProductDetail() {
   const { id } = useParams();
 
   const [producto, setProducto] = useState(null);
+  const [loadingData, setLoadingData] = useState(false);
+  const [menuProductoOpen, setMenuProductoOpen] = useState(false);
+  const [mostrarEdicion, setMostrarEdicion] = useState(false);
+  const [rubros, setRubros] = useState(null);
+  const [registrosPM, setRegistrosPM] = useState(null);
 
   const fetchProduct = async () => {
     try{
@@ -32,10 +40,47 @@ export default function ProductDetail() {
     }
   };
 
+  const handleEliminarProducto = async ()=>{
+      if(window.confirm("¿Seguro que deseas eliminar este producto?")){
+          console.log("Eliminando producto")
+          try{
+              const res = await apiCall(`${API_URL}/api/productos/eliminacion/${producto.id_producto}`, {'method':"DELETE"});
+              //console.log(`${API_URL}/api/productos/eliminacion/${producto.id_producto}`);
+              alert(`${producto.nombre} eliminado exitosamente`);
+              navigate("/products");
+              
+          }catch(err){
+              alert("No se pudo eliminar el producto seleccionado");
+          }
+      }
+  }
   
   useEffect(() => {
     fetchProduct();
   }, [id]); // El efecto se ejecuta si cambia el ID
+
+  //Petción de rubros, listados de PM y productos al cargar el componente
+  useEffect(() => {
+      const fetchAuxData = async () => {
+          setLoadingData(true);
+          try {
+              const [dataRubros, dataPM] = await Promise.all([
+                  apiCall(`${API_URL}/api/productos/rubros`,{}),
+                  apiCall(`${API_URL}/api/productos/registros-pm`,{})
+              ])
+              
+              setRubros(dataRubros);
+              setRegistrosPM(dataPM);
+
+          } catch (error) {
+              console.error("Error cargando listas:", error);
+          } finally {
+              setLoadingData(false);
+          }
+      };
+      
+      fetchAuxData();
+  }, []);
 
  
   if (!producto) return <div>Cargando...</div>;
@@ -44,18 +89,47 @@ export default function ProductDetail() {
     <>
     <NavBar />
     <div className='body-container'>
+
       <div className='detail-container'>
-        <h1>{producto.nombre}</h1>
+        <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
+          <h1>{producto.nombre}</h1>
+          <DropdownMenu
+              isOpen={menuProductoOpen}
+              onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
+              items={[
+                  {
+                      label: 'Editar producto',
+                      icon: 'edit',
+                      onClick: () => setMostrarEdicion(true)
+                  },
+                  {
+                      label: 'Eliminar producto',
+                      icon: 'delete',
+                      color: 'red', 
+                      onClick: () => handleEliminarProducto()
+                  }
+                                          
+              ]}
+          />
+        </div>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
-{/*
-        <div className='add-span'>
-            <i className='material-icons' id="add-icon">add</i>
-            <h3 style={{"fontSize":"1rem"}}>Agregar pieza</h3>
-        </div>
-*/}
+
         <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
         <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+
+        {mostrarEdicion &&
+          <EdicionProducto 
+              producto={producto} 
+              rubros={rubros} 
+              registrosPM={registrosPM} 
+              onUploadSuccess={()=>{
+                  setMostrarEdicion(false); 
+                  window.location.reload();
+                  }} 
+              onClose={()=>setMostrarEdicion(false)}
+          />
+        }
 
         <div style={{'marginTop':'20px'}}>
           {producto.pieza && producto.pieza.map(p => (
