@@ -35,7 +35,7 @@ export const productos = async (req, res)=>{
 export const nuevoProducto = async (req, res) =>{
     try {
         const { nombre, id_registro_pm, id_rubro, piezas } = req.body;
-
+        /*
         // Validaciones básicas de entrada
         if (!nombre || !piezas || piezas.length === 0) {
             return res.status(400).json({ error: "Datos incompletos" });
@@ -58,7 +58,7 @@ export const nuevoProducto = async (req, res) =>{
                 throw err;
             }
         }
-
+        */
         const data = await productService.cargarProductos(nombre, id_registro_pm, id_rubro, piezas);
 
         // Si todo salió bien
@@ -130,20 +130,12 @@ export const pieza = async (req, res) =>{
 
 export const agregarPieza = async (req, res)=>{
     try{
-
         const {nombrePieza, codigo, idProducto } = req.body;
-
-        // 1. Validación básica de presencia de datos
-        if (!nombrePieza || !codigo || !idProducto) {
-            return res.status(400).json({ error: "Faltan campos obligatorios" });
-        }
-
-        const codigoLimpio = codigo === "" ? null : Number(codigo)
 
         //Verificar que no estén repetidos los códigos o los nombres
         const piezaVerificada = await productService.verificarPieza(nombrePieza, codigo, idProducto);
 
-        const idPiezaCreada = await productService.crearPieza(nombrePieza, codigoLimpio, idProducto);
+        const idPiezaCreada = await productService.crearPieza(nombrePieza, codigo, idProducto);
         
         res.status(201).json({
             message: "Pieza creada exitosamente",
@@ -159,19 +151,12 @@ export const edicionPieza = async (req, res)=>{
     try{
         const {id} = req.params;
         const {nombre, codigo, idProducto} = req.body;
-        
-        //Validaciones
-        const codigoLimpio = codigo === "" ? null : Number(codigo)
 
-        if(!nombre){
-            res.status(400).json({error:"Es obligatorio especificar el nombre de la pieza"});
-            return;
-        }
         //Verificación: dos piezas del mismo producto no pueden tener el mismo código o nombre
         const piezaVerificada = await productService.verificarPieza(nombre, codigo, idProducto , Number(id));
 
         //Servicios
-        const data = productService.editarPieza(id, nombre, codigoLimpio, null);
+        const data = productService.editarPieza(id, nombre, codigo, null);
         res.status(201).json({message: "Pieza editada correctamente"});
     
     }catch(err){

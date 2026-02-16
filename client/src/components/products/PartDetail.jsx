@@ -46,7 +46,13 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
 
     const handleVerPlano = async (pathArchivo) => {
         try {
-            const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-plano`, {method:'POST', body:JSON.stringify({ path: pathArchivo })});
+            const params = new URLSearchParams({ path: pathArchivo });
+
+            const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-documento?${params.toString()}`,
+                {
+                    method:'GET',
+                    //body:JSON.stringify({ path: pathArchivo })
+                });
             window.open(signedUrl, '_blank');
 
         } catch (err) {
@@ -105,8 +111,6 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
             }
         }
     }
-
-    useEffect(()=>console.log(pieza),[pieza]);
 
     return (
         <>

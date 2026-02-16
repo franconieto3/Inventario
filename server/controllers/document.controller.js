@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion} from "../services/document.service.js";
 import { z } from "zod";
 
 export const tiposDocumento = async (req, res)=>{
@@ -19,26 +19,21 @@ export const tiposDocumento = async (req, res)=>{
 
 export const subirDocumento = async (req, res)=>{
     try{
-        //¿El usuario puede subir documentos? (Middleware)
+        const { idTipoDocumento, fileType, fileName } = req.body;
 
-        const { idTipoDocumento } = req.body;
-
-        if (!idTipoDocumento) {
-            return res.status(400).json({ error: "Es obligatorio especificar el tipo de documento a subir" });
-        }
         //Obtener configuración dinámica desde Supabase
         const config = await obtenerConfiguracionTipoDocumento(idTipoDocumento);
 
-        //Generación de esquema dinámico
-        const esquemaDinamico = SolicitudSubidaSchema(config.tipos_permitidos);
-
-        //Validaciones: ¿El archivo cumple con el tipo y tamaño permitidos? Agregar el esquema en una función que lo modifique según los tipos de datos
-        const datosValidados = esquemaDinamico.parse(req.body);
+        if (!config.tipos_permitidos.includes(fileType)) {
+            return res.status(400).json({ 
+                error: `Tipo de archivo no permitido. Permitidos: ${config.tipos_permitidos.join(', ')}` 
+            });
+        } 
 
         //Validar piezas? (servicios)
 
         //Creación de path temporal(servicio) 
-        const path = `temp/${Date.now()}-${datosValidados.fileName}`;
+        const path = `temp/${Date.now()}-${fileName}`;
         
         //Generación de url de carga
         const data = await signedUploadUrl(path);
@@ -53,9 +48,6 @@ export const subirDocumento = async (req, res)=>{
 
     }
     catch(err){
-        if (err instanceof z.ZodError) {
-            return res.status(400).json({ error: err.errors[0].message });
-        }
         if (err.statusCode) {
             return res.status(err.statusCode).json({ error: err.message });
         }
@@ -67,9 +59,9 @@ export const subirDocumento = async (req, res)=>{
 export const documento = async (req, res)=>{
     //Lógica de subida de documentos relacionados a productos
     try{
-        const datosValidado = DocumentoPayloadSchema.parse(req.body);
+        //const datosValidado = DocumentoPayloadSchema.parse(req.body);
+        const datosValidado = req.body;
 
-        //const config = await obtenerConfiguracionTipoDocumento(datosValidado.documento.id_tipo_documento);
         const config = await obtenerConfiguracionTipoDocumento(datosValidado.version.id_tipo_documento);
         
         //Path temporal
@@ -97,12 +89,7 @@ export const documento = async (req, res)=>{
 
     }catch(err){
         console.log(err);
-        if (err instanceof z.ZodError) {
-            return res.status(400).json({ 
-            error: "Datos inválidos", 
-            detalles: err.errors.map(e => ({ campo: e.path.join('.'), mensaje: e.message })) 
-            });
-        }
+       
         if(err.statusCode){
             return res.status(err.statusCode).json({ error: err.message });    
         }
@@ -114,11 +101,7 @@ export const documento = async (req, res)=>{
 
 export const visualizarDocumento = async (req, res)=>{
     try {
-        const { path } = req.body;
-
-        if (!path) {
-            return res.status(400).json({ error: "El path del archivo es obligatorio" });
-        }
+        const { path } = req.query;
 
         const data = await signedUrl(path);
         res.json({ signedUrl: data.signedUrl });
@@ -152,8 +135,7 @@ export const historialDocumentos = async (req, res) =>{
 
 export const reestablecerVersion = async(req, res)=>{
     try{
-        //Validaciones
-        const datosValidados = ReestablecerVersionSchema.parse(req.body);
+        const datosValidados = req.body;
         
         //Obtención de los metadatos del archivo para verificar que exista
         await obtenerMetadatos(datosValidados.path);
@@ -162,15 +144,21 @@ export const reestablecerVersion = async(req, res)=>{
         const nueva_fecha_vigencia = new Date().toISOString();
         const nuevo_commit = `Se recupera la versión del ${new Date(datosValidados.fecha_vigencia).toISOString().split("T")[0]}`;
 
+        //Obtener piezas de la version
+        const listadoPiezas = await obtenerPiezasVersion(datosValidados.idVersionRecuperada);
+
         const payload = {
-            fecha_vigencia: nueva_fecha_vigencia,
-            commit: nuevo_commit,
-            path: datosValidados.path,
-            id_tipo_documento: datosValidados.id_tipo_documento
+            version:{
+                fecha_vigencia: nueva_fecha_vigencia,
+                commit: nuevo_commit,
+                path: datosValidados.path,
+                id_tipo_documento: datosValidados.id_tipo_documento
+            },
+            piezas: listadoPiezas
         }
 
         //Guardado de la version en SQL
-        const idVersionCreada = await guardarDocumento(datosValidado);
+        const idVersionCreada = await guardarDocumento(payload);
 
         // ÉXITO
         return res.status(201).json({

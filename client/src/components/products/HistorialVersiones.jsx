@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState, useCallback} from "react";
 import { apiCall } from '../../services/api';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 import "../../styles/HistorialVersiones.css";
@@ -12,22 +12,23 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     
-    useEffect(()=>{
-        const fetchVersiones = async()=>{
-            try{
-                setLoading(true);
-                const url = `${API_URL}/api/documentos/historial-versiones-pieza?idPieza=${idPieza}&idTipoDocumento=${idTipoDocumento}`;
-                const data = await apiCall(url, {method: 'GET'});
-                setVersiones(data);
-            }catch(err){
-                console.log(err.message);
-                setError(true);
-            }finally{
-                setLoading(false);
-            }
+    const fetchVersiones = useCallback(async()=>{
+        try{
+            setLoading(true);
+            const url = `${API_URL}/api/documentos/historial-versiones-pieza?idPieza=${idPieza}&idTipoDocumento=${idTipoDocumento}`;
+            const data = await apiCall(url, {method: 'GET'});
+            setVersiones(data);
+        }catch(err){
+            console.log(err.message);
+            setError(true);
+        }finally{
+            setLoading(false);
         }
+    },[idPieza, idTipoDocumento])
+
+    useEffect(()=>{
         fetchVersiones();
-    },[idPieza, idTipoDocumento]); 
+    },[fetchVersiones]); 
 
     const toggleMenu = (idVersion) => {
         if (activeMenuId === idVersion) {
@@ -44,19 +45,18 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
             // Aquí tu lógica de API call
             try{
                 const payload = {
+                    idVersionRecuperada: v.id_version,
                     fecha_vigencia: v.fecha_vigencia,
                     commit: v.commit,
                     path: v.path,
                     id_tipo_documento: v.id_tipo_documento
                 };
-
-                console.log(payload);
                 
                 //3. Enviar los datos del plano al backend
                 const respuesta = await apiCall(`${API_URL}/api/documentos/recuperar-version`, {method: 'POST', body: JSON.stringify(payload)});
                 
-                alert("Plano subido y asociado correctamente.");
-                
+                //alert("Plano subido y asociado correctamente.");
+                fetchVersiones();
             }catch(err){
                 alert(err.message);
             }
@@ -73,8 +73,11 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
             console.log("Eliminando versión del documento:", version.id_version);
             
             const res = await apiCall(`${API_URL}/api/documentos/eliminar/${version.id_version}`,{'method':'DELETE'});
-            alert("Documento eliminado exitosamente");
-            window.location.reload();
+            
+            setVersiones(prevVersiones => prevVersiones.filter(v => v.id_version !== version.id_version));
+            
+            //alert("Documento eliminado exitosamente");
+            
 
             }catch(err){
                 alert(err.message);

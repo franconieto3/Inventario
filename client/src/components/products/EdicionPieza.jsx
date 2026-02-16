@@ -30,7 +30,6 @@ export default function EdicionPieza({idPieza, pieza, producto, nombreInicial, c
                 codigo: codigo === "" ? null : Number(codigo),
                 idProducto: producto.id_producto
             }
-            console.log(payload);
             const respuesta = await apiCall(`${API_URL}/api/productos/pieza/edicion/${idPieza}`, {method: 'PUT', body: JSON.stringify(payload)});
             
 

@@ -4,10 +4,6 @@ export const login = async (req, res) => {
   try {
     const { dni, password } = req.body;
 
-    if (!dni || !password) {
-      return res.status(400).json({ error: "DNI y contraseña obligatorios" });
-    }
-
     // Llamamos al servicio (Lógica pura)
     const result = await authService.loginUser(dni, password);
 

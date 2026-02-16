@@ -132,11 +132,6 @@ export const verificarPieza = async (nombrePieza, codigo, idProducto, idPieza = 
         err.statusCode = 400;
         throw err;
     }
-
-    //Edicion: Si se encuentra una coincidencia cuyo id_pieza es distinto a idPieza, arrojar una excepción
-    console.log("Datos recibidos", nombrePieza, codigo, idProducto, idPieza);
-    console.log("Respuesta de supabase", data);
-
     const existeConflicto = data.some(row => row.id_pieza !== idPieza);
 
     if (existeConflicto) {

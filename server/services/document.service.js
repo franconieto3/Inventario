@@ -148,3 +148,28 @@ export const eliminarVersion = async (idVersion)=>{
     }
     return data;
 }
+
+export const obtenerPiezasVersion = async (idVersion) => {
+    
+    const { data, error } = await supabase
+        .from('version_pieza')
+        .select('id_pieza')
+        .eq('id_version', idVersion);
+
+    // Verificamos si hubo error
+    if (error) {
+        const err = new Error("No se pudo recuperar las piezas de la versión");
+        err.statusCode = 500; 
+        throw err;
+    }
+
+    // Opcional: Si quieres lanzar error 404 si la lista está vacía
+    if (!data || data.length === 0) {
+         const err = new Error("No se encontraron piezas para esta versión");
+         err.statusCode = 404;
+         throw err;
+    }
+    const piezas = data.map((item)=>item.id_pieza);
+
+    return piezas;
+}

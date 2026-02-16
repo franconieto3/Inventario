@@ -139,7 +139,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             },
             piezas:piezasPlano
             };
-            console.log(payload);
+            
             
             //3. Enviar los datos del plano al backend
             const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
