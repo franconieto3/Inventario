@@ -1,8 +1,9 @@
 // client/src/components/auth/Register.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from '../NavBar';
-import { apiCall } from '../../services/api';
+import { apiCall } from '../../../services/api';
+import NavBar from '../../../components/layout/NavBar';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 

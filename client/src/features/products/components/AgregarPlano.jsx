@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { apiCall } from "../services/api";
 
-import "../styles/ProductDetail.css"
-import "../styles/AgregarDocumento.css"
+import SubirArchivo from "../../../components/ui/SubirArchivo";
+import { apiCall } from "../../../services/api";
 
-import SubirArchivo from "./SubirArchivo";
+//import "../styles/ProductDetail.css"
+import "./AgregarDocumento.css"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 

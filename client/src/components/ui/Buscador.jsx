@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
-import "../styles/Buscador.css"
+import "./Buscador.css"
 
 const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField, showId, valorInicial }) => {
 

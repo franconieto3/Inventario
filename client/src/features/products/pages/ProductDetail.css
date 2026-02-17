@@ -1,0 +1,103 @@
+.detail-container{
+}
+
+.detail-container h1{
+    text-align: start;
+    margin-bottom: 20px;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.detail-container p{
+    text-align: start;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+.detail{
+    padding: 15px;
+    text-align: start;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.detail-subtitle{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.detail-subtitle span{
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+.part-list{
+  /*list-style-type: none;*/
+  padding-left: 0;
+  margin-top: 10px;
+  margin-left: 25px;
+}
+
+.part-list li{
+  margin-top: 10px;
+}
+
+/*Pestaña de planos*/
+
+.planos-list{
+  list-style-type: none;
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+
+.planos-list li{
+  margin-top: 10px;
+}
+
+.upload-container{
+  /*margin-top: 15px;*/
+}
+
+
+
+/* Lista de archivos subidos */
+
+.form-input{
+  margin-bottom: 10px;
+}
+
+.form-input label{
+  font-size: 1rem;
+}
+
+.add-span{
+  color: #78787a;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  background-color: white;
+  border: none
+}
+.add-span:hover{
+  cursor: pointer;
+}
+
+#add-icon{
+  font-size: 1.7rem;
+}
+
+#close-button{
+  font-size: 1.7rem;
+  margin-top: 5px;
+}
+
+#close-button:hover{
+  cursor: pointer;
+}

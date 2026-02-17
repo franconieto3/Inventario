@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-//import { supabase } from '../../supabase/client';
 
-import NavBar from '../NavBar';
+import { DropdownMenu } from '../../../components/ui/DropdownMenu';
+import NavBar from '../../../components/layout/NavBar';
 
-import "../../styles/ProductDetail.css"
-import { UserAuth } from '../../context/AuthContext';
-import { apiCall } from '../../services/api';
-import AgregarPlano from '../AgregarPlano';
-import { PartDetail } from './PartDetail';
-import { AgregarPieza } from './AgregarPieza';
-import { DropdownMenu } from '../DropdownMenu';
-import EdicionProducto from './EdicionProducto';
+import { apiCall } from '../../../services/api';
+import AgregarPlano from '../components/AgregarPlano';
+import { UserAuth } from '../../auth/context/AuthContext';
 
+import { PartDetail } from '../components/PartDetail';
+import { AgregarPieza } from '../components/AgregarPieza';
+import EdicionProducto from "../components/EdicionProducto";
+
+import "./ProductDetail.css"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -42,7 +42,6 @@ export default function ProductDetail() {
           console.log("Eliminando producto")
           try{
               const res = await apiCall(`${API_URL}/api/productos/eliminacion/${producto.id_producto}`, {'method':"DELETE"});
-              //console.log(`${API_URL}/api/productos/eliminacion/${producto.id_producto}`);
               alert(`${producto.nombre} eliminado exitosamente`);
               navigate("/products");
               

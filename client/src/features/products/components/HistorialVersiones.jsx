@@ -1,9 +1,11 @@
 import { useEffect, useState, useCallback} from "react";
-import { apiCall } from '../../services/api';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-import "../../styles/HistorialVersiones.css";
 
-import { DropdownMenu } from '../DropdownMenu';
+import { apiCall } from "../../../services/api";
+import { DropdownMenu } from "../../../components/ui/DropdownMenu";
+
+import "./HistorialVersiones.css";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal, verDocumento} ){
 

@@ -1,10 +1,8 @@
-import React from 'react';
-import { UserAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 //Estilos
-import "../styles/NavBar.css"
+import "./NavBar.css"
+import { UserAuth } from '../../features/auth/context/AuthContext';
 
 export default function NavBar(){
     const { user, logout} = UserAuth();

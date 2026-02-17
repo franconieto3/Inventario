@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import "../../styles/ProductDetail.css"
-import { apiCall } from '../../services/api';
-import "../../styles/PartDetail.css"
-import { HistorialVersiones } from './HistorialVersiones';
-import { DropdownMenu } from '../DropdownMenu';
-import formatearCodigo from '../../services/formatearCodigo';
+
+import { apiCall } from '../../../services/api';
+import { DropdownMenu } from '../../../components/ui/DropdownMenu';
+import formatearCodigo from '../../../services/formatearCodigo';
 import EdicionPieza from './EdicionPieza';
+import { HistorialVersiones } from './HistorialVersiones';
+
+import "./PartDetail.css"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
