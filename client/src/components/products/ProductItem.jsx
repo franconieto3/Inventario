@@ -9,7 +9,7 @@ import { apiCall } from "../../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export default function ProductItem({ producto, onChange, onEdit}){
+export default function ProductItem({ producto, onChange, onEdit, onDelete}){
 
     //Método para llamar a la API al hacer click
     const [menuProductoOpen, setMenuProductoOpen] = useState(false);
@@ -23,8 +23,9 @@ export default function ProductItem({ producto, onChange, onEdit}){
             console.log("Eliminando producto")
             try{
                 const res = await apiCall(`${API_URL}/api/productos/eliminacion/${producto.id_producto}`, {'method':"DELETE"});
-                alert(`${producto.nombre} eliminado exitosamente`);
-                window.location.reload();
+                //alert(`${producto.nombre} eliminado exitosamente`);
+                //window.location.reload();
+                if (onDelete) onDelete();
                 
             }catch(err){
                 alert("No se pudo eliminar el producto seleccionado");

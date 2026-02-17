@@ -111,6 +111,7 @@ export default function ProductSection(){
                                 producto={item} 
                                 onChange={handleProductClick} 
                                 onEdit={(prod) => abrirModalEdicion(prod)}
+                                onDelete={handleSuccess}
                             />
                         ))
                     )}

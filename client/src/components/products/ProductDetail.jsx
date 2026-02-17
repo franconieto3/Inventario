@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 //import { supabase } from '../../supabase/client';
 
 import NavBar from '../NavBar';
 
 import "../../styles/ProductDetail.css"
-import SubirArchivo from '../SubirArchivo';
 import { UserAuth } from '../../context/AuthContext';
 import { apiCall } from '../../services/api';
 import AgregarPlano from '../AgregarPlano';
@@ -29,16 +28,14 @@ export default function ProductDetail() {
   const [rubros, setRubros] = useState(null);
   const [registrosPM, setRegistrosPM] = useState(null);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try{
-
       const data = await apiCall(`${API_URL}/api/productos/${id}`, {});
       setProducto(data);
-      
     }catch(err){
       console.error(err.message);
     }
-  };
+  },[id]);
 
   const handleEliminarProducto = async ()=>{
       if(window.confirm("¿Seguro que deseas eliminar este producto?")){
@@ -57,7 +54,7 @@ export default function ProductDetail() {
   
   useEffect(() => {
     fetchProduct();
-  }, [id]); // El efecto se ejecuta si cambia el ID
+  }, [fetchProduct]); // El efecto se ejecuta si cambia el ID
 
   //Petción de rubros, listados de PM y productos al cargar el componente
   useEffect(() => {
@@ -107,8 +104,7 @@ export default function ProductDetail() {
                       icon: 'delete',
                       color: 'red', 
                       onClick: () => handleEliminarProducto()
-                  }
-                                          
+                  }                      
               ]}
           />
         </div>
@@ -125,7 +121,7 @@ export default function ProductDetail() {
               registrosPM={registrosPM} 
               onUploadSuccess={()=>{
                   setMostrarEdicion(false); 
-                  window.location.reload();
+                  fetchProduct();
                   }} 
               onClose={()=>setMostrarEdicion(false)}
           />
@@ -138,7 +134,8 @@ export default function ProductDetail() {
               nombrePieza={p.nombre} 
               idPieza={p.id_pieza}
               codigoPieza={p.codigo}
-              producto={producto} 
+              producto={producto}
+              onRefreshParent={fetchProduct}
             />        
           ))}
         </div>

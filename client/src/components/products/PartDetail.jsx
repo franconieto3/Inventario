@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import "../../styles/ProductDetail.css"
 import { apiCall } from '../../services/api';
 import "../../styles/PartDetail.css"
@@ -9,7 +9,7 @@ import EdicionPieza from './EdicionPieza';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
+export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefreshParent }) {
 
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
@@ -17,18 +17,13 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
 
     const [mostrarHistorial, setMostrarHistorial] = useState(false);
     const [docSeleccionado, setDocSeleccionado] = useState(null);
-
     const [menuPiezaOpen, setMenuPiezaOpen] = useState(false);
-
     const [mostrarEdicion, setMostrarEdicion] = useState(false);
-
     const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
-
-    // 2. Estado para controlar qué menú desplegable está abierto (por ID de documento)
     const [activeMenuId, setActiveMenuId] = useState(null);
 
-    useEffect(() => {
-        const fetchPart = async () => {
+    const fetchPart = useCallback(
+        async () => {
             setLoading(true);
             try {
                 const data = await apiCall(`${API_URL}/api/productos/pieza/${idPieza}`,{});
@@ -39,10 +34,13 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
                 setLoading(false);
             }
         }
+    , [mostrar, idPieza]);
+
+    useEffect(() => {
         if (mostrar && idPieza) {
             fetchPart();
         }
-    }, [mostrar, idPieza]);
+    }, [fetchPart]);
 
     const handleVerPlano = async (pathArchivo) => {
         try {
@@ -51,7 +49,6 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
             const {signedUrl} = await apiCall(`${API_URL}/api/documentos/obtener-url-documento?${params.toString()}`,
                 {
                     method:'GET',
-                    //body:JSON.stringify({ path: pathArchivo })
                 });
             window.open(signedUrl, '_blank');
 
@@ -75,8 +72,8 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
             console.log("Eliminando versión del documento:", idDocumento);
             
             const res = await apiCall(`${API_URL}/api/documentos/eliminar/${idDocumento}`,{'method':'DELETE'});
-            alert("Documento eliminado exitosamente");
-            window.location.reload();
+            fetchPart();
+            setActiveMenuId(null);
 
             }catch(err){
                 alert(err.message);
@@ -96,6 +93,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
     const abrirModalEdicion=(id)=>{
         setPiezaSeleccionada(id)
         setMostrarEdicion(true);
+        setMenuPiezaOpen(false);
     }
 
     const handleEliminarPieza = async (id) => {
@@ -103,8 +101,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
             console.log("Eliminando pieza", id);
             try{
                 const res = await apiCall(`${API_URL}/api/productos/pieza/eliminacion/${id}`, {method:'DELETE'})
-                alert("Pieza eliminada exitosamente");
-                window.location.reload();
+                if (onRefreshParent) onRefreshParent();
 
             }catch(err){
                 alert("Ocurrió un error: ", err.message);
@@ -158,7 +155,8 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto }) {
                         onUploadSuccess={()=>{
                             setMostrarEdicion(false); 
                             setPiezaSeleccionada(null);
-                            window.location.reload();
+                            fetchPart();
+                            if (onRefreshParent) onRefreshParent();
                         }}
                     />}
 
