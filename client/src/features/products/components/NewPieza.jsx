@@ -1,6 +1,6 @@
 // NewPieza.jsx
 import React, { useState } from "react";
-import "../../styles/NewPieza.css";
+import "./NewPieza.css";
 
 function NewPieza({ id, data = {}, onChange, onDelete, rubro, producto }) {
 

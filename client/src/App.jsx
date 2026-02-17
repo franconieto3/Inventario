@@ -1,21 +1,21 @@
 
-import ProductSection from "./components/products/ProductSection";
-import { useEffect, useState } from "react";
-import { BrowserRouter,Routes, Route, Link} from 'react-router-dom'
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import { AuthContextProvider } from './context/AuthContext';
-import HomePage from './components/HomePage';
-import PrivateRoute from './components/PrivateRoute';
-import ProductDetail from "./components/products/ProductDetail";
 
+import { BrowserRouter,Routes, Route, Link} from 'react-router-dom'
+
+import HomePage from './pages/HomePage';
+import PrivateRoute from './routes/PrivateRoute';
+
+import { AuthContextProvider } from "./features/auth/context/AuthContext";
+import Login from './features/auth/components/Login';
+import Register from "./features/auth/components/Register";
+
+import ProductsPage from './features/products/pages/ProductsPage';
+import ProductDetail from "./features/products/pages/ProductDetail";
 
 function App() {
-  const [mensaje, setMensaje] = useState("");
 
   return (  
         <>
-        
         <AuthContextProvider>
           <BrowserRouter>
             <Routes>
@@ -36,7 +36,7 @@ function App() {
               path="/products" 
               element={
                 <PrivateRoute>
-                  <ProductSection />
+                  <ProductsPage />
                 </PrivateRoute>
               }
             />

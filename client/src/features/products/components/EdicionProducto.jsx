@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { apiCall } from "../../services/api";
-import Buscador from "../Buscador";
+
+import { apiCall } from "../../../services/api";
+import Buscador from "../../../components/ui/Buscador";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 

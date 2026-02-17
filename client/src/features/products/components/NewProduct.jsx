@@ -1,12 +1,14 @@
-// NewProduct.jsx
-import "../../styles/NewProduct.css";
-import Buscador from "../Buscador";
-import NewPieza from "./NewPieza";
 import { useState } from "react";
-import { apiCall } from "../../services/api";
+
+import Buscador from "../../../components/ui/Buscador";
+import { apiCall } from "../../../services/api";
+import NewPieza from "./NewPieza";
+
+import "./NewProduct.css";
 
 const genId = () => `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 
 export default function NewProduct(props) {
   const [nombre, setNombre] = useState("");

@@ -1,9 +1,8 @@
 // client/src/components/auth/Login.jsx
-import React, { useState, useContext, useEffect } from 'react';
-//import { AuthContext } from '../../context/AuthContext';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/AuthContext';
-import "../../styles/Login.css";
+import "./Login.css";
+import { UserAuth } from '../context/AuthContext';
 
 export default function Login() {
   

@@ -1,21 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 // Componentes
-import ProductItem from "./ProductItem";
-import NewProduct from "./NewProduct";
-import logo from '../../assets/logo.png';
-import NavBar from '../NavBar';
-import { useState , useEffect} from "react";
+import ProductItem from "../components/ProductItem";
+import NavBar from "../../../components/layout/NavBar";
+import { useProducts } from "../hooks/useProducts";
+import EdicionProducto from "../components/EdicionProducto";
+import Buscador from "../../../components/ui/Buscador";
+import NewProduct from "../components/NewProduct";
 
 //Estilos
-import "../../styles/ProductSection.css"
-
-import { useNavigate } from "react-router-dom";
-import EdicionProducto from "./EdicionProducto";
-import Buscador from "../Buscador";
-import { useProducts } from "../../features/products/hooks/useProducts";
+import "./ProductsPage.css"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export default function ProductSection(){
+export default function ProductsPage(){
     const navigate = useNavigate(); 
 
     const { 

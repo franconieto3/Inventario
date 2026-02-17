@@ -1,11 +1,11 @@
 //Componentes
-import React from "react";
 import { useState } from 'react';
-import { DropdownMenu } from "../DropdownMenu";
+
+import { apiCall } from '../../../services/api';
+import { DropdownMenu } from '../../../components/ui/DropdownMenu';
 
 //Estilos
-import "../../styles/ProductItem.css"
-import { apiCall } from "../../services/api";
+import "./ProductItem.css"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 

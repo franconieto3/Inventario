@@ -1,5 +1,9 @@
-.historial-container{
-    min-height: 30vh;
+/* Contenedor relativo para posicionar el menú absoluto */
+.menu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Botón de los tres puntos */
@@ -12,14 +16,6 @@
 
 .version-options-btn:hover, .version-options-btn.active {
     background-color: rgba(60, 64, 67, 0.08);
-}
-
-/* Contenedor relativo para posicionar el menú absoluto */
-.menu-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* El menú desplegable flotante */

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
+import './SubirArchivo.css';
 
 export default function SubirArchivo( {onUpload, acceptedFileTypes, onRemove} ){
     const [selected, setSelected] = useState([]);
@@ -53,7 +54,7 @@ export default function SubirArchivo( {onUpload, acceptedFileTypes, onRemove} ){
                 </div>
                 )}
             </div>
-            <p className="card-description">Formatos permitidos: {extensionesTexto}</p>
+            <p className="allowed-files">Formatos permitidos: {extensionesTexto}</p>
         </div>
         {selected.length > 0 && (
         <ul className="file-list">
