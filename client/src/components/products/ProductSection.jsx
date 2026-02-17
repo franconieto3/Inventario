@@ -9,86 +9,62 @@ import { useState , useEffect} from "react";
 import "../../styles/ProductSection.css"
 
 import { useNavigate } from "react-router-dom";
-import { UserAuth } from "../../context/AuthContext";
-import { apiCall } from "../../services/api";
 import EdicionProducto from "./EdicionProducto";
 import Buscador from "../Buscador";
+import { useProducts } from "../../features/products/hooks/useProducts";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export default function ProductSection(){
+    const navigate = useNavigate(); 
 
-    const [showNewProduct, setShowNewProduct] = useState(false);
-    const [productos, setProductos] = useState([]);
-    const [registrosPM, setRegistrosPM] = useState([]);
-    const [rubros, setRubros] = useState([]);
-    const [loadingData, setLoadingData] = useState(false);
+    const { 
+        productos, 
+        rubros, 
+        registrosPM, 
+        loadingProducts, 
+        loadingAux,
+        page,
+        setPage,
+        totalPages,
+        refreshProducts
+    } = useProducts();
 
     const [mostrarEdicion, setMostrarEdicion] = useState(false);
+    const [showNewProduct, setShowNewProduct] = useState(false);
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-    const { logout } = UserAuth();
-    const navigate = useNavigate();
-
-    //Petción de rubros, listados de PM y productos al cargar el componente
-    useEffect(() => {
-        const fetchAuxData = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                 logout(); // Asegurar limpieza
-                 navigate('/login');
-                 return;
-            }
-            setLoadingData(true);
-            try {
-                const [dataRubros, dataPM, dataProductos] = await Promise.all([
-                    apiCall(`${API_URL}/api/productos/rubros`,{}),
-                    apiCall(`${API_URL}/api/productos/registros-pm`,{}),
-                    apiCall(`${API_URL}/api/productos`,{})
-                ])
-                
-                setRubros(dataRubros);
-                setRegistrosPM(dataPM);
-                setProductos(dataProductos);
-
-            } catch (error) {
-                console.error("Error cargando listas:", error);
-            } finally {
-                setLoadingData(false);
-            }
-        };
-        
-        fetchAuxData();
-    }, []);
-
-    const handleProductCreated = (newProductData) => {
-        // 1. Actualizamos la lista localmente para evitar un re-fetch
-        setProductos(prev => [...prev, {
-            id_producto: newProductData.id_producto, 
-            nombre: newProductData.nombre
-        }]);
-        // 2. Cerramos el modal
-        setShowNewProduct(false);
-    };   
-
-    const handleProductClick = (id) => {
-        navigate(`/producto/${id}`); 
-    };
+    const handleProductClick = (id) => navigate(`/producto/${id}`); 
 
     const abrirModalEdicion = (producto)=>{
         setProductoSeleccionado(producto)
         setMostrarEdicion(true);
     }
 
-    const cerrarModalEdicion =()=>{
+    const handleCloseModal =()=>{
         setMostrarEdicion(false);
         setProductoSeleccionado(null);
+        setShowNewProduct(false);
     }
 
-    const items = productos.map((item) => (
-        <ProductItem key={item.id_producto} producto={item} onChange={handleProductClick} onEdit={abrirModalEdicion}/>
-    ));
+    const handleSuccess = ()=>{
+        handleCloseModal();
+        refreshProducts();
+    }
 
+    // Handlers de Paginación
+    const handlePrevPage = () => {
+        if (page > 1) setPage(p => p - 1);
+    };
+
+    const handleNextPage = () => {
+        if (page < totalPages) setPage(p => p + 1);
+    };
+
+    if (loadingAux && page === 1 && productos.length === 0) {
+        return <div className="loading-state">Cargando productos...</div>;
+    }
+    
     return (
         <>
             <NavBar />
@@ -97,10 +73,17 @@ export default function ProductSection(){
                     <div>
                     <p className='products-text'>Repositorio de productos</p>
                     <p className='products-count'>{`${productos.length}`} productos</p>
+                    <p className='products-count'>
+                            Página {page} de {totalPages || 1}
+                    </p>
                     </div>
                 </div>
                 <div className='filters'>
                     <div className='search-box'>
+                        {/* NOTA: Si hay paginación en el backend, este buscador local
+                           solo buscará en los 20 productos visibles actualmente.
+                           Para buscar en todo, el componente Buscador debería llamar a la API.
+                        */}
                         <Buscador               
                             opciones={productos}
                             placeholder="Buscar productos..."
@@ -117,12 +100,48 @@ export default function ProductSection(){
                 </div>
                 <div className='product-list'>
                     <div className='product-list-header'>Nombre</div>
-                    {items}
+
+                    {loadingProducts ? (
+                        <div style={{ padding: '20px', textAlign: 'center' }}>Cargando productos...</div>
+                    ) : (
+                    productos.map(
+                        (item) => (
+                            <ProductItem 
+                                key={item.id_producto} 
+                                producto={item} 
+                                onChange={handleProductClick} 
+                                onEdit={(prod) => abrirModalEdicion(prod)}
+                            />
+                        ))
+                    )}
                 </div>
+
+                {/* Controles de Paginación */}
+                {totalPages > 1 && (
+                    <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
+                        <button 
+                            onClick={handlePrevPage} 
+                            disabled={page === 1 || loadingProducts}
+                            className="pagination-button" // Asegúrate de tener estilos o usa estilos inline
+                        >
+                            Anterior
+                        </button>
+                        <span>{page} / {totalPages}</span>
+                        <button 
+                            onClick={handleNextPage} 
+                            disabled={page === totalPages || loadingProducts}
+                            className="pagination-button"
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
+
+                {/* Modales */}
                 {showNewProduct && (
                     <NewProduct 
-                        onClose={()=>setShowNewProduct(false)} 
-                        onSuccess={handleProductCreated} 
+                        onClose={handleCloseModal}
+                        onSuccess={handleSuccess}
                         registros = {registrosPM} 
                         rubros = {rubros}/>
                 )}
@@ -131,10 +150,8 @@ export default function ProductSection(){
                         producto={productoSeleccionado} 
                         rubros={rubros} 
                         registrosPM={registrosPM} 
-                        onUploadSuccess={()=>{
-                            cerrarModalEdicion(); 
-                            window.location.reload();}} 
-                        onClose={cerrarModalEdicion}
+                        onUploadSuccess={handleSuccess}
+                        onClose={handleCloseModal}
                     />
                 }
             </div>

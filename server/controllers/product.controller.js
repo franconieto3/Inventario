@@ -96,11 +96,7 @@ export const producto = async (req, res)=>{
 
     } catch (err) {
         console.error(err);
-        if(err.message === 'PGRST116'){
-            res.status(404).json({ error: "Producto no encontrado" });
-        }else{
-            res.status(500).json({ error: "Error al obtener el detalle del producto" });
-        }
+        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
     }
 }
 
@@ -119,11 +115,7 @@ export const pieza = async (req, res) =>{
 
     }catch(err){
         console.error(err);
-        if (err.message === 'PGRST116') {
-            res.status(404).json({ error: "Pieza no encontrada" });
-        } else {
-            res.status(500).json({ error: "Error al obtener el detalle de la pieza" });
-        }
+        res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
     }
 
 }

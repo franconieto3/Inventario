@@ -5,14 +5,15 @@ export const productoSchema = z.object({
   nombre: z.string({ required_error: "Datos incompletos" })
            .min(1, "Datos incompletos"),
   
-  id_registro_pm: z.number().optional(),
-  id_rubro: z.number().optional(),
+  id_registro_pm: z.coerce.number().optional(),
+  id_rubro: z.coerce.number().optional(),
 
   piezas: z.array(
     z.object({
       // 1. Aquí RELAJAMOS la regla base. Permitimos string vacío u opcional.
       // Esto es necesario para que pase la validación inicial del tipo.
-      nombrePieza: z.string().optional() 
+      nombre: z.string().optional(), 
+      codigo: z.any().optional()
     })
   )
   .min(1, "Datos incompletos") // Debe haber al menos 1 pieza
@@ -23,15 +24,15 @@ export const productoSchema = z.object({
     // CASO A: Hay más de 1 pieza
     if (items.length > 1) {
       
-      const nombres = items.map(p => p.nombrePieza);
+      const nombres = items.map(p => p.nombre);
 
       // Regla 1: Validar que ninguna esté vacía o undefined
       items.forEach((item, index) => {
-        if (!item.nombrePieza || item.nombrePieza.trim() === "") {
+        if (!item.nombre || item.nombre.trim() === "") {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Hay al menos una pieza sin denominación",
-            path: [index, "nombrePieza"] // Esto marca exactamente qué input falló
+            path: [index, "nombre"] // Esto marca exactamente qué input falló
           });
         }
       });
@@ -50,7 +51,7 @@ export const productoSchema = z.object({
     
     // CASO B: Hay exactamente 1 pieza
     // No hacemos nada (return implícito), por lo que pasa la validación 
-    // aunque nombrePieza sea "" o undefined.
+    // aunque nombre sea "" o undefined.
   }),
 });
 

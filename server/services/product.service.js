@@ -22,8 +22,19 @@ export const obtenerRegistrosPm = async ()=>{
 }
 
 export const obtenerProductos = async ()=>{
-    const {data, error} = await supabase.from('producto').select('*').eq('id_estado_producto', 1);
-    if (error) throw new Error("Error al obtener los productos");
+    const {data, error} = await supabase
+    .from('producto')
+    .select('*')
+    .eq('id_estado_producto', 1);
+
+    if (error) {
+        if(error.code == 'PGRST116'){
+            const err = new Error("Producto no encontrado");
+            err.statusCode = 404;
+            throw err;
+        }
+        throw new Error("Error al obtener los productos");
+    }
 
     return data;
 }
@@ -93,8 +104,14 @@ export const obtenerInfoPieza = async (idPieza) => {
 
     // Manejo de errores de la consulta de producto
     if (piezaRes.error) {
-        if (piezaRes.error.code === 'PGRST116') {throw new Error('PGRST116');}
-        else{throw piezaRes.error;} 
+        if (piezaRes.error.code === 'PGRST116'){
+            const err = new Error('PGRST116');
+            err.statusCode = 404;
+            throw err;
+        }
+        else{
+            throw new Error("Ocurrió un error al obtener la pieza");
+        } 
     }
 
     // Manejo de errores de la función RPC (opcional, podrías devolver [] si falla)

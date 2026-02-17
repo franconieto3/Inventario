@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export const validateSchema = (schema, source = 'body') => (req, res, next) => {
   try {
     schema.parse(req[source]);
