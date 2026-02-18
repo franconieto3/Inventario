@@ -24,8 +24,9 @@ export const AuthContextProvider = ({ children }) => {
     
     const verifyToken = async ()=>{
       try{
-        const res = await apiCall(`${API_URL}/auth/verificar`, {method: 'GET'});
-        setUser(JSON.parse(storedUser));
+        const data = await apiCall(`${API_URL}/auth/verificar`, {method: 'GET'});
+        //setUser(JSON.parse(storedUser));
+        setUser(data.user);
 
       }catch(error){
         console.error(error);
@@ -37,7 +38,7 @@ export const AuthContextProvider = ({ children }) => {
       }
     }
 
-    if (storedToken && storedUser) {
+    if (storedToken) {
       verifyToken();
     }else{
       setLoading(false);

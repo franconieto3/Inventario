@@ -57,5 +57,36 @@ export const register = async (req, res)=>{
 }
 
 export const verificar = async (req, res)=>{
-  return res.status(200).json(req.usuario);
+  try{
+  const userId = req.usuario.id;
+
+  const userFound = await authService.getUserById(userId);
+
+  if(!userFound) return res.status(401).json({message:"Usuario no encontrado"})
+   
+  return res.status(200).json({user: userFound}); 
+
+  //return res.status(200).json({user: req.usuario});
+
+  }catch(err){
+    console.error(err);
+    return res.status(500).json({error: "Error al verificar usuario"});
+  }
+}
+
+export const perfil = async (req, res)=>{
+  try{
+    const userId = req.usuario.id;
+
+    const data = await authService.obtenerPerfil(userId);
+
+    res.status(201).json({
+      message: "Acceso autorizado", 
+      datos: data 
+    });
+    
+  }catch(err){
+    console.error(err);
+    res.status(err.statusCode? err.statusCode : 500).json({error: err.message? err.message: "Error al obtener perfil"})
+  }
 }

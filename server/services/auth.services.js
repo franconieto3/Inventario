@@ -65,3 +65,56 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
 
     return data;
 }
+
+export const obtenerPerfil = async (userId)=>{
+
+    /*
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('id_usuario, dni, nombre, email, telefono') // No traemos la contraseña
+      .eq('id_usuario', userId)
+      .single();
+
+    */
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select(`
+        id_usuario, 
+        dni, 
+        nombre, 
+        email, 
+        telefono,
+        usuario_roles (
+          roles (
+            nombre,
+            rol_permisos (
+              permisos (
+                nombre
+              )
+            )
+          )
+        )
+      `)
+      .eq('id_usuario', userId)
+      .single();
+
+    if (error){
+      const err = new Error("Error al obtener perfil");
+      err.statusCode = 500;
+      throw err;
+    }
+
+    return data;
+}
+
+const getUserById = async(id)=>{
+  const {data, error} = await supabase.from('usuario').select('*').eq('id_usuario', id).maybeSingle()
+  
+  if(error){
+    const err = new Error("Error verificando el usuario");
+    err.statusCode = 500;
+    throw err;
+  }
+
+  return data;
+}
