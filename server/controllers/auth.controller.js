@@ -4,28 +4,20 @@ export const login = async (req, res) => {
   try {
     const { dni, password } = req.body;
 
-    // Llamamos al servicio (Lógica pura)
-    const result = await authService.loginUser(dni, password);
+    const data = await authService.searchUser(dni);
+    const checkedPassword = await authService.comparePassword(password, data.password);
+    const user = await authService.getUserById(data.id_usuario);
+    const token = authService.generateToken(user);
 
-    // Respondemos (HTTP)
-    res.json({
-      message: "Login exitoso",
-      token: result.token,
-      user: {
-        id: result.user.id_usuario,
-        name: result.user.name,
-        email: result.user.email,
-        dni: result.user.dni
+    return res.status(200).json(
+      {message:"Login exitoso",
+        token: token,
+        user: user
       }
-    });
-
+    );
   } catch (err) {
     console.error(err);
-    // Manejo básico de errores según el mensaje
-    if (err.message === "Credenciales inválidas") {
-        return res.status(401).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Error interno del servidor" });
+    return res.status(err.statusCode? err.statusCode: 500).json({error: err.message? err.message: "Error interno del servidor"});
   }
 };
 
@@ -57,16 +49,18 @@ export const register = async (req, res)=>{
 }
 
 export const verificar = async (req, res)=>{
+
   try{
   const userId = req.usuario.id;
 
-  const userFound = await authService.getUserById(userId);
+  //const userFound = await authService.getUserById(userId);
 
-  if(!userFound) return res.status(401).json({message:"Usuario no encontrado"})
+  //if(!userFound) return res.status(401).json({message:"Usuario no encontrado"})
+
+  //console.log(userFound);
    
-  return res.status(200).json({user: userFound}); 
-
-  //return res.status(200).json({user: req.usuario});
+  //return res.status(200).json({user: userFound}); 
+  return res.status(200).json(req.usuario);
 
   }catch(err){
     console.error(err);
