@@ -8,9 +8,20 @@ import { loginSchema, registerSchema } from "../schemas/auth.schemas.js";
 
 const router = Router();
 
-router.post('/login',validateSchema(loginSchema), login);
-router.post('/register',validateSchema(registerSchema) ,register);
-router.get('/verificar', verificarToken, verificar);
-router.get('/perfil', verificarToken, perfil);
+router.post('/login',
+    validateSchema(loginSchema), 
+    login);
+
+router.post('/register',
+    validateSchema(registerSchema) ,
+    register);
+
+router.get('/verificar', 
+    verificarToken, 
+    verificar);
+
+router.get('/perfil', 
+    verificarToken, 
+    perfil);
 
 export default router;

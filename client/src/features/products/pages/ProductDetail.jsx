@@ -13,6 +13,7 @@ import { AgregarPieza } from '../components/AgregarPieza';
 import EdicionProducto from "../components/EdicionProducto";
 
 import "./ProductDetail.css"
+import Can from '../../../components/Can';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -89,28 +90,31 @@ export default function ProductDetail() {
       <div className='detail-container'>
         <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
           <h1>{producto.nombre}</h1>
-          <DropdownMenu
-              isOpen={menuProductoOpen}
-              onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
-              items={[
-                  {
-                      label: 'Editar producto',
-                      icon: 'edit',
-                      onClick: () => setMostrarEdicion(true)
-                  },
-                  {
-                      label: 'Eliminar producto',
-                      icon: 'delete',
-                      color: 'red', 
-                      onClick: () => handleEliminarProducto()
-                  }                      
-              ]}
-          />
+          <Can permission="administrar_productos">
+            <DropdownMenu
+                isOpen={menuProductoOpen}
+                onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
+                items={[
+                    {
+                        label: 'Editar producto',
+                        icon: 'edit',
+                        onClick: () => setMostrarEdicion(true)
+                    },
+                    {
+                        label: 'Eliminar producto',
+                        icon: 'delete',
+                        color: 'red', 
+                        onClick: () => handleEliminarProducto()
+                    }                      
+                ]}
+            />
+          </Can>
         </div>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
-
-        <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
+        <Can permission="administrar_productos">
+          <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
+        </Can>
         <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
 
         {mostrarEdicion &&

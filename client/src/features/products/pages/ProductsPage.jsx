@@ -8,6 +8,7 @@ import { useProducts } from "../hooks/useProducts";
 import EdicionProducto from "../components/EdicionProducto";
 import Buscador from "../../../components/ui/Buscador";
 import NewProduct from "../components/NewProduct";
+import Can from "../../../components/Can";
 
 //Estilos
 import "./ProductsPage.css"
@@ -93,9 +94,12 @@ export default function ProductsPage(){
                             showId={false}
                         />
                     </div>
-                    <div className='button-container'>
-                        <button className='add-button' onClick={()=>setShowNewProduct(true)}>Agregar producto</button>
-                    </div>
+                    <Can permission="administrar_productos">
+                        <div className='button-container'>
+                            <button className='add-button' onClick={()=>setShowNewProduct(true)}>Agregar producto</button>
+                        </div>
+                    </Can>
+                    
                 </div>
                 <div className='product-list'>
                     <div className='product-list-header'>Nombre</div>

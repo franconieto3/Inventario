@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
+/*
 export const loginUser = async (dni, password) => {
     // 1. Buscar usuario
     const { data: user, error } = await supabase
@@ -27,7 +27,7 @@ export const loginUser = async (dni, password) => {
     );
 
     return { token, user };
-};
+};*/
 
 export const searchUser = async(dni)=>{
     const { data: user, error } = await supabase

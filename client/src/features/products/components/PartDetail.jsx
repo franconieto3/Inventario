@@ -5,8 +5,10 @@ import { DropdownMenu } from '../../../components/ui/DropdownMenu';
 import formatearCodigo from '../../../services/formatearCodigo';
 import EdicionPieza from './EdicionPieza';
 import { HistorialVersiones } from './HistorialVersiones';
+import Can from '../../../components/Can';
 
 import "./PartDetail.css"
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -123,24 +125,26 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                         />
                         <span>{producto.nombre + " " + nombrePieza + " · Código: " + formatearCodigo(producto.id_rubro, codigoPieza)}</span>
                     </div>
-                    <DropdownMenu
-                        isOpen={menuPiezaOpen}
-                        onToggle={() => setMenuPiezaOpen(!menuPiezaOpen)}
-                        items={[
-                            {
-                                label: 'Editar pieza',
-                                icon: 'edit',
-                                onClick: () => abrirModalEdicion(idPieza)
-                            },
-                            {
-                                label: 'Eliminar pieza',
-                                icon: 'delete',
-                                color: 'red', // Opcional: para indicar peligro
-                                onClick: () => handleEliminarPieza(idPieza)
-                            }
-                                                    
-                        ]}
-                    />
+                    <Can permission="administrar_productos">
+                        <DropdownMenu
+                            isOpen={menuPiezaOpen}
+                            onToggle={() => setMenuPiezaOpen(!menuPiezaOpen)}
+                            items={[
+                                {
+                                    label: 'Editar pieza',
+                                    icon: 'edit',
+                                    onClick: () => abrirModalEdicion(idPieza)
+                                },
+                                {
+                                    label: 'Eliminar pieza',
+                                    icon: 'delete',
+                                    color: 'red', // Opcional: para indicar peligro
+                                    onClick: () => handleEliminarPieza(idPieza)
+                                }
+                                                        
+                            ]}
+                        />
+                    </Can>
 
                 </div>
 
@@ -186,17 +190,21 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                                     </a>
                                                 </div>
                                                 <div>
-                                                    <span className={`material-icons version-options-btn`} onClick={() => verHistorialVersiones(idPieza, d.id_tipo_documento)}> history</span>
-                                                    {/* 4. Implementación del DropdownMenu */}
                                                     <DropdownMenu 
                                                         isOpen={activeMenuId === d.id_tipo_documento}
                                                         onToggle={() => toggleMenu(d.id_tipo_documento)}
                                                         items={[
                                                             {
+                                                                label:'Historial de versiones',
+                                                                icon: 'history',
+                                                                onClick: ()=>verHistorialVersiones(idPieza, d.id_tipo_documento)
+                                                            },
+                                                            {
                                                                 label: 'Eliminar versión',
                                                                 icon: 'delete',
                                                                 color: 'red', // Opcional: para indicar peligro
-                                                                onClick: () => handleEliminarVersion(d.id_version)
+                                                                onClick: () => handleEliminarVersion(d.id_version),
+                                                                permission:"administrar_documentos"
                                                             }
                                                         ]}
                                                     />

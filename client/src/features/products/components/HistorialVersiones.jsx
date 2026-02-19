@@ -4,6 +4,7 @@ import { apiCall } from "../../../services/api";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 
 import "./HistorialVersiones.css";
+import Can from "../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -105,7 +106,8 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                 { 
                                     label: "Restablecer esta versión", 
                                     icon: "restore", 
-                                    onClick: () => handleReestablecer(v) 
+                                    onClick: () => handleReestablecer(v), 
+                                    //permission:'administrar_documentos'
                                 },
                                 { 
                                     separator: true 
@@ -114,7 +116,8 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                     label: "Eliminar versión", 
                                     icon: "delete", 
                                     color: "red",
-                                    onClick: () => handleEliminar(v) 
+                                    onClick: () => handleEliminar(v),
+                                    //permission:'administrar_documentos' 
                                 }
                             ];
 
@@ -134,11 +137,13 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                     </div>
                                     
                                     <div>
-                                        <DropdownMenu 
-                                            isOpen={activeMenuId === v.id_version} 
-                                            onToggle={() => toggleMenu(v.id_version)} 
-                                            items={menuOptions} // <--- Aquí la magia
-                                        />
+                                        <Can permission='administrar_documentos'>
+                                            <DropdownMenu 
+                                                isOpen={activeMenuId === v.id_version} 
+                                                onToggle={() => toggleMenu(v.id_version)} 
+                                                items={menuOptions} // <--- Aquí la magia
+                                            />
+                                        </Can>
                                     </div>
                                 </div>
                             );

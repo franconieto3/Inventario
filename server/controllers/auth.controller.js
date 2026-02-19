@@ -26,11 +26,6 @@ export const register = async (req, res)=>{
       // 1. Desestructurar los datos que vienen del frontend (Register.jsx)
       const { dni, password, name, email, telefono } = req.body;
 
-      // Validación básica del lado del servidor (opcional, pero recomendada como doble chequeo)
-      if (!dni || !password || !name || !email) {
-          return res.status(400).json({ error: "Faltan campos obligatorios" });
-      }
-
       const data = await authService.registerUser(dni, password, name, email, telefono);
 
       //Respuesta exitosa

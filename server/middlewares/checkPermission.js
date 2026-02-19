@@ -1,5 +1,4 @@
 // server/middlewares/checkPermission.js
-import { supabase } from "../config/supabase.js";
 import { getUserById } from "../services/auth.services.js";
 
 

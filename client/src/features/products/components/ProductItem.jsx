@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { apiCall } from '../../../services/api';
 import { DropdownMenu } from '../../../components/ui/DropdownMenu';
+import Can from '../../../components/Can';
 
 //Estilos
 import "./ProductItem.css"
@@ -42,24 +43,26 @@ export default function ProductItem({ producto, onChange, onEdit, onDelete}){
             </div>
             
             <div>
-                <DropdownMenu
-                    isOpen={menuProductoOpen}
-                    onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
-                    items={[
-                        {
-                            label: 'Editar producto',
-                            icon: 'edit',
-                            onClick: () => editar()
-                        },
-                        {
-                            label: 'Eliminar producto',
-                            icon: 'delete',
-                            color: 'red', 
-                            onClick: () => handleEliminarProducto()
-                        }
-                                                
-                    ]}
-                />
+                <Can permission="administrar_productos">
+                    <DropdownMenu
+                        isOpen={menuProductoOpen}
+                        onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
+                        items={[
+                            {
+                                label: 'Editar producto',
+                                icon: 'edit',
+                                onClick: () => editar()
+                            },
+                            {
+                                label: 'Eliminar producto',
+                                icon: 'delete',
+                                color: 'red', 
+                                onClick: () => handleEliminarProducto()
+                            }
+                                                    
+                        ]}
+                    />
+                </Can>
             </div>
             
         </div>

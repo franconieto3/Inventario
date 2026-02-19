@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import './DropdownMenu.css';
+import Can from '../Can';
 
 export const DropdownMenu = ({ 
     isOpen, 
@@ -54,26 +55,28 @@ export const DropdownMenu = ({
 
                         // Opción normal
                         return (
-                            <div 
-                                key={index} 
-                                className="dropdown-item" 
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Evitar burbujeo
-                                    item.onClick();
-                                    onToggle(e);
-                                }}
-                                style={{ color: item.color || 'inherit'}}
-                            >
-                                {item.icon && (
-                                    <i 
-                                        className="material-icons" 
-                                        style={{ color: item.color || 'inherit' }}
-                                    >
-                                        {item.icon}
-                                    </i>
-                                )}
-                                <span>{item.label}</span>
-                            </div>
+                            <Can permission={item.permission? item.permission : null}>
+                                <div 
+                                    key={index} 
+                                    className="dropdown-item" 
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Evitar burbujeo
+                                        item.onClick();
+                                        onToggle(e);
+                                    }}
+                                    style={{ color: item.color || 'inherit'}}
+                                >
+                                    {item.icon && (
+                                        <i 
+                                            className="material-icons" 
+                                            style={{ color: item.color || 'inherit' }}
+                                        >
+                                            {item.icon}
+                                        </i>
+                                    )}
+                                    <span>{item.label}</span>
+                                </div>
+                            </Can>
                         );
                     })}
                 </div>
