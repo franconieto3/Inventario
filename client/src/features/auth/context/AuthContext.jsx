@@ -45,10 +45,6 @@ export const AuthContextProvider = ({ children }) => {
     
   }, []);
 
-  useEffect(()=>{
-    console.log(user);
-  },[user])
-
   // 2. FUNCIÓN LOGIN: Conecta con tu backend
   const login = async (dni, password) => {
       try {
