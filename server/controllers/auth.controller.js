@@ -51,16 +51,13 @@ export const register = async (req, res)=>{
 export const verificar = async (req, res)=>{
 
   try{
-  const userId = req.usuario.id;
+  const userId = req.usuario.id_usuario;
 
-  //const userFound = await authService.getUserById(userId);
+  const userFound = await authService.getUserById(userId);
 
-  //if(!userFound) return res.status(401).json({message:"Usuario no encontrado"})
+  if(!userFound) return res.status(401).json({message:"Usuario no encontrado"});
 
-  //console.log(userFound);
-   
-  //return res.status(200).json({user: userFound}); 
-  return res.status(200).json(req.usuario);
+  return res.status(200).json({user: userFound}); 
 
   }catch(err){
     console.error(err);
