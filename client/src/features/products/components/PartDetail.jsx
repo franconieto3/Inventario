@@ -24,6 +24,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
     const [mostrarEdicion, setMostrarEdicion] = useState(false);
     const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
     const [activeMenuId, setActiveMenuId] = useState(null);
+    const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
 
     const fetchPart = useCallback(
         async () => {
@@ -112,6 +113,10 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
         }
     }
 
+    const handleChangeRequest = (idVersion)=>{
+        setMostrarSolicitud(true);
+    }
+
     return (
         <>
             <div className='detail'>
@@ -194,6 +199,11 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                                         isOpen={activeMenuId === d.id_tipo_documento}
                                                         onToggle={() => toggleMenu(d.id_tipo_documento)}
                                                         items={[
+                                                            {
+                                                                label:'Solicitar una modificación',
+                                                                icon:'edit',
+                                                                onClick: ()=> handleChangeRequest(d.id_version)
+                                                            },
                                                             {
                                                                 label:'Historial de versiones',
                                                                 icon: 'history',
