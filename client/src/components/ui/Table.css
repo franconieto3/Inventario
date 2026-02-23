@@ -1,0 +1,79 @@
+/* Table.css */
+
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.table-wrapper {
+  border: 1px solid #e2e8f0; /* Equivalente a border-border en modo claro */
+  border-radius: 0.5rem; /* rounded-lg */
+  overflow-x: auto;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  /* Tipografía limpia tipo sistema */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.875rem; /* text-sm */
+  color: #0f172a; /* Equivalente a text-foreground */
+  /* Esta propiedad es clave: fuerza a que la tabla ocupe al menos el espacio 
+     de su contenido, activando el scroll del padre si es necesario */
+  min-width: max-content;
+}
+
+.table-header {
+  font-weight: 500;
+  color: #64748b; /* text-muted-foreground */
+  padding: 0.75rem 1rem; /* h-12 pero en padding para centrado vertical */
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.table-row {
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:hover {
+  background-color: #f8fafc; /* hover:bg-muted/50 */
+}
+
+.table-cell {
+  padding: 1rem; /* p-4 */
+  vertical-align: middle;
+}
+
+.table-empty {
+  text-align: center;
+  height: 6rem; /* h-24 */
+  color: #64748b;
+  vertical-align: middle;
+}
+
+/* Opcional: Estilizar la barra de scroll horizontal para que luzca moderna */
+.table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

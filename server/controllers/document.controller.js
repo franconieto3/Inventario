@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes} from "../services/document.service.js";
 
 
 export const tiposDocumento = async (req, res)=>{
@@ -178,5 +178,34 @@ export const eliminacionVersion = async (req, res)=>{
         res.status(200).json({message: "Versión eliminada exitosamente"});
     }catch(err){
         res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
+    }
+}
+
+
+export const solicitudCambio = async(req, res)=>{
+	try{
+		const {idUsuario, mensaje, idVersion} = req.body;
+        
+		const data = await crearSolicitudCambio(idUsuario, mensaje, idVersion);
+
+		return res.status(201).json({message: "La solicitud fue creada exitosamente"});
+	}catch(err){
+		console.error(err);
+		return res.status(err.statusCode? err.statusCode :500).json({error: err.message? err.message : "Ocurrió un error al crear la solicitud"})
+	}
+}
+
+export const solicitudesCambio = async(req, res) =>{
+    try{
+        const { page = 1, limit = 20 } = req.query;
+
+        const solicitudes = await verSolicitudes();
+
+        return res.status(200).json({message: "Solicitudes recuperadas exitosamente", data: solicitudes});
+
+    }catch(err){
+        console.log("Detalle", err);
+        console.error(err);
+        return res.status(err.statusCode? err.statusCode :500).json({error: err.message? err.message : "Ocurrió un error al obtener las solicitudes"})
     }
 }

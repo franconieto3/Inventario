@@ -18,6 +18,8 @@ export const useProducts = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+    //useEffect(()=>{console.log(productos)},[productos])
+
     // Función para recargar manualmente (útil tras crear/editar)
     
     const refreshProducts = useCallback(() => {

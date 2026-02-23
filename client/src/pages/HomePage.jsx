@@ -41,6 +41,19 @@ export default function HomePage(){
                         <p className='card-description'>Registrar nuevos usuarios</p>
                     </div>
 
+                    <div className="card" onClick={()=>navigate("/ingenieria")}>
+                        <div className='icons-container'>
+                            <div className="first-icon">
+                                <i className="material-icons">engineering</i>
+                            </div>
+                            <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                        </div>
+                        <div className='card-title'>
+                            <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Ingeniería</h1>
+                        </div>
+                        <p className='card-description'>Ordenes de cambio de ingeniería, registro de calibraciones</p>
+                    </div>
+
                 </div>
             </div>
         </div>

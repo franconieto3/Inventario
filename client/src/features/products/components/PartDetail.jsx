@@ -6,6 +6,7 @@ import formatearCodigo from '../../../services/formatearCodigo';
 import EdicionPieza from './EdicionPieza';
 import { HistorialVersiones } from './HistorialVersiones';
 import Can from '../../../components/Can';
+import { SolicitudCambio } from './SolicitudCambio';
 
 import "./PartDetail.css"
 
@@ -115,6 +116,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
 
     const handleChangeRequest = (idVersion)=>{
         setMostrarSolicitud(true);
+        setDocSeleccionado(idVersion);
     }
 
     return (
@@ -168,7 +170,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                             fetchPart();
                             if (onRefreshParent) onRefreshParent();
                         }}
-                    />}
+                />}
 
                 {mostrar && (
                     <div className="pieza-info">
@@ -255,10 +257,27 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 
                             </div>
                         )}
-                    {mostrarHistorial && <HistorialVersiones idPieza={piezaSeleccionada} idTipoDocumento={docSeleccionado} closeHistoryModal={()=>setMostrarHistorial(false)} verDocumento={handleVerPlano}/>}  
-                    
+                    {mostrarHistorial && 
+                        <HistorialVersiones 
+                        idPieza={piezaSeleccionada} 
+                        idTipoDocumento={docSeleccionado} 
+                        closeHistoryModal={()=>{
+                            setMostrarHistorial(false); 
+                            setDocSeleccionado(null)
+                        }} 
+                        verDocumento={handleVerPlano}
+                        />}  
+                    {mostrarSolicitud && 
+                        <SolicitudCambio 
+                            idVersion={docSeleccionado} 
+                            onClose={()=>{
+                                setMostrarSolicitud(false); 
+                                setDocSeleccionado(null)
+                            }}
+                        />}
                     </div>
                 )}
+                
             </div>
         </>
     );

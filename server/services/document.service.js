@@ -173,3 +173,37 @@ export const obtenerPiezasVersion = async (idVersion) => {
 
     return piezas;
 }
+
+export const crearSolicitudCambio = async(idUsuario, mensaje, idVersion)=>{
+
+	const {data, error} = await supabase.rpc('crear_solicitud_cambio',{
+		p_id_usuario: idUsuario, 
+		p_mensaje: mensaje, 
+		p_id_version_afectada: idVersion
+	});
+	
+	if(error || data===null){
+        console.log(error);
+		const err = new Error("Ocurrió un error al crear la solicitud")
+		err.statusCode = 500;
+		throw err
+	}
+	return data;
+}
+
+export const verSolicitudes = async()=>{
+    const {data, error} = await supabase
+        .rpc('obtener_solicitudes_cambio',{});
+
+    if (error) {
+        console.log(error);
+        if(error.code == 'PGRST116'){
+            return [];
+        }
+        const err = new Error("Error al obtener las solicitudes")
+        err.statusCode = 500;
+        throw err;
+    }
+    
+    return data;
+}

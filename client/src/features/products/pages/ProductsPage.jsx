@@ -9,6 +9,7 @@ import EdicionProducto from "../components/EdicionProducto";
 import Buscador from "../../../components/ui/Buscador";
 import NewProduct from "../components/NewProduct";
 import Can from "../../../components/Can";
+import Table from "../../../components/ui/Table";
 
 //Estilos
 import "./ProductsPage.css"
@@ -119,6 +120,18 @@ export default function ProductsPage(){
                         ))
                     )}
                 </div>
+                
+                {/*
+                <Table 
+                    data={productos} 
+                    columns={
+                        [
+                            {key:"nombre", header:"Nombre"},
+                            {key:"id_rubro", header:"Rubro"},
+                            {key:"id_registro_pm", header:"Producto médico"}
+                        ]}>
+                </Table>
+                */}
 
                 {/* Controles de Paginación */}
                 {totalPages > 1 && (

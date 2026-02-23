@@ -1,8 +1,8 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
+import { DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
@@ -44,5 +44,15 @@ router.delete('/eliminar/:id',
     requirePermission('administrar_documentos'),
     validateSchema(eliminarVersionSchema, 'params'), 
     eliminacionVersion);
+
+router.post('/nueva-solicitud',
+	verificarToken,
+	requirePermission('solicitar_modificacion'),
+	validateSchema(solicitudCambioSchema),
+	solicitudCambio);
+
+router.get('/solicitud-cambio',
+    verificarToken,
+    solicitudesCambio);
 
 export default router;

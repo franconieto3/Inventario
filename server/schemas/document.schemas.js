@@ -49,3 +49,9 @@ export const HistorialVersionesSchema = z.object({
 export const eliminarVersionSchema = z.object({
   id: z.coerce.number().int().positive({message: "Especifique el ID de la versión a eliminar"})
 });
+
+export const solicitudCambioSchema = z.object({
+	idUsuario: z.coerce.number().int().positive("ID de usuario inválido"),
+	mensaje: z.string().min(1, {message: "La descripción del cambio es obligatoria"}),
+	idVersion: z.coerce.number().int().positive("ID de versión inválida")
+});

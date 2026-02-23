@@ -11,6 +11,7 @@ import Register from "./features/auth/components/Register";
 
 import ProductsPage from './features/products/pages/ProductsPage';
 import ProductDetail from "./features/products/pages/ProductDetail";
+import { Ingenieria } from './features/ingenieria/pages/Ingenieria';
 
 function App() {
 
@@ -37,6 +38,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <ProductsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/ingenieria"
+              element={
+                <PrivateRoute>
+                  <Ingenieria/>
                 </PrivateRoute>
               }
             />
