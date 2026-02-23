@@ -22,10 +22,14 @@ export const obtenerRegistrosPm = async ()=>{
 }
 
 export const obtenerProductos = async ()=>{
+  /*  
     const {data, error} = await supabase
     .from('producto')
     .select('*')
     .eq('id_estado_producto', 1);
+*/
+
+    const { data, error } = await supabase.rpc('obtener_productos',{});
 
     if (error) {
         if(error.code == 'PGRST116'){

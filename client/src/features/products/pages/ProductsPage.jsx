@@ -127,8 +127,8 @@ export default function ProductsPage(){
                     columns={
                         [
                             {key:"nombre", header:"Nombre"},
-                            {key:"id_rubro", header:"Rubro"},
-                            {key:"id_registro_pm", header:"Producto médico"}
+                            {key:"descripcion_rubro", header:"Rubro"},
+                            {key:"descripcion_registro", header:"Producto médico"}
                         ]}>
                 </Table>
                 */}

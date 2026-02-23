@@ -192,11 +192,9 @@ export const crearSolicitudCambio = async(idUsuario, mensaje, idVersion)=>{
 }
 
 export const verSolicitudes = async()=>{
-    const {data, error} = await supabase
-        .rpc('obtener_solicitudes_cambio',{});
-
+    const {data, error} = await supabase.rpc('obtener_solicitudes_cambio',{});
+    
     if (error) {
-        console.log(error);
         if(error.code == 'PGRST116'){
             return [];
         }
@@ -204,6 +202,5 @@ export const verSolicitudes = async()=>{
         err.statusCode = 500;
         throw err;
     }
-    
     return data;
 }
