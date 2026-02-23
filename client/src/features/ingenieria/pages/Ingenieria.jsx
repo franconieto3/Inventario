@@ -81,7 +81,7 @@ export function Ingenieria(){
       {
         key:"",
         header:"",
-        render:(_, row) => <ChangeRequestRowActions row={row} />
+        render:(_, row) => <ChangeRequestRowActions row={row} onUpdate={refreshRequests}/>
       }
     ]
 

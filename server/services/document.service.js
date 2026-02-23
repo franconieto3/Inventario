@@ -204,3 +204,19 @@ export const verSolicitudes = async()=>{
     }
     return data;
 }
+
+export const actualizarSolicitud = async(idSolicitud, idUsuario, idEstado)=>{
+    const {data, error} = await supabase.rpc('actualizar_solicitud_cambio',
+        {
+            p_id_solicitud: idSolicitud,
+            p_id_responsable: idUsuario,
+            p_id_estado: idEstado
+        })
+    if(error){
+        console.log(error);
+        const err = new Error ("Error al actualizar la solicitud");
+        err.statusCode = 500;
+        throw err;
+    }
+    return data;
+}

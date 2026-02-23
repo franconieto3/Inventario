@@ -53,3 +53,9 @@ export const solicitudCambioSchema = z.object({
 	mensaje: z.string().min(1, {message: "La descripción del cambio es obligatoria"}),
 	idVersion: z.coerce.number().int().positive("ID de versión inválida")
 });
+
+export const actualizarSolicitudSchema = z.object({
+  idSolicitud: z.coerce.number().int().positive("ID de solicitud inválida"),
+  idUsuario: z.coerce.number().int().positive("ID de usuario inválida"),
+  idEstado: z.coerce.number().int().positive("ID de estado inválida"),
+})

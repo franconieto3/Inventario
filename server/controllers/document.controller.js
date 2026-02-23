@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud} from "../services/document.service.js";
 
 
 export const tiposDocumento = async (req, res)=>{
@@ -207,5 +207,17 @@ export const solicitudesCambio = async(req, res) =>{
         console.log("Detalle", err);
         console.error(err);
         return res.status(err.statusCode? err.statusCode :500).json({error: err.message? err.message : "Ocurrió un error al obtener las solicitudes"})
+    }
+}
+
+export const solicitudTerminada = async (req, res)=>{
+    try{
+        const {idSolicitud, idUsuario, idEstado} = req.body;
+        const data = await actualizarSolicitud(idSolicitud, idUsuario, idEstado);
+        return res.status(201).json({message: "Solicitud actualizada correctamente"});
+    }catch(err){
+        console.log("Detalle", err);
+        console.error(err);
+        return res.status(err.statusCode? err.statusCode :500).json({error: err.message});  
     }
 }
