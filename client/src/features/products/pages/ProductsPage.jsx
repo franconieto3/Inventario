@@ -126,13 +126,27 @@ export default function ProductsPage(){
                     data={productos} 
                     columns={
                         [
-                            {key:"nombre", header:"Nombre"},
-                            {key:"descripcion_rubro", header:"Rubro"},
-                            {key:"descripcion_registro", header:"Producto médico"}
+                            {
+                                key:"nombre", 
+                                header:"Nombre",
+                                render: (_, row)=>(
+                                    <div onClick={()=>navigate(`/producto/${row.id_producto}`)} style={{'cursor':'pointer'}}>
+                                        {_}
+                                    </div>
+                                )
+                            },
+                            {
+                                key:"descripcion_rubro", 
+                                header:"Rubro"
+                            },
+                            {
+                                key:"descripcion_registro", 
+                                header:"Producto médico"
+                            }
                         ]}>
                 </Table>
                 */}
-
+                
                 {/* Controles de Paginación */}
                 {totalPages > 1 && (
                     <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>

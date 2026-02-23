@@ -1,23 +1,21 @@
 import { z } from 'zod';
 
-export const SolicitudSubidaSchema = (tiposPermitidos)=>{
-  return z.object({
-        idTipoDocumento: z.number().int().positive({ message: "ID de tipo requerido" }),
+export const SolicitudSubidaSchema = z.object({
+        idTipoDocumento: z.coerce.number().int().positive({ message: "ID de tipo requerido" }),
         fileName: z.string().min(1, "El nombre es requerido"),
         fileType: z.string().min(1, "El tipo de archivo es requerido"),
         fileSize: z.number().max(50 * 1024 * 1024, "El archivo excede los 50MB"),
-        idProducto: z.number().optional() // Útil si quieres organizar temp por producto
+        idProducto: z.coerce.number().optional() // Útil si quieres organizar temp por producto
     });
-}
 
 export const DocumentoPayloadSchema = z.object({
   //Borrar todo el índice documento
   
   documento: z.object({
-    id_producto: z.number().int().positive({ message: "ID de producto inválido" })
+    id_producto: z.coerce.number().int().positive({ message: "ID de producto inválido" })
   }),
   version: z.object({
-    id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" }),
+    id_tipo_documento: z.coerce.number().int().positive({ message: "ID de tipo inválido" }),
     fecha_vigencia: z.coerce.date({
       invalid_type_error: "Fecha inválida",
     }),
@@ -28,13 +26,13 @@ export const DocumentoPayloadSchema = z.object({
 });
 
 export const ReestablecerVersionSchema = z.object({
-  idVersionRecuperada: z.number().int().positive({message: "ID de versión inválida"}),
+  idVersionRecuperada: z.coerce.number().int().positive({message: "ID de versión inválida"}),
   fecha_vigencia: z.coerce.date({
     invalid_type_error: "Fecha inválida",
   }),
   commit: z.string().optional(),
   path: z.string().min(1, { message: "El path del archivo es obligatorio" }),
-  id_tipo_documento: z.number().int().positive({ message: "ID de tipo inválido" })
+  id_tipo_documento: z.coerce.number().int().positive({ message: "ID de tipo inválido" })
 });
 
 export const VisualizarDocumentoSchema = z.object({

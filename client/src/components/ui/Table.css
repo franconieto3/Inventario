@@ -12,6 +12,8 @@
   overflow-x: auto;
   width: 100%;
   background-color: #ffffff;
+
+  padding-bottom: 140px;
 }
 
 .custom-table {

@@ -5,6 +5,7 @@ import { apiCall } from "../../../services/api";
 
 //import "../styles/ProductDetail.css"
 import "./AgregarDocumento.css"
+import { useDocuments } from "../hooks/useDocuments";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -15,8 +16,10 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     const [commit, setCommit] = useState("");
     const [resetKey, setResetKey] = useState(0);
     const [piezasPlano, setPiezasPlano] = useState([]);
-    const [tiposDocumento, setTiposDocumento] = useState([]);
+    //const [tiposDocumento, setTiposDocumento] = useState([]);
     const [idTipoDocumento, setIdTipoDocumento] = useState("");
+
+    const {tiposDocumento} = useDocuments();
 
     const [file, setFile] = useState(null);
     
@@ -29,8 +32,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-
-
     // Lógica para obtener los tipos permitidos del documento seleccionado
     // Buscamos el objeto completo en el array 'tiposDocumento' usando el ID seleccionado
     const tipoDocumentoSeleccionado = tiposDocumento.find(
@@ -41,7 +42,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     const formatosPermitidos = tipoDocumentoSeleccionado?.tipos_permitidos || []; 
     
     
-
     const togglePieza = (id) => {
         setPiezasPlano(prev => {
         if (prev.includes(id)) {
@@ -50,15 +50,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         return [...prev, id];
         });
     };
-
-    
-    useEffect(()=>{
-        const fetchTipos = async ()=>{
-            const data = await apiCall(`${API_URL}/api/documentos/tipo-documento`,{method:'GET'});
-            setTiposDocumento(data);    
-        }
-        fetchTipos();
-    },[])
 
     useEffect(()=>{
         if(file){

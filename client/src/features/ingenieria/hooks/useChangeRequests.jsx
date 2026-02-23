@@ -4,7 +4,7 @@ import { apiCall } from "../../../services/api";
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export const useChangeRequest = ()=>{
-    const [solicitudes, setSolicitudes] = useState(null)
+    const [solicitudes, setSolicitudes] = useState([])
 
     const [loadingRequests, setLoadingRequests] = useState(false);
 
@@ -25,7 +25,7 @@ export const useChangeRequest = ()=>{
                 setSolicitudes(data.data || []);
 
             }catch(err){
-                console.error("Error cargando productos", err);
+                console.error("Error cargando solicitudes", err);
             }finally{
                 setLoadingRequests(false);
             }
@@ -33,7 +33,6 @@ export const useChangeRequest = ()=>{
         fetchRequests();
     },[page, refreshTrigger]);
 
-    useEffect(()=>{console.log(solicitudes)},[solicitudes]);
 
     return{
         solicitudes,
