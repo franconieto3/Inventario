@@ -72,11 +72,11 @@ export default function ProductsPage(){
             <div className='body-container'>
                 <div className='title-container'>
                     <div>
-                    <p className='products-text'>Repositorio de productos</p>
-                    <p className='products-count'>{`${productos.length}`} productos</p>
-                    <p className='products-count'>
-                            Página {page} de {totalPages || 1}
-                    </p>
+                        <p className='products-text'>Repositorio de productos</p>
+                        <p className='products-count'>{`${productos.length}`} productos</p>
+                        <p className='products-count'>
+                                Página {page} de {totalPages || 1}
+                        </p>
                     </div>
                 </div>
                 <div className='filters'>

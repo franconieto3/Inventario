@@ -53,10 +53,12 @@ router.post('/nueva-solicitud',
 
 router.get('/solicitud-cambio',
     verificarToken,
+    requirePermission('solicitar_modificacion'),
     solicitudesCambio);
 
 router.post('/actualizacion-solicitud',
     verificarToken,
+    requirePermission('modificar_solicitud_cambio'),
     validateSchema(actualizarSolicitudSchema),
     solicitudTerminada);
 

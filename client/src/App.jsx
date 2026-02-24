@@ -22,9 +22,17 @@ function App() {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              
                
             {/* Rutas Privadas */}
+            <Route 
+              path="/register" 
+              element={
+                <PrivateRoute permission="acceso_usuarios">
+                  <Register />
+                </PrivateRoute>
+              } 
+            />
             <Route 
               path="/homepage" 
               element={
@@ -36,7 +44,7 @@ function App() {
             <Route
               path="/products" 
               element={
-                <PrivateRoute>
+                <PrivateRoute permission="acceso_repositorio">
                   <ProductsPage />
                 </PrivateRoute>
               }
@@ -44,7 +52,7 @@ function App() {
             <Route
               path="/ingenieria"
               element={
-                <PrivateRoute>
+                <PrivateRoute permission="acceso_ingenieria">
                   <Ingenieria/>
                 </PrivateRoute>
               }
@@ -52,7 +60,7 @@ function App() {
             <Route 
               path="/producto/:id" 
               element={
-                <PrivateRoute>
+                <PrivateRoute permission="acceso_repositorio">
                   <ProductDetail />
                 </PrivateRoute>
                 } 

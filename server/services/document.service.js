@@ -181,9 +181,10 @@ export const crearSolicitudCambio = async(idUsuario, mensaje, idVersion)=>{
 		p_mensaje: mensaje, 
 		p_id_version_afectada: idVersion
 	});
+    console.log('data', data);
 	
 	if(error || data===null){
-        console.log(error);
+        console.log('error', error);
 		const err = new Error("Ocurrió un error al crear la solicitud")
 		err.statusCode = 500;
 		throw err

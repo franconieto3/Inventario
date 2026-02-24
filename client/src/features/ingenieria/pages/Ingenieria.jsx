@@ -3,6 +3,10 @@ import { ChangeRequestRowActions } from "../components/RowActions";
 import Table from "../../../components/ui/Table";
 import { useChangeRequest } from "../hooks/useChangeRequests";
 import { useDocuments } from "../../products/hooks/useDocuments";
+import { useEffect } from "react";
+
+//Estilos
+import "./Ingenieria.css"
 
 export function Ingenieria(){
 
@@ -28,9 +32,7 @@ export function Ingenieria(){
         header: "Versión afectada",
         render: (_)=>(
           <div style={{'display':'flex','alignItems':'center','gap':'5px','cursor':'pointer'}} onClick={()=>verDocumento(_)}>
-            <button>
-              <i className="material-icons">open_in_new</i>
-            </button>
+            <i className="material-icons">open_in_new</i>
             <span> Ver documento</span>
           </div>
         )
@@ -71,25 +73,36 @@ export function Ingenieria(){
       {
         key:"fecha_cierre",
         header: "Fecha de cierre",
-        render: (_)=>_? new Date(_).toLocaleDateString() : "- - -"
+        render: (_)=> _ ===null? "- - -" : new Date(_).toLocaleDateString()
       },
       {
-        key:"usuario_respuesta",
+        key:"nombre_responsable",
         header: "Responsable",
-        render: (_)=>_? _ : "- - -"
+        render: (_)=> _ ===null? "- - -" : _
       },
       {
         key:"",
         header:"",
-        render:(_, row) => <ChangeRequestRowActions row={row} onUpdate={refreshRequests}/>
+        render:(_, row) => row.id_estado_solicitud ===1? <ChangeRequestRowActions row={row} onUpdate={refreshRequests}/> : ""
       }
     ]
-
+    
     return(
         <>
             <NavBar />
             <div className="body-container">
-                <Table data={solicitudes} columns={columnas}/>
+              <div className="ingenieria-tc">
+                <p className='ingenieria-titulos'>Ingeniería</p>
+              </div>
+              <div style={{display:'flex', textAlign:'start',alignItems:'center', maxWidth:'500px',marginBottom:'20px'}}>
+                <div>
+                  <h3 style={{fontWeight:'500'}}>Solicitudes de cambios</h3>
+                  <p className="table-description">
+                    Seguimiento de todas las solicitudes de cambio en documentos relacionados a piezas.
+                  </p>
+                </div>
+              </div>
+              <Table data={solicitudes} columns={columnas}/>
             </div>
         </>
 

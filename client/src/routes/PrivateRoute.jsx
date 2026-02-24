@@ -2,7 +2,7 @@
 import { Navigate } from 'react-router-dom';
 import { UserAuth } from '../features/auth/context/AuthContext';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ permission = null, children }) => {
   const { user, loading } = UserAuth();
 
   // 1. Si todavía está verificando el localStorage, mostramos un "Cargando..."
@@ -15,6 +15,10 @@ const PrivateRoute = ({ children }) => {
   if (!user) {
     // 'replace' evita que el usuario pueda volver atrás con el botón del navegador
     return <Navigate to="/login" replace />;
+  }
+
+  if (permission!==null && !user?.permisos?.includes(permission)) {
+    return <Navigate to="/homepage" replace />;
   }
 
   // 3. Si hay usuario, renderizar el componente hijo (ej: Dashboard)

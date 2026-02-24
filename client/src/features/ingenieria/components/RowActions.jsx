@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu"; // Importa tu componente
 import { apiCall } from "../../../services/api";
 import { UserAuth } from "../../auth/context/AuthContext";
+import Can from "../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -47,11 +48,13 @@ export function ChangeRequestRowActions({ row, onUpdate }) {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <DropdownMenu 
-        isOpen={isOpen} 
-        onToggle={() => setIsOpen(!isOpen)} 
-        items={menuItems} 
-      />
+      <Can permission='modificar_solicitud_cambio'>
+        <DropdownMenu 
+          isOpen={isOpen} 
+          onToggle={() => setIsOpen(!isOpen)} 
+          items={menuItems} 
+        />
+      </Can>
     </div>
   );
 }

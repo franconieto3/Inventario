@@ -1,0 +1,25 @@
+.ingenieria-tc{
+  display: flex;
+  padding: 0px;
+  justify-content: space-between;
+  margin-top: 0px;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.ingenieria-titulos{
+  margin: 0%;
+  font-size: 25px;
+  font-family: "Inter", sans-serif;
+  font-size: 2rem;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.table-description{
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: rgb(97, 97, 97);
+    text-align: start;
+}
