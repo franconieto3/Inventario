@@ -11,6 +11,7 @@ import "./Ingenieria.css"
 export function Ingenieria(){
 
     const {solicitudes,
+        estados,
         loadingRequests,
         page,
         setPage,
@@ -94,12 +95,22 @@ export function Ingenieria(){
               <div className="ingenieria-tc">
                 <p className='ingenieria-titulos'>Ingeniería</p>
               </div>
-              <div style={{display:'flex', textAlign:'start',alignItems:'center', maxWidth:'500px',marginBottom:'20px'}}>
+              <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between'}}>
                 <div>
                   <h3 style={{fontWeight:'500'}}>Solicitudes de cambios</h3>
                   <p className="table-description">
                     Seguimiento de todas las solicitudes de cambio en documentos relacionados a piezas.
                   </p>
+                </div>
+                <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
+                  <select onChange={(e)=>{setSelectedStatus(e.target.value)}}>
+                    <option value="0">Todos los estados</option>
+                    {estados.map(
+                      (estado)=>{
+                        <option key={estado.id_estado_solicitud} value={estado.id_estado_solicitud}>{estado.descripcion}</option>
+                      }
+                    )}
+                  </select>
                 </div>
               </div>
               <Table data={solicitudes} columns={columnas}/>

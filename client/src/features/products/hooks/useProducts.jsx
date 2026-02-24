@@ -70,8 +70,6 @@ export const useProducts = () => {
                 if (selectedRubro) query += `&rubro=${selectedRubro}`;
                 if (selectedRegistroPM) query += `&registro_pm=${selectedRegistroPM}`;
 
-                console.log(`Query: ${API_URL}/api/productos${query}`)
-
                 const data = await apiCall(`${API_URL}/api/productos${query}`, {});
 
                 if (data && data.data && Array.isArray(data.data)) {
