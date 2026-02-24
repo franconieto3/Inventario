@@ -9,16 +9,18 @@ import EdicionProducto from "../components/EdicionProducto";
 import Buscador from "../../../components/ui/Buscador";
 import NewProduct from "../components/NewProduct";
 import Can from "../../../components/Can";
-import Table from "../../../components/ui/Table";
+import { ListadoProductos } from "../components/ListadoProductos";
 
 //Estilos
 import "./ProductsPage.css"
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export default function ProductsPage(){
     const navigate = useNavigate(); 
 
+    //Estados
     const { 
         productos, 
         rubros, 
@@ -28,15 +30,24 @@ export default function ProductsPage(){
         page,
         setPage,
         totalPages,
-        refreshProducts
+        refreshProducts,
+        handleSetRubro,
+        handleSetRegistroPM
     } = useProducts();
 
     const [mostrarEdicion, setMostrarEdicion] = useState(false);
     const [showNewProduct, setShowNewProduct] = useState(false);
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+    const [idRubroSeleccionado, setIdRubroSeleccionado] = useState(null);
+    const [idRegistroSeleccionado, setIdRegistroSeleccionado] = useState(null);
 
-    const handleProductClick = (id) => navigate(`/producto/${id}`); 
+    const [reload, setReload] = useState(0);
 
+    //Selección de productos
+
+    //const handleProductClick = (id) => navigate(`/producto/${id}`);
+
+    //Edición de productos
     const abrirModalEdicion = (producto)=>{
         setProductoSeleccionado(producto)
         setMostrarEdicion(true);
@@ -47,10 +58,38 @@ export default function ProductsPage(){
         setProductoSeleccionado(null);
         setShowNewProduct(false);
     }
-
+    //Refrescar la página una vez editado o eliminado un producto
     const handleSuccess = ()=>{
         handleCloseModal();
         refreshProducts();
+    }
+
+    //Eliminación de productos
+    const handleEliminarProducto = async (producto)=>{
+        if(window.confirm("¿Seguro que deseas eliminar este producto?")){
+            try{
+                const res = await apiCall(`${API_URL}/api/productos/eliminacion/${producto.id_producto}`, {'method':"DELETE"});
+                console.log("Eliminando ", producto.nombre);
+                handleSuccess();
+                
+            }catch(err){
+                alert("No se pudo eliminar el producto seleccionado");
+            }
+        }
+    }
+
+    //Filtros
+    const aplicarFiltros =()=>{
+        handleSetRubro(idRubroSeleccionado);
+        handleSetRegistroPM(idRegistroSeleccionado);
+    }
+
+    const limpiarFiltros=()=>{
+        setIdRegistroSeleccionado(null);
+        setIdRubroSeleccionado(null);
+        handleSetRubro(null);
+        handleSetRegistroPM(null);
+        setReload(prev => prev + 1)
     }
 
     // Handlers de Paginación
@@ -85,7 +124,7 @@ export default function ProductsPage(){
                            solo buscará en los 20 productos visibles actualmente.
                            Para buscar en todo, el componente Buscador debería llamar a la API.
                         */}
-                        <Buscador               
+                        <Buscador              
                             opciones={productos}
                             placeholder="Buscar productos..."
                             keys={['id_producto','nombre']}
@@ -102,6 +141,7 @@ export default function ProductsPage(){
                     </Can>
                     
                 </div>
+                {/*
                 <div className='product-list'>
                     <div className='product-list-header'>Nombre</div>
 
@@ -120,32 +160,54 @@ export default function ProductsPage(){
                         ))
                     )}
                 </div>
-                
-                {/*
-                <Table 
-                    data={productos} 
-                    columns={
-                        [
-                            {
-                                key:"nombre", 
-                                header:"Nombre",
-                                render: (_, row)=>(
-                                    <div onClick={()=>navigate(`/producto/${row.id_producto}`)} style={{'cursor':'pointer'}}>
-                                        {_}
-                                    </div>
-                                )
-                            },
-                            {
-                                key:"descripcion_rubro", 
-                                header:"Rubro"
-                            },
-                            {
-                                key:"descripcion_registro", 
-                                header:"Producto médico"
-                            }
-                        ]}>
-                </Table>
                 */}
+                <Can permission="acceso_repositorio">
+                    <div style={{display:"flex", justifyContent:"space-between", gap:'10px',flexWrap:'wrap',marginBottom:'20px'}}>
+                        <div style={{display:'flex', textAlign:'start',alignItems:'center', maxWidth:'500px'}}>
+                            <div style={{minWidth:'300px'}}>
+                                <h3 style={{fontWeight:'500'}}>Listado de productos</h3>
+                                <p className="table-description">
+                                    Repositorio de todos los productos, especificación de documentos, códigos, componenentes, materiales y procesos
+                                </p>
+                            </div>
+                        </div>
+                        <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
+                            <div style={{minWidth:'250px'}}>
+                                <Buscador 
+                                    key={reload} 
+                                    opciones={rubros}
+                                    placeholder="Filtrar por rubros"
+                                    keys={['id_rubro','descripcion']}
+                                    onChange={(id) => setIdRubroSeleccionado(id)}
+                                    idField='id_rubro'
+                                    displayField='descripcion'
+                                    showId={false}
+                                />
+                            </div>
+                            <div style={{minWidth:'250px'}}>
+                                <Buscador 
+                                    key={reload} 
+                                    opciones={registrosPM}
+                                    placeholder="Filtrar por P.M."
+                                    keys={['id_registro_pm','descripcion']}
+                                    onChange={(id) => setIdRegistroSeleccionado(id)}
+                                    idField='id_registro_pm'
+                                    displayField='descripcion'
+                                    showId={false}
+                                />
+                            </div>
+                            <div style={{display:'flex',gap:'10px',paddingBottom:'10px'}}>
+                                <button onClick={aplicarFiltros}>Aplicar filtros</button>
+                                <button onClick={limpiarFiltros}>Limpiar filtros</button>
+                            </div>
+                        </div>
+                    </div>
+                    <ListadoProductos 
+                        data={productos} 
+                        onEdit={(prod) => abrirModalEdicion(prod)}
+                        onDelete={(producto)=>handleEliminarProducto(producto)}
+                    />
+                </Can>
                 
                 {/* Controles de Paginación */}
                 {totalPages > 1 && (

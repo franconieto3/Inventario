@@ -3,7 +3,7 @@ import { ChangeRequestRowActions } from "../components/RowActions";
 import Table from "../../../components/ui/Table";
 import { useChangeRequest } from "../hooks/useChangeRequests";
 import { useDocuments } from "../../products/hooks/useDocuments";
-import { useEffect } from "react";
+
 
 //Estilos
 import "./Ingenieria.css"

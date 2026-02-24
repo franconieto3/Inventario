@@ -8,9 +8,6 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
   const [focus, setFocus] = useState(false);
   const [value, setValue] = useState(0);
 
-  useEffect(()=>{
-    onChange(value)
-  },[value])
 
   useEffect(() => {
     // Verificamos que exista un valorInicial y que tengamos opciones donde buscar
@@ -45,6 +42,7 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
   }, [busqueda, fuse, opciones]);
 
   const handleClick = (item)=>{
+    onChange(item[idField]);
     setValue(item[idField]);
     setBusqueda(item[displayField]);
     setFocus(false);

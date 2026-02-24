@@ -3,8 +3,6 @@ import { UserAuth } from "../features/auth/context/AuthContext";
 
 export const Can = ({ permission, children }) => {
   const { user } = UserAuth();
-
-  useEffect(()=>{console.log(user)},[user]);
   
   // Si no hay usuario o no tiene el permiso, no renderiza nada
   if (permission!==null && !user?.permisos?.includes(permission)) {

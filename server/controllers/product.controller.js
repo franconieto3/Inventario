@@ -23,7 +23,16 @@ export const registrosPM = async (req, res) =>{
 
 export const productos = async (req, res)=>{
     try{
-        const productos = await productService.obtenerProductos();
+        const { page = 1, limit = 20, rubro, registro_pm } = req.query;
+        
+        const filtros = {
+            page: Number(page),
+            limit: Number(limit),
+            rubro: rubro ? Number(rubro) : null,
+            registro_pm: registro_pm ? Number(registro_pm) : null
+        };
+
+        const productos = await productService.obtenerProductos(filtros);
         res.json(productos);
 
     }catch(err){

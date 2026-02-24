@@ -21,15 +21,19 @@ export const obtenerRegistrosPm = async ()=>{
     return data;
 }
 
-export const obtenerProductos = async ()=>{
-  /*  
-    const {data, error} = await supabase
-    .from('producto')
-    .select('*')
-    .eq('id_estado_producto', 1);
-*/
+export const obtenerProductos = async ({ page, limit, rubro, registro_pm })=>{
+    
+    //const { data, error } = await supabase.rpc('obtener_productos',{});
+    
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
 
-    const { data, error } = await supabase.rpc('obtener_productos',{});
+    const { data, error, count } = await supabase
+        .rpc('obtener_productos', {
+            p_rubro: rubro,
+            p_registro_pm: registro_pm
+        }, { count: 'exact' })
+        .range(from, to);
 
     if (error) {
         if(error.code == 'PGRST116'){
@@ -40,7 +44,13 @@ export const obtenerProductos = async ()=>{
         throw new Error("Error al obtener los productos");
     }
 
-    return data;
+    //return data;
+
+    return {
+        data: data || [],
+        total: count || 0
+    };
+
 }
 
 export const cargarProductos = async (nombre, id_registro_pm, id_rubro, piezas)=>{

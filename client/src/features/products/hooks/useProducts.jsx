@@ -9,6 +9,9 @@ export const useProducts = () => {
     const [rubros, setRubros] = useState([]);
     const [registrosPM, setRegistrosPM] = useState([]);
     
+    const [selectedRubro, setSelectedRubro] = useState(null);
+    const [selectedRegistroPM, setSelectedRegistroPM] = useState(null);
+
     // Estados de carga independientes
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [loadingAux, setLoadingAux] = useState(false); // Para rubros y PM
@@ -18,13 +21,23 @@ export const useProducts = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-    //useEffect(()=>{console.log(productos)},[productos])
-
     // Función para recargar manualmente (útil tras crear/editar)
     
     const refreshProducts = useCallback(() => {
         setRefreshTrigger(prev => prev + 1);
     }, []);
+
+    // Funciones para manejar los filtros y resetear la página a 1
+    const handleSetRubro = (id) => {
+        setSelectedRubro(id); // Asumiendo que 0 es "limpiar filtro"
+        setPage(1);
+    };
+
+    const handleSetRegistroPM = (id) => {
+        setSelectedRegistroPM(id);
+        setPage(1);
+        
+    };
 
     // 2. EFECTO 1: Cargar datos auxiliares (Solo una vez al montar)
     // Esto es rápido y habilita los filtros casi instantáneamente.
@@ -53,7 +66,12 @@ export const useProducts = () => {
         const fetchProductos = async () => {
             setLoadingProducts(true);
             try {
-                const query = `?page=${page}&limit=20`; 
+                let query = `?page=${page}&limit=20`;
+                if (selectedRubro) query += `&rubro=${selectedRubro}`;
+                if (selectedRegistroPM) query += `&registro_pm=${selectedRegistroPM}`;
+
+                console.log(`Query: ${API_URL}/api/productos${query}`)
+
                 const data = await apiCall(`${API_URL}/api/productos${query}`, {});
 
                 if (data && data.data && Array.isArray(data.data)) {
@@ -78,7 +96,7 @@ export const useProducts = () => {
         };
 
         fetchProductos();
-    }, [page, refreshTrigger]); // Se vuelve a ejecutar si cambia la página
+    }, [page, refreshTrigger,selectedRubro, selectedRegistroPM]); // Se vuelve a ejecutar si cambia la página
 
     return { 
         productos, 
@@ -89,6 +107,8 @@ export const useProducts = () => {
         page,
         setPage,
         totalPages,
-        refreshProducts
+        refreshProducts,
+        handleSetRubro,
+        handleSetRegistroPM
     };
 };
