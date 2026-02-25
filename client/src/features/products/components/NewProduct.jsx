@@ -120,6 +120,7 @@ export default function NewProduct(props) {
               idField="id_registro_pm"
               displayField="descripcion"
               showId={true}
+              maxResults={props.registros.length}
             />
             
             <label>Especificar rubro:</label>
@@ -131,6 +132,7 @@ export default function NewProduct(props) {
               idField="id_rubro" 
               displayField="descripcion"
               showId={true}
+              maxResults={props.rubros.length}
             />
           </div>
           

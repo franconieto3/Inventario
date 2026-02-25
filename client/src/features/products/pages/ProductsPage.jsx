@@ -163,6 +163,7 @@ export default function ProductsPage(){
                                     idField='id_rubro'
                                     displayField='descripcion'
                                     showId={false}
+                                    maxResults={rubros.length}
                                 />
                             </div>
                             <div style={{minWidth:'250px'}}>
@@ -175,6 +176,7 @@ export default function ProductsPage(){
                                     idField='id_registro_pm'
                                     displayField='descripcion'
                                     showId={false}
+                                    maxResults={registrosPM.length}
                                 />
                             </div>
                             <div style={{display:'flex',gap:'10px',paddingBottom:'10px'}}>

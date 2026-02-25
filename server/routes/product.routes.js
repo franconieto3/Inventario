@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { rubros, registrosPM, productos, nuevoProducto, producto, pieza, agregarPieza, edicionPieza, eliminacionPieza, edicionProducto, eliminacionProducto} from '../controllers/product.controller.js';
+import { rubros, registrosPM, productos, nuevoProducto, producto, pieza, agregarPieza, edicionPieza, eliminacionPieza, edicionProducto, eliminacionProducto, piezas} from '../controllers/product.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 
@@ -61,5 +61,9 @@ router.delete('/pieza/eliminacion/:id',
     verificarToken,
     requirePermission('administrar_productos'), 
     eliminacionPieza);
+
+router.get('listado-piezas',
+    verificarToken, 
+    piezas);
 
 export default router;

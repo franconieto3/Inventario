@@ -9,6 +9,7 @@ import Can from '../../../components/Can';
 import { SolicitudCambio } from './SolicitudCambio';
 
 import "./PartDetail.css"
+import { BuscadorPiezas } from './BuscadorPiezas';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -232,6 +233,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                         <i className='material-icons'>grid_view</i>    
                                         Componentes: 
                                     </p>
+                                    <BuscadorPiezas onSelect={(id)=>console.log("hola mundo")}/>
                                 </div>
 
                                 <div className='detalle-documentos'>

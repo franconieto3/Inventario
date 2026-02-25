@@ -269,3 +269,16 @@ export const eliminarProducto = async(idProducto)=>{
 
     return data;
 }
+
+export const obtenerPiezas = async()=>{
+    const {data, error} = await supabase.rpc('obtener_piezas',{})
+
+    if(error){
+        console.error("Detalle del error:", error.message);
+        const err = new Error("Ocurrió un error. No se pudo obtener el listado de piezas");
+        err.statusCode =500;
+        throw err;
+    }
+
+    return data;
+}

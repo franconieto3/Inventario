@@ -2,11 +2,25 @@ import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import "./Buscador.css"
 
-const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField, showId, valorInicial }) => {
+const Buscador = ({ 
+  opciones, 
+  placeholder, 
+  keys, 
+  onChange, 
+  idField, 
+  displayField, 
+  showId, 
+  valorInicial,
+  threshold = 0.6,
+  debounceMs = 300,
+  maxResults = 50  
+}) => {
 
   const [busqueda, setBusqueda] = useState("");
   const [focus, setFocus] = useState(false);
   const [value, setValue] = useState(0);
+
+  const [busquedaDebounced, setBusquedaDebounced] = useState("");
 
 
   useEffect(() => {
@@ -18,28 +32,44 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
       if (encontrado) {
         setValue(encontrado[idField]);
         setBusqueda(encontrado[displayField]);
+        setBusquedaDebounced(encontrado[displayField]);
       }
     }
   }, [valorInicial, opciones, idField, displayField]);
+
+  //Logica de debounce
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setBusquedaDebounced(busqueda);
+    }, debounceMs);
+
+    return () => clearTimeout(timerId);
+  }, [busqueda, debounceMs]);
 
   // 1. Configuramos Fuse (useMemo para no instanciarlo en cada render)
   const fuse = useMemo(() => {
     return new Fuse(opciones, {
       keys: keys,
-      threshold: 0.3, // 0.0 = coincidencia exacta, 1.0 = coincide con todo
+      threshold: threshold, // 0.0 = coincidencia exacta, 1.0 = coincide con todo
     });
-  }, [opciones]);
+  }, [opciones, keys, threshold]);
 
   // 2. Calculamos los resultados
   const resultados = useMemo(() => {
+    /*
     if (!busqueda) return opciones; // Si no hay texto, mostramos todo
-
-    // AQUI ESTA LA CLAVE:
-    // fuse.search devuelve [{item: ...}, {item: ...}]
-    // Usamos .map para extraer el 'item' y dejar el array plano como el original
     return fuse.search(busqueda).map(resultado => resultado.item);
-    
-  }, [busqueda, fuse, opciones]);
+    */
+    if (!busquedaDebounced) {
+      return opciones.slice(0, maxResults); 
+    }
+    const resultadosBusqueda = fuse.search(busquedaDebounced);
+
+    return resultadosBusqueda
+      .slice(0, maxResults) // 1ro: Cortamos el array (ej. de 1000 a 50)
+      .map(resultado => resultado.item);
+
+  }, [busquedaDebounced, fuse, opciones, maxResults]);
 
   const handleClick = (item)=>{
     onChange(item[idField]);

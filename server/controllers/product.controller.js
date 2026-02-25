@@ -227,3 +227,14 @@ export const eliminacionProducto = async (req, res)=>{
         res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
     }
 }
+
+export const piezas = async (req, res)=>{
+    try{
+        const data = await productService.obtenerPiezas();
+        return res.status(200).json(data);
+        
+    }catch(err){
+        console.error(err);
+        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});    
+    }
+}
