@@ -192,18 +192,30 @@ export const crearSolicitudCambio = async(idUsuario, mensaje, idVersion)=>{
 	return data;
 }
 
-export const verSolicitudes = async()=>{
-    const {data, error} = await supabase.rpc('obtener_solicitudes_cambio',{});
+export const verSolicitudes = async(page = 1, limit = 20, status = null)=>{
+
+    const offset = (page - 1) * limit;
+    const p_id_estado = (status && status !== "0") ? parseInt(status) : null;
+
+    const {data, error} = await supabase.rpc('obtener_solicitudes_cambio',{
+        p_limit: parseInt(limit),
+        p_offset: offset,
+        p_id_estado: p_id_estado        
+    });
     
     if (error) {
         if(error.code == 'PGRST116'){
-            return [];
+            return { data: [], total: 0 };
         }
         const err = new Error("Error al obtener las solicitudes")
         err.statusCode = 500;
         throw err;
     }
-    return data;
+
+    const total = data.length > 0 ? parseInt(data[0].total_count) : 0;
+    const cleanData = data.map(({ total_count, ...rest }) => rest);
+
+    return { data: cleanData, total };
 }
 
 export const actualizarSolicitud = async(idSolicitud, idUsuario, idEstado)=>{
@@ -214,10 +226,22 @@ export const actualizarSolicitud = async(idSolicitud, idUsuario, idEstado)=>{
             p_id_estado: idEstado
         })
     if(error){
-        console.log(error);
         const err = new Error ("Error al actualizar la solicitud");
         err.statusCode = 500;
         throw err;
     }
     return data;
+}
+
+export const obtenerEstadosSolicitud = async ()=>{
+    const {data,error}= await supabase.from('estado_solicitud_cambio').select('*');
+    
+    if(error){
+        console.error(err);
+        const err = new Error("Ocurrió un error obteniendo estados de solicitudes");
+        err.statusCode = 500;
+        throw err;
+    }
+
+    return data
 }

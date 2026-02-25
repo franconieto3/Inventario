@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud} from "../services/document.service.js";
 
 
 export const tiposDocumento = async (req, res)=>{
@@ -197,16 +197,22 @@ export const solicitudCambio = async(req, res)=>{
 
 export const solicitudesCambio = async(req, res) =>{
     try{
-        const { page = 1, limit = 20 } = req.query;
+        const { page = 1, limit = 20 , status} = req.query;
 
-        const solicitudes = await verSolicitudes();
+        const result = await verSolicitudes(page, limit, status);
 
-        return res.status(200).json({message: "Solicitudes recuperadas exitosamente", data: solicitudes});
+        return res.status(200).json({
+            message: "Solicitudes recuperadas exitosamente", 
+            data: result.data,
+            total: result.total
+        });
 
     }catch(err){
         console.log("Detalle", err);
         console.error(err);
-        return res.status(err.statusCode? err.statusCode :500).json({error: err.message? err.message : "Ocurrió un error al obtener las solicitudes"})
+        return res.status(err.statusCode? err.statusCode :500).json({
+            error: err.message? err.message : "Ocurrió un error al obtener las solicitudes"
+        })
     }
 }
 
@@ -216,7 +222,16 @@ export const solicitudTerminada = async (req, res)=>{
         const data = await actualizarSolicitud(idSolicitud, idUsuario, idEstado);
         return res.status(201).json({message: "Solicitud actualizada correctamente"});
     }catch(err){
-        console.log("Detalle", err);
+        console.error(err);
+        return res.status(err.statusCode? err.statusCode :500).json({error: err.message});  
+    }
+}
+
+export const estadoSolicitud = async(req, res)=>{
+    try{
+        const data = await obtenerEstadosSolicitud();
+        return res.status(200).json({message:"Estados obtenidos correctamente", data: data})
+    }catch(err){
         console.error(err);
         return res.status(err.statusCode? err.statusCode :500).json({error: err.message});  
     }

@@ -9,6 +9,7 @@ export const useProducts = () => {
     const [rubros, setRubros] = useState([]);
     const [registrosPM, setRegistrosPM] = useState([]);
     
+    //Categorización
     const [selectedRubro, setSelectedRubro] = useState(null);
     const [selectedRegistroPM, setSelectedRegistroPM] = useState(null);
 

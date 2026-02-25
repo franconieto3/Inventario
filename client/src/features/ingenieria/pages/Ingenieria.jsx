@@ -7,6 +7,7 @@ import { useDocuments } from "../../products/hooks/useDocuments";
 
 //Estilos
 import "./Ingenieria.css"
+import { useEffect } from "react";
 
 export function Ingenieria(){
 
@@ -14,11 +15,17 @@ export function Ingenieria(){
         estados,
         loadingRequests,
         page,
+        totalPages,
         setPage,
+        setSelectedStatus,
         refreshRequests} = useChangeRequest();
     
     const {verDocumento} = useDocuments();
-
+    
+    //Paginación
+    const handlePrevPage = () => setPage(prev => Math.max(1, prev - 1));
+    const handleNextPage = () => setPage(prev => Math.min(totalPages, prev + 1));
+    
     const columnas = [
       {
         key: "name",
@@ -52,7 +59,7 @@ export function Ingenieria(){
           const STATUS_STYLES = {
             pendiente: { backgroundColor: '#fef3c7', color: '#92400e' },
             aceptada:  { backgroundColor: '#dcfce7', color: '#166534' },
-            rechazadA: { backgroundColor: '#fee2e2', color: '#991b1b' } // cuidado con mayúsculas si no normalizas
+            rechazada: { backgroundColor: '#fee2e2', color: '#991b1b' } 
           };
 
           const key = String(status).toLowerCase();
@@ -87,7 +94,7 @@ export function Ingenieria(){
         render:(_, row) => row.id_estado_solicitud ===1? <ChangeRequestRowActions row={row} onUpdate={refreshRequests}/> : ""
       }
     ]
-    
+
     return(
         <>
             <NavBar />
@@ -102,18 +109,41 @@ export function Ingenieria(){
                     Seguimiento de todas las solicitudes de cambio en documentos relacionados a piezas.
                   </p>
                 </div>
+                
                 <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
                   <select onChange={(e)=>{setSelectedStatus(e.target.value)}}>
                     <option value="0">Todos los estados</option>
                     {estados.map(
-                      (estado)=>{
+                      (estado)=>(
                         <option key={estado.id_estado_solicitud} value={estado.id_estado_solicitud}>{estado.descripcion}</option>
-                      }
+                      )
                     )}
                   </select>
                 </div>
+
               </div>
               <Table data={solicitudes} columns={columnas}/>
+
+              {totalPages > 1 && (
+                <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
+                    <button 
+                        onClick={handlePrevPage} 
+                        disabled={page === 1 || loadingRequests}
+                        className="pagination-button" // Asegúrate de tener estilos o usa estilos inline
+                    >
+                        <i className="material-icons">chevron_left</i>
+                    </button>
+                    <span>{page} / {totalPages}</span>
+                    <button 
+                        onClick={handleNextPage} 
+                        disabled={page === totalPages || loadingRequests}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_right</i>
+                    </button>
+                </div>
+              )}
+
             </div>
         </>
 

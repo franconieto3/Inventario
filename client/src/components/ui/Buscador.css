@@ -1,3 +1,10 @@
+/*
+.buscador-wrapper{
+    margin-bottom": 15px;
+    position: relative;
+    width: 100%
+}
+
 .option-container{
     max-height: 150px;
     overflow-y: scroll;
@@ -25,5 +32,105 @@
 .search-option:hover{
     background-color: #005FB8;
     color:white
+}
+
+
+*/
+
+/* Contenedor principal relativo */
+.buscador-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Estilo del Input (estilo shadcn) */
+.buscador-input {
+  display: flex;
+  height: 2.5rem; /* h-10 */
+  width: 100%;
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid #e2e8f0; /* border-input */
+  background-color: #ffffff; /* bg-background */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  font-size: 0.875rem; /* text-sm */
+  color: #0f172a; /* text-foreground */
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.buscador-input::placeholder {
+  color: #64748b; /* text-muted-foreground */
+}
+
+.buscador-input:focus-visible {
+  outline: none;
+  /* Anillo de foco característico de shadcn: borde negro con offset blanco */
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0f172a; 
+  border-color: #0f172a;
+}
+
+/* Contenedor de las opciones (Popover) */
+.buscador-popover {
+  position: absolute;
+  top: calc(100% + 4px); /* Espacio sutil entre el input y el menú */
+  left: 0;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  /* Sombra elegante (shadow-md) */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  z-index: 50;
+  box-sizing: border-box;
+  padding: 0.25rem; /* p-1: el popover de shadcn suele tener padding interno */
+}
+
+/* Lista sin viñetas */
+.buscador-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Opción individual (CommandItem) */
+.buscador-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  user-select: none;
+  border-radius: 0.125rem; /* rounded-sm */
+  padding: 0.375rem 0.5rem; /* py-1.5 px-2 */
+  font-size: 0.875rem; /* text-sm */
+  color: #0f172a;
+  outline: none;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+/* Efecto hover estilo shadcn (bg-accent text-accent-foreground) */
+.buscador-item:hover {
+  background-color: #f1f5f9; /* gris muy claro, en lugar del azul intenso */
+  color: #0f172a; /* mantiene el texto oscuro */
+}
+
+/* Texto truncado para opciones muy largas */
+.buscador-item-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  text-align: left;
+}
+
+/* Estado vacío */
+.buscador-empty {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #64748b; /* text-muted-foreground */
 }
 

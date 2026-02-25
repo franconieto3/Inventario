@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
@@ -61,5 +61,11 @@ router.post('/actualizacion-solicitud',
     requirePermission('modificar_solicitud_cambio'),
     validateSchema(actualizarSolicitudSchema),
     solicitudTerminada);
+
+router.get('/estados-solicitud',
+    verificarToken,
+    requirePermission('modificar_solicitud_cambio'),
+    estadoSolicitud
+)
 
 export default router;

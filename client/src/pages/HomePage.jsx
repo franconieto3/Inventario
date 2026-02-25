@@ -41,7 +41,7 @@ export default function HomePage(){
                             <div className='card-title'>
                                 <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Usuarios</h1>
                             </div>
-                            <p className='card-description'>Registrar nuevos usuarios</p>
+                            <p className='card-description'>Registro de usuarios y roles</p>
                         </div>
                     </Can>
                     <Can permission="acceso_ingenieria">
@@ -55,7 +55,7 @@ export default function HomePage(){
                             <div className='card-title'>
                                 <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Ingeniería</h1>
                             </div>
-                            <p className='card-description'>Ordenes de cambio de ingeniería, registro de calibraciones</p>
+                            <p className='card-description'>Ordenes de cambio de ingeniería, permisos de acceso a documentos, registro de calibraciones</p>
                         </div>
                     </Can>
                 </div>

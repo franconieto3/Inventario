@@ -49,9 +49,10 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
   }
 
   return (
-    <div style={{"marginBottom": "15px", "position": "relative", "width":"100%"}}>
+    <div className='buscador-wrapper' >
       <input 
         type="text" 
+        className="buscador-input"
         placeholder={placeholder}
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
@@ -59,24 +60,30 @@ const Buscador = ({ opciones, placeholder, keys, onChange, idField, displayField
         onBlur={() => setTimeout(() => setFocus(false), 200)}
         style={{"marginTop": "5px", "marginBottom":"0px","width":"100%"}}
       />
-      <div className='option-container' style={focus?{'display':'block'}:{'display':'none'}}>
-        <ul>
-            {resultados.map(opcion => (
-            // Como aplanamos el array arriba, accedemos directo a las propiedades
-            <li
-              className="search-option"
-              key={opcion[idField]} onMouseDown={()=>handleClick(opcion)} style={{"padding":"4px","display":"flex"}}>
-              <span>
-                {showId? opcion[idField]+ " - ":null}{opcion[displayField]}
-              </span>
-            </li>
-            ))}
+      {focus && (
+        <div className='buscador-popover'>
+          <ul className="buscador-list">
+              {resultados.map(opcion => (
+              // Como aplanamos el array arriba, accedemos directo a las propiedades
+              <li
+                className="buscador-item"
+                key={opcion[idField]} 
+                onMouseDown={()=>handleClick(opcion)} 
+              >
+                <span className="buscador-item-text">
+                  {showId? opcion[idField]+ " - ":null}{opcion[displayField]}
+                </span>
+              </li>
+              ))}
 
-            {resultados.length === 0 && (
-            <li style={{"marginTop": "8px", "marginBottom": "8px"}}>No se encontraron resultados.</li>
-            )}
-        </ul>
-      </div>
+              {resultados.length === 0 && (
+                <li className="buscador-empty">
+                  No se encontraron resultados.
+                </li>
+              )}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

@@ -13,6 +13,7 @@ import { ListadoProductos } from "../components/ListadoProductos";
 
 //Estilos
 import "./ProductsPage.css"
+import Button from "../../../components/ui/Button";
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -136,31 +137,11 @@ export default function ProductsPage(){
                     </div>
                     <Can permission="administrar_productos">
                         <div className='button-container'>
-                            <button className='add-button' onClick={()=>setShowNewProduct(true)}>Agregar producto</button>
+                            <Button variant="default" onClick={()=>setShowNewProduct(true)}>Agregar producto</Button>
                         </div>
                     </Can>
                     
                 </div>
-                {/*
-                <div className='product-list'>
-                    <div className='product-list-header'>Nombre</div>
-
-                    {loadingProducts ? (
-                        <div style={{ padding: '20px', textAlign: 'center' }}>Cargando productos...</div>
-                    ) : (
-                    productos.map(
-                        (item) => (
-                            <ProductItem 
-                                key={item.id_producto} 
-                                producto={item} 
-                                onChange={handleProductClick} 
-                                onEdit={(prod) => abrirModalEdicion(prod)}
-                                onDelete={handleSuccess}
-                            />
-                        ))
-                    )}
-                </div>
-                */}
                 <Can permission="acceso_repositorio">
                     <div style={{display:"flex", justifyContent:"space-between", gap:'10px',flexWrap:'wrap',marginBottom:'20px'}}>
                         <div style={{display:'flex', textAlign:'start',alignItems:'center', maxWidth:'500px'}}>
@@ -197,8 +178,8 @@ export default function ProductsPage(){
                                 />
                             </div>
                             <div style={{display:'flex',gap:'10px',paddingBottom:'10px'}}>
-                                <button onClick={aplicarFiltros}>Aplicar filtros</button>
-                                <button onClick={limpiarFiltros}>Limpiar filtros</button>
+                                <Button variant="secondary" onClick={aplicarFiltros}>Aplicar filtros</Button>
+                                <Button variant="ghost" onClick={limpiarFiltros}>Limpiar filtros</Button>
                             </div>
                         </div>
                     </div>
@@ -211,13 +192,13 @@ export default function ProductsPage(){
                 
                 {/* Controles de Paginación */}
                 {totalPages > 1 && (
-                    <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
+                    <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
                         <button 
                             onClick={handlePrevPage} 
                             disabled={page === 1 || loadingProducts}
                             className="pagination-button" // Asegúrate de tener estilos o usa estilos inline
                         >
-                            Anterior
+                            <i className="material-icons">chevron_left</i>
                         </button>
                         <span>{page} / {totalPages}</span>
                         <button 
@@ -225,7 +206,7 @@ export default function ProductsPage(){
                             disabled={page === totalPages || loadingProducts}
                             className="pagination-button"
                         >
-                            Siguiente
+                            <i className="material-icons">chevron_right</i>
                         </button>
                     </div>
                 )}
