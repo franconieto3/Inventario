@@ -3,6 +3,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js"
 import documentRoutes from "./routes/document.routes.js";
+import componentRoutes from "./routes/component.routes.js";
 
 
 // Middlewares
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/api/productos", productRoutes);
 app.use('/api/documentos', documentRoutes);
+app.use('/api/componentes', componentRoutes);
 
 
 const PORT = 4000;

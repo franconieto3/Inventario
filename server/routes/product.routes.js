@@ -16,6 +16,10 @@ router.get('/registros-pm',
     verificarToken, 
     registrosPM);
 
+router.get('/listado-piezas',
+    verificarToken, 
+    piezas);
+
 router.get('/',
     verificarToken, 
     productos);
@@ -62,8 +66,5 @@ router.delete('/pieza/eliminacion/:id',
     requirePermission('administrar_productos'), 
     eliminacionPieza);
 
-router.get('listado-piezas',
-    verificarToken, 
-    piezas);
 
 export default router;

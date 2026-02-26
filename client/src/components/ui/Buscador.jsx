@@ -72,7 +72,7 @@ const Buscador = ({
   }, [busquedaDebounced, fuse, opciones, maxResults]);
 
   const handleClick = (item)=>{
-    onChange(item[idField]);
+    onChange(item[idField],item[displayField]);
     setValue(item[idField]);
     setBusqueda(item[displayField]);
     setFocus(false);

@@ -10,6 +10,8 @@ import { SolicitudCambio } from './SolicitudCambio';
 
 import "./PartDetail.css"
 import { BuscadorPiezas } from './BuscadorPiezas';
+import { AgregarComponentes } from '../../ensambles/components/AgregarComponentes';
+import Button from '../../../components/ui/Button';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -27,6 +29,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
     const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
     const [activeMenuId, setActiveMenuId] = useState(null);
     const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
+    const [mostrarAgregarComponente, setMostrarAgregarComponente] = useState(false)
 
     const fetchPart = useCallback(
         async () => {
@@ -233,7 +236,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                         <i className='material-icons'>grid_view</i>    
                                         Componentes: 
                                     </p>
-                                    <BuscadorPiezas onSelect={(id)=>console.log("hola mundo")}/>
+                                    <Button variant="secondary" onClick={()=>{setMostrarAgregarComponente(true)}}>Agregar componentes</Button>
                                 </div>
 
                                 <div className='detalle-documentos'>
@@ -276,7 +279,10 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 setMostrarSolicitud(false); 
                                 setDocSeleccionado(null)
                             }}
-                        />}
+                    />}
+                    {mostrarAgregarComponente &&
+                        <AgregarComponentes onClose={()=>{setMostrarAgregarComponente(false)}} idPiezaPadre={pieza.id_pieza}/>
+                    }
                     </div>
                 )}
                 
