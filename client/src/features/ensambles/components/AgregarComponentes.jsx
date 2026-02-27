@@ -72,7 +72,7 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre }) {
             });
             
             // Si hay onSuccess prop, la llamamos para refrescar la UI padre
-            if (onSuccess) onSuccess(res);
+            if (onSuccess) onSuccess();
             
             // Cerramos el modal
             if (onClose) onClose();

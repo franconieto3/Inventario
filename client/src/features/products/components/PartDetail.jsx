@@ -236,7 +236,9 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                         <i className='material-icons'>grid_view</i>    
                                         Componentes: 
                                     </p>
+                                    <div style={{width:'100%',display:'flex',justifyContent:'center'}}>
                                     <Button variant="secondary" onClick={()=>{setMostrarAgregarComponente(true)}}>Agregar componentes</Button>
+                                    </div>
                                 </div>
 
                                 <div className='detalle-documentos'>
@@ -281,7 +283,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                             }}
                     />}
                     {mostrarAgregarComponente &&
-                        <AgregarComponentes onClose={()=>{setMostrarAgregarComponente(false)}} idPiezaPadre={pieza.id_pieza}/>
+                        <AgregarComponentes onClose={()=>{setMostrarAgregarComponente(false)}} onSuccess={fetchPart} idPiezaPadre={pieza.id_pieza}/>
                     }
                     </div>
                 )}
