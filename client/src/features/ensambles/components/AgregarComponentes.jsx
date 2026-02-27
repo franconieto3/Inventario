@@ -9,7 +9,7 @@ import "./AgregarComponentes.css";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre }) {
+export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre, nombrePiezaPadre }) {
     const [componentes, setComponentes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -51,6 +51,8 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre }) {
         // Limpiar errores previos y setear loading
         setError("");
         setLoading(true);
+
+        
 
         // Armado del body
         const body = {
@@ -96,7 +98,10 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre }) {
                 
                 {/* Cabecera y Botón de cierre del modal */}
                 <div className="modal-header">
-                    <h3 className="modal-title">Agregar Componentes</h3>
+                    <div style={{textAlign:'start'}}>
+                        <h3 className="modal-title">Agregar Componentes</h3>
+                        <p style={{fontSize:'1rem',marginTop:'5px'}}>{nombrePiezaPadre}</p>
+                    </div>
                     <button className="modal-close" onClick={onClose} aria-label="Cerrar">
                         &times;
                     </button>

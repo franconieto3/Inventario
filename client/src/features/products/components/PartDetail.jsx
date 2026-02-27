@@ -12,11 +12,13 @@ import "./PartDetail.css"
 import { BuscadorPiezas } from './BuscadorPiezas';
 import { AgregarComponentes } from '../../ensambles/components/AgregarComponentes';
 import Button from '../../../components/ui/Button';
+import { useNavigate } from 'react-router-dom';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefreshParent }) {
+    const navigate = useNavigate(); 
 
     const [mostrar, setMostrar] = useState(false);
     const [pieza, setPieza] = useState(null);
@@ -236,8 +238,25 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                         <i className='material-icons'>grid_view</i>    
                                         Componentes: 
                                     </p>
+
+                                    <div>
+                                        {pieza.componentes.length === 0? 
+                                            (<p>No se encontraron componentes</p>) :
+                                        (
+                                            <ul>
+                                                {pieza.componentes.map((c)=>(
+                                                    <>
+                                                    <li onClick={()=>navigate(`/producto/${c.id_producto}`)}>
+                                                        {c.nombre}
+                                                    </li>
+                                                    </>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+
                                     <div style={{width:'100%',display:'flex',justifyContent:'center'}}>
-                                    <Button variant="secondary" onClick={()=>{setMostrarAgregarComponente(true)}}>Agregar componentes</Button>
+                                        <Button variant="secondary" onClick={()=>{setMostrarAgregarComponente(true)}}>Agregar componentes</Button>
                                     </div>
                                 </div>
 
@@ -283,7 +302,11 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                             }}
                     />}
                     {mostrarAgregarComponente &&
-                        <AgregarComponentes onClose={()=>{setMostrarAgregarComponente(false)}} onSuccess={fetchPart} idPiezaPadre={pieza.id_pieza}/>
+                        <AgregarComponentes 
+                            onClose={()=>{setMostrarAgregarComponente(false)}} 
+                            onSuccess={fetchPart} 
+                            idPiezaPadre={pieza.id_pieza} 
+                            nombrePiezaPadre={producto.nombre + ' ' + pieza.nombre}/>
                     }
                     </div>
                 )}

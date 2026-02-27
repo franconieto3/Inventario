@@ -46,7 +46,6 @@ export default function ProductsPage(){
 
     //Selección de productos
 
-    //const handleProductClick = (id) => navigate(`/producto/${id}`);
 
     //Edición de productos
     const abrirModalEdicion = (producto)=>{

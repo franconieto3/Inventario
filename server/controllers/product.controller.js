@@ -120,6 +120,14 @@ export const pieza = async (req, res) =>{
             documentos: documentosRes.data || []
         };
 
+        if(respuestaFinal.esEnsamble){
+            respuestaFinal.componentes = []
+        }else{
+            respuestaFinal.componentes = [];
+        }
+
+        console.log(respuestaFinal);
+
         res.status(200).json(respuestaFinal);
 
     }catch(err){

@@ -108,11 +108,14 @@ export const obtenerProducto = async (id)=>{
 
 export const obtenerInfoPieza = async (idPieza) => {
     const [piezaRes, documentosRes] = await Promise.all([
+        //Obtener información básica de la pieza
         supabase
         .from('pieza')
         .select('*')
         .eq('id_pieza', idPieza)
         .single(),
+
+        //Ultimas versiones de los documentos
         supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza})
     ]);
 
@@ -136,6 +139,17 @@ export const obtenerInfoPieza = async (idPieza) => {
 
     return [piezaRes, documentosRes];
     
+}
+
+export const obtenerComponentes = async(idPiezaPadre)=>{
+    const {data, error} = await supabase.rpc('obtener_componentes',{p_id_pieza_padre: idPiezaPadre});
+    
+    if(error){
+        console.error("Error al obtener componentes", error);
+        return [];
+    }
+
+    return data;
 }
 
 export const verificarPieza = async (nombrePieza, codigo, idProducto, idPieza = null ) => {
