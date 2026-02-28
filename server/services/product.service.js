@@ -296,3 +296,17 @@ export const obtenerPiezas = async()=>{
 
     return data;
 }
+
+export const obtenerPiezasHijas = async (idPiezaPadre) => {
+  // Llamada a la función PostgreSQL a través de RPC
+  const { data, error } = await supabase.rpc('obtener_piezas_hijas', {
+    p_id_pieza_padre: idPiezaPadre 
+  });
+
+  if (error) {
+    // Lanzamos el error para que el controlador lo maneje
+    throw new Error(`Error en Supabase: ${error.message}`);
+  }
+
+  return data;
+};

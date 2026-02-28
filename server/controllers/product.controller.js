@@ -120,13 +120,16 @@ export const pieza = async (req, res) =>{
             documentos: documentosRes.data || []
         };
 
-        if(respuestaFinal.esEnsamble){
-            respuestaFinal.componentes = []
+        if(respuestaFinal.es_ensamble){
+            
+            const componentes = await productService.obtenerPiezasHijas(id);
+
+            respuestaFinal.componentes = componentes;
         }else{
             respuestaFinal.componentes = [];
         }
 
-        console.log(respuestaFinal);
+        console.log(respuestaFinal)
 
         res.status(200).json(respuestaFinal);
 

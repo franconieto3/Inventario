@@ -240,19 +240,27 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                     </p>
 
                                     <div>
-                                        {pieza.componentes.length === 0? 
-                                            (<p>No se encontraron componentes</p>) :
-                                        (
-                                            <ul>
-                                                {pieza.componentes.map((c)=>(
-                                                    <>
-                                                    <li onClick={()=>navigate(`/producto/${c.id_producto}`)}>
-                                                        {c.nombre}
-                                                    </li>
-                                                    </>
-                                                ))}
-                                            </ul>
-                                        )}
+                                    {pieza.componentes.length === 0 ? (
+                                        <p className="componentes-empty">No se encontraron componentes</p>
+                                    ) : (
+                                        <ul className="componentes-list">
+                                            {pieza.componentes.map((c) => (
+                                                <li 
+                                                    key={`${c.id_producto}-${c.id_pieza}`} 
+                                                    className="componente-item"
+                                                    onClick={() => navigate(`/producto/${c.id_producto}`)}
+                                                >
+                                                    <span className="componente-nombre">
+                                                        {c.nombre_producto} {c.nombre_pieza}
+                                                    </span>
+                                                    <span className="componente-cantidad">
+                                                        x{c.cantidad}
+                                                    </span>
+                                                    <DropdownMenu/>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                     </div>
 
                                     <div style={{width:'100%',display:'flex',justifyContent:'center'}}>
