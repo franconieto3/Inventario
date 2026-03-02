@@ -1,4 +1,4 @@
-import { asociarComponentes, eliminarComponente } from "../services/component.service.js";
+import { asociarComponentes, editarComponente, eliminarComponente } from "../services/component.service.js";
 
 
 export const asociarPiezas = async (req, res) => {
@@ -20,11 +20,34 @@ export const asociarPiezas = async (req, res) => {
   }
 };
 
+export const edicionComponente = async(req, res)=>{
+    try {
+      const { idPiezaPadre, idPiezaHijo, cantidad } = req.body;
+
+      const resultado = await editarComponente(idPiezaPadre, idPiezaHijo, cantidad);
+
+      return res.status(200).json({
+          success: true,
+          message: "Cantidad de componente actualizada correctamente.",
+          data: resultado
+      });
+
+    } catch (error) {
+        console.error("[edicionComponente] Error:", error.message);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Ocurrió un error interno al intentar editar el componente." 
+        });
+    }
+}
+
 export const eliminacionComponente = async (req, res)=>{
   try{
-    const {idPiezaPadre, idPiezaHijo} = req.params;
-    const data = await eliminarComponente(idPiezaPadre, idPiezaHijo);
+    const {idPiezaPadre, idPiezaHijo} = req.query;
 
+    console.log("Parametros: ",req.query);
+
+    const data = await eliminarComponente(idPiezaPadre, idPiezaHijo);
     return res.status(200).json({message: "Eliminación exitosa", data: data});
 
   }catch(err){

@@ -129,8 +129,6 @@ export const pieza = async (req, res) =>{
             respuestaFinal.componentes = [];
         }
 
-        console.log(respuestaFinal)
-
         res.status(200).json(respuestaFinal);
 
     }catch(err){

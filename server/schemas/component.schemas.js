@@ -11,3 +11,11 @@ export const crearComposicionSchema = z.object({
   ).min(1, "Debes enviar al menos un componente")
   
 });
+
+export const editarComposicionSchema = z.object(
+  {
+    idPiezaPadre:z.coerce.number().int().positive("El ID de la pieza debe ser un número positivo"),
+    idPiezaHijo:z.coerce.number().int().positive("El ID del componente debe ser un número positivo"),
+    cantidad: z.number().int().min(1, "La cantidad debe ser al menos 1")
+  }
+);

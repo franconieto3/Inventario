@@ -13,6 +13,7 @@ import { BuscadorPiezas } from './BuscadorPiezas';
 import { AgregarComponentes } from '../../ensambles/components/AgregarComponentes';
 import Button from '../../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { EditarComponente } from '../../ensambles/components/EditarComponentes';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -31,7 +32,12 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
     const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
     const [activeMenuId, setActiveMenuId] = useState(null);
     const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
-    const [mostrarAgregarComponente, setMostrarAgregarComponente] = useState(false)
+
+    //Estados de componentes
+    const [activeComponentMenuId, setActiveComponentMenuId] = useState(null);
+    const [mostrarAgregarComponente, setMostrarAgregarComponente] = useState(false);
+    const [mostrarEditarComponente, setMostrarEditarComponente] = useState(false);
+    const [componenteSeleccionado, setComponenteSeleccionado] = useState(null);
 
     const fetchPart = useCallback(
         async () => {
@@ -125,6 +131,46 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
         setDocSeleccionado(idVersion);
     }
 
+    //Logica de componentes
+    
+    const toggleComponentMenu = (id) => {
+        if (activeComponentMenuId === id) {
+            setActiveComponentMenuId(null); // Si ya está abierto, lo cierra
+        } else {
+            setActiveComponentMenuId(id); // Si no, lo abre y cierra los demás
+        }
+    };
+
+    const handleRemoveComponent = async(idComponente)=>{
+        if(window.confirm("¿Desea quitar este componente?")){
+            try{
+                console.log(`Quitando componente ${idComponente} de ${idPieza}`);
+
+                const params = new URLSearchParams({
+                    idPiezaPadre: idPieza,
+                    idPiezaHijo: idComponente
+                });
+
+                const res = await apiCall(
+                    `${API_URL}/api/componentes/remove?${params.toString()}`,
+                    { method: 'DELETE' }
+                );
+
+                console.log(res.message);
+                
+                fetchPart();
+                
+            }catch(err){
+                console.log(err.message);
+            }
+        }
+    }
+
+    const handleEditComponent = (componente)=>{
+        setComponenteSeleccionado(componente);
+        setMostrarEditarComponente(true);
+    }
+
     return (
         <>
             <div className='detail'>
@@ -151,7 +197,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 {
                                     label: 'Eliminar pieza',
                                     icon: 'delete',
-                                    color: 'red', // Opcional: para indicar peligro
+                                    color: 'red',
                                     onClick: () => handleEliminarPieza(idPieza)
                                 }
                                                         
@@ -248,15 +294,31 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                                 <li 
                                                     key={`${c.id_producto}-${c.id_pieza}`} 
                                                     className="componente-item"
-                                                    onClick={() => navigate(`/producto/${c.id_producto}`)}
                                                 >
-                                                    <span className="componente-nombre">
-                                                        {c.nombre_producto} {c.nombre_pieza}
-                                                    </span>
-                                                    <span className="componente-cantidad">
-                                                        x{c.cantidad}
-                                                    </span>
-                                                    <DropdownMenu/>
+                                                    <div onClick={() => navigate(`/producto/${c.id_producto}`)}> 
+                                                        <span className="componente-nombre">
+                                                            {c.nombre_producto} {c.nombre_pieza}
+                                                        </span>
+                                                        <span className="componente-cantidad">
+                                                            x{c.cantidad}
+                                                        </span>
+                                                    </div>
+                                                    <DropdownMenu
+                                                        isOpen={activeComponentMenuId === c.id_pieza}
+                                                        onToggle={()=>toggleComponentMenu(c.id_pieza)}
+                                                        items={[
+                                                            {
+                                                                label: 'Modificar cantidad',
+                                                                icon: 'edit',
+                                                                onClick: ()=>handleEditComponent(c)
+                                                            },                                                   
+                                                            {
+                                                                label: 'Quitar componente',
+                                                                icon: 'remove',
+                                                                onClick:()=>handleRemoveComponent(c.id_pieza)
+                                                            }
+                                                        ]}
+                                                    />
                                                 </li>
                                             ))}
                                         </ul>
@@ -315,6 +377,18 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                             onSuccess={fetchPart} 
                             idPiezaPadre={pieza.id_pieza} 
                             nombrePiezaPadre={producto.nombre + ' ' + pieza.nombre}/>
+                    }
+                    {mostrarEditarComponente &&
+                        <EditarComponente
+                            idPiezaPadre={pieza.id_pieza}
+                            componente={componenteSeleccionado}
+                            onClose={()=>{setMostrarEditarComponente(false); setComponenteSeleccionado(null)}}
+                            nombrePiezaPadre={producto.nombre + ' ' + pieza.nombre}
+                            onSuccess={()=>{
+                                setComponenteSeleccionado(null);
+                                fetchPart();
+                            }}
+                        />
                     }
                     </div>
                 )}

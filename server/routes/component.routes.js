@@ -2,8 +2,8 @@ import { Router } from "express";
 import { requirePermission } from "../middlewares/checkPermission.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { asociarPiezas, eliminacionComponente } from "../controllers/component.controller.js";
-import { crearComposicionSchema } from "../schemas/component.schemas.js";
+import { asociarPiezas, edicionComponente, eliminacionComponente } from "../controllers/component.controller.js";
+import { crearComposicionSchema, editarComposicionSchema } from "../schemas/component.schemas.js";
 
 const router = Router();
 
@@ -11,18 +11,23 @@ const router = Router();
 router.post('/new', 
     verificarToken, 
     validateSchema(crearComposicionSchema),
-    //Permisos 
+    requirePermission('administrar_productos'),
     asociarPiezas
 );
 
 // Edición
-
+router.put('/edit',
+    verificarToken,
+    validateSchema(editarComposicionSchema),
+    requirePermission('administrar_productos'),
+    edicionComponente
+)
 
 //Eliminación
-router.delete('/delete',
+router.delete('/remove',
     verificarToken,
-    //Permisos
+    requirePermission('administrar_productos'),
     eliminacionComponente
- )
+);
 
 export default router;

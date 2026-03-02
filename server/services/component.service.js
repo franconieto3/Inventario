@@ -69,6 +69,20 @@ export const asociarComponentes = async (idPiezaPadre, componentes) => {
   return data;
 };
 
+export const editarComponente = async(idPiezaPadre, idPiezaHijo, cantidad)=>{
+    const { data, error } = await supabase.rpc('editar_pieza', {
+        p_id_pieza_padre: idPiezaPadre,
+        p_id_pieza_hijo: idPiezaHijo,
+        p_cantidad: cantidad
+    });
+
+    if (error) {
+        throw new Error(`Error en base de datos: ${error.message}`);
+    }
+
+    return data;
+}
+
 export const eliminarComponente = async(idPadre, idHijo)=>{
     const {data, error} = await supabase.rpc('quitar_componente',{
         p_id_pieza_padre: idPadre,

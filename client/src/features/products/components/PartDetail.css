@@ -55,7 +55,7 @@
     border: 1px solid #e2e8f0; /* Borde sutil slate-200 */
     border-radius: 0.375rem; /* Esquinas redondeadas (md) */
     background-color: #ffffff;
-    overflow: hidden; /* Para que el primer y último item respeten el border-radius */
+    /*overflow: hidden; /* Para que el primer y último item respeten el border-radius */
 }
 
 .componente-item {
