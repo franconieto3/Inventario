@@ -24,13 +24,17 @@
     align-items: center;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid grey ;
+    border: 1px solid #e2e8f0;
 }
 
 .display-documento div{
     display: flex;
     gap:5px;
     align-items: center;
+}
+
+.display-documento:hover{
+    background-color: #f8fafc; /* bg-slate-50 */
 }
 
 #history_icon :hover{

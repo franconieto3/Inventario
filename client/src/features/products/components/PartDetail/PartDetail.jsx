@@ -1,44 +1,55 @@
 import { useEffect, useState, useCallback } from 'react';
 
-import { apiCall } from '../../../services/api';
-import { DropdownMenu } from '../../../components/ui/DropdownMenu';
-import formatearCodigo from '../../../services/formatearCodigo';
-import EdicionPieza from './EdicionPieza';
-import { HistorialVersiones } from './HistorialVersiones';
-import Can from '../../../components/Can';
-import { SolicitudCambio } from './SolicitudCambio';
+import { apiCall } from '../../../../services/api';
+import { DropdownMenu } from '../../../../components/ui/DropdownMenu';
+import formatearCodigo from '../../../../services/formatearCodigo';
+import EdicionPieza from '../EdicionPieza';
+import { HistorialVersiones } from '../HistorialVersiones';
+import Can from '../../../../components/Can';
+import { SolicitudCambio } from '../SolicitudCambio';
 
 import "./PartDetail.css"
-import { BuscadorPiezas } from './BuscadorPiezas';
-import { AgregarComponentes } from '../../ensambles/components/AgregarComponentes';
-import Button from '../../../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
-import { EditarComponente } from '../../ensambles/components/EditarComponentes';
 
+import { AgregarComponentes } from '../../../ensambles/components/AgregarComponentes';
+import Button from '../../../../components/ui/Button';
+import { useNavigate } from 'react-router-dom';
+import { EditarComponente } from '../../../ensambles/components/EditarComponentes';
+import { usePartDetail } from './usePartDetail';
+import { PartComponents } from './components/PartComponents';
+import { PartHeader } from './components/PartHeader';
+import { PartDocuments } from './components/PartDocuments';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefreshParent }) {
     const navigate = useNavigate(); 
 
-    const [mostrar, setMostrar] = useState(false);
-    const [pieza, setPieza] = useState(null);
-    const [loading, setLoading] = useState(false);
+    /*const [pieza, setPieza] = useState(null);
+    const [loading, setLoading] = useState(false);*/
 
-    const [mostrarHistorial, setMostrarHistorial] = useState(false);
-    const [docSeleccionado, setDocSeleccionado] = useState(null);
+    const {pieza, loading, fetchPart} = usePartDetail(idPieza);
+
+    const [mostrar, setMostrar] = useState(false);
+    /*
     const [menuPiezaOpen, setMenuPiezaOpen] = useState(false);
     const [mostrarEdicion, setMostrarEdicion] = useState(false);
-    const [piezaSeleccionada, setPiezaSeleccionada] = useState(null);
+    */
+
+    /*
+    //Estados de documentos
+    const [mostrarHistorial, setMostrarHistorial] = useState(false);
+    const [docSeleccionado, setDocSeleccionado] = useState(null);
     const [activeMenuId, setActiveMenuId] = useState(null);
     const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
+    */
 
+/*
     //Estados de componentes
     const [activeComponentMenuId, setActiveComponentMenuId] = useState(null);
     const [mostrarAgregarComponente, setMostrarAgregarComponente] = useState(false);
     const [mostrarEditarComponente, setMostrarEditarComponente] = useState(false);
-    const [componenteSeleccionado, setComponenteSeleccionado] = useState(null);
-
+    const [componenteSeleccionado, setComponenteSeleccionado] = useState(null);*/
+/*
     const fetchPart = useCallback(
         async () => {
             setLoading(true);
@@ -52,13 +63,33 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
             }
         }
     , [mostrar, idPieza]);
-
+*/
     useEffect(() => {
         if (mostrar && idPieza) {
             fetchPart();
         }
-    }, [fetchPart]);
+    }, [mostrar, idPieza, fetchPart]);
+/*
+    const abrirModalEdicion=(id)=>{
+        setMostrarEdicion(true);
+        setMenuPiezaOpen(false);
+    }
 
+    const handleEliminarPieza = async (id) => {
+        if(window.confirm("¿Seguro que deseas eliminar esta pieza?")) {
+            console.log("Eliminando pieza", id);
+            try{
+                const res = await apiCall(`${API_URL}/api/productos/pieza/eliminacion/${id}`, {method:'DELETE'})
+                if (onRefreshParent) onRefreshParent();
+
+            }catch(err){
+                alert("Ocurrió un error: ", err.message);
+            }
+        }
+    }
+*/
+    //Logica de documentos
+/*
     const handleVerPlano = async (pathArchivo) => {
         try {
             const params = new URLSearchParams({ path: pathArchivo });
@@ -75,7 +106,6 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
     };
 
     const verHistorialVersiones = async (idPieza, idTipoDocumento) =>{
-        setPiezaSeleccionada(idPieza);
         setDocSeleccionado(idTipoDocumento);
         setMostrarHistorial(true);
     }
@@ -98,7 +128,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
         }
     };
 
-    // Helper para abrir/cerrar menú específico
+    // Helper para abrir/cerrar menú específico de documentos
     const toggleMenu = (id) => {
         if (activeMenuId === id) {
             setActiveMenuId(null); // Si ya está abierto, lo cierra
@@ -107,32 +137,13 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
         }
     };
 
-    const abrirModalEdicion=(id)=>{
-        setPiezaSeleccionada(id)
-        setMostrarEdicion(true);
-        setMenuPiezaOpen(false);
-    }
-
-    const handleEliminarPieza = async (id) => {
-        if(window.confirm("¿Seguro que deseas eliminar esta pieza?")) {
-            console.log("Eliminando pieza", id);
-            try{
-                const res = await apiCall(`${API_URL}/api/productos/pieza/eliminacion/${id}`, {method:'DELETE'})
-                if (onRefreshParent) onRefreshParent();
-
-            }catch(err){
-                alert("Ocurrió un error: ", err.message);
-            }
-        }
-    }
-
     const handleChangeRequest = (idVersion)=>{
         setMostrarSolicitud(true);
         setDocSeleccionado(idVersion);
     }
-
+*/
     //Logica de componentes
-    
+    /*
     const toggleComponentMenu = (id) => {
         if (activeComponentMenuId === id) {
             setActiveComponentMenuId(null); // Si ya está abierto, lo cierra
@@ -170,10 +181,11 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
         setComponenteSeleccionado(componente);
         setMostrarEditarComponente(true);
     }
-
+*/
     return (
         <>
             <div className='detail'>
+                {/*
                 <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
                     <div className='part-title'>
                         <input 
@@ -209,27 +221,35 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
 
                 {mostrarEdicion && 
                     <EdicionPieza 
-                        idPieza={piezaSeleccionada}
+                        idPieza={idPieza}
                         producto={producto} 
                         nombreInicial={nombrePieza} 
                         codigoInicial={codigoPieza} 
-                        onClose={()=>{
-                            setMostrarEdicion(false); 
-                            setPiezaSeleccionada(null)}} 
+                        onClose={()=>setMostrarEdicion(false)} 
                         onUploadSuccess={()=>{
                             setMostrarEdicion(false); 
-                            setPiezaSeleccionada(null);
                             fetchPart();
                             if (onRefreshParent) onRefreshParent();
                         }}
                 />}
-
+                */}
+                <PartHeader
+                    mostrar={mostrar} 
+                    setMostrar={setMostrar}
+                    idPieza={idPieza}
+                    nombrePieza={nombrePieza}
+                    codigoPieza={codigoPieza}
+                    producto={producto}
+                    onRefreshParent={onRefreshParent}
+                    onPartUpdated={fetchPart}
+                />
                 {mostrar && (
                     <div className="pieza-info">
                         {loading && <p>Cargando...</p>}
                         
                         {!loading && pieza && (
                             <div style={{'display':'flex', 'gap':'15px', 'flexWrap':'wrap'}}>
+                                {/* 
                                 <div className='detalle-documentos' style={pieza.documentos?{'display':'block'}:{'display':'none'}}>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>file_open</i>    
@@ -278,7 +298,15 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                         }
                                     </div>
                                 </div> 
-
+                                */}
+                                {pieza.documentos && (
+                                    <PartDocuments 
+                                        documentos={pieza.documentos} 
+                                        idPieza={idPieza} 
+                                        onRefresh={fetchPart} 
+                                    />
+                                )}
+                                {/* 
                                 <div className='detalle-documentos'>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>grid_view</i>    
@@ -328,7 +356,13 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                     <div style={{width:'100%',display:'flex',justifyContent:'center'}}>
                                         <Button variant="secondary" onClick={()=>{setMostrarAgregarComponente(true)}}>Agregar componentes</Button>
                                     </div>
-                                </div>
+                                </div>*/}
+
+                                <PartComponents
+                                    pieza={pieza} 
+                                    producto={producto} 
+                                    onRefresh={fetchPart}
+                                />
 
                                 <div className='detalle-documentos'>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
@@ -353,32 +387,33 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 
                             </div>
                         )}
-                    {mostrarHistorial && 
+                    
+                    {/*mostrarHistorial && 
                         <HistorialVersiones 
-                        idPieza={piezaSeleccionada} 
+                        idPieza={idPieza} 
                         idTipoDocumento={docSeleccionado} 
                         closeHistoryModal={()=>{
                             setMostrarHistorial(false); 
                             setDocSeleccionado(null)
                         }} 
                         verDocumento={handleVerPlano}
-                        />}  
-                    {mostrarSolicitud && 
+                        />*/}  
+                    {/*mostrarSolicitud && 
                         <SolicitudCambio 
                             idVersion={docSeleccionado} 
                             onClose={()=>{
                                 setMostrarSolicitud(false); 
                                 setDocSeleccionado(null)
                             }}
-                    />}
-                    {mostrarAgregarComponente &&
+                    />*/}
+                    {/*mostrarAgregarComponente &&
                         <AgregarComponentes 
                             onClose={()=>{setMostrarAgregarComponente(false)}} 
                             onSuccess={fetchPart} 
                             idPiezaPadre={pieza.id_pieza} 
                             nombrePiezaPadre={producto.nombre + ' ' + pieza.nombre}/>
-                    }
-                    {mostrarEditarComponente &&
+                    */}
+                    {/*mostrarEditarComponente &&
                         <EditarComponente
                             idPiezaPadre={pieza.id_pieza}
                             componente={componenteSeleccionado}
@@ -389,7 +424,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 fetchPart();
                             }}
                         />
-                    }
+                    */}
                     </div>
                 )}
                 

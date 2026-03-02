@@ -8,12 +8,13 @@ import { apiCall } from '../../../services/api';
 import AgregarPlano from '../components/AgregarPlano';
 import { UserAuth } from '../../auth/context/AuthContext';
 
-import { PartDetail } from '../components/PartDetail';
+import { PartDetail } from '../components/PartDetail/PartDetail';
 import { AgregarPieza } from '../components/AgregarPieza';
 import EdicionProducto from "../components/EdicionProducto";
 
 import "./ProductDetail.css"
 import Can from '../../../components/Can';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
