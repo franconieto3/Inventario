@@ -1,23 +1,24 @@
 import { useEffect, useState, useCallback } from 'react';
 
-import { apiCall } from '../../../../services/api';
-import { DropdownMenu } from '../../../../components/ui/DropdownMenu';
-import formatearCodigo from '../../../../services/formatearCodigo';
-import EdicionPieza from '../EdicionPieza';
-import { HistorialVersiones } from '../HistorialVersiones';
-import Can from '../../../../components/Can';
-import { SolicitudCambio } from '../SolicitudCambio';
+//import { apiCall } from '../../../../services/api';
+//import { DropdownMenu } from '../../../../components/ui/DropdownMenu';
+//import formatearCodigo from '../../../../services/formatearCodigo';
+//import EdicionPieza from '../EdicionPieza';
+//import { HistorialVersiones } from '../HistorialVersiones';
+//import Can from '../../../../components/Can';
+//import { SolicitudCambio } from '../SolicitudCambio';
 
 import "./PartDetail.css"
 
-import { AgregarComponentes } from '../../../ensambles/components/AgregarComponentes';
-import Button from '../../../../components/ui/Button';
+//import { AgregarComponentes } from '../../../ensambles/components/AgregarComponentes';
+//import Button from '../../../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
-import { EditarComponente } from '../../../ensambles/components/EditarComponentes';
+//import { EditarComponente } from '../../../ensambles/components/EditarComponentes';
 import { usePartDetail } from './usePartDetail';
 import { PartComponents } from './components/PartComponents';
 import { PartHeader } from './components/PartHeader';
 import { PartDocuments } from './components/PartDocuments';
+import { PartMaterials } from './components/PartMaterials';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -67,14 +68,18 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                     producto={producto} 
                                     onRefresh={fetchPart}
                                 />
-
+                                {/* 
                                 <div className='detalle-documentos'>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>list</i>    
                                         Materiales: 
                                     </p>
                                 </div>
-
+*/}
+                                <PartMaterials
+                                    pieza={pieza}
+                                    onRefresh={fetchPart}
+                                />
                                 <div className='detalle-documentos'>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>factory</i>    

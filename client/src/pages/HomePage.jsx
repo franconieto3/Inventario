@@ -58,6 +58,48 @@ export default function HomePage(){
                             <p className='card-description'>Ordenes de cambio de ingeniería, permisos de acceso a documentos, registro de calibraciones</p>
                         </div>
                     </Can>
+                    <Can permission={null}>
+                        <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
+                            <div className='icons-container'>
+                                <div className="first-icon">
+                                    <i className="material-icons">grid_view</i>
+                                </div>
+                                <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            </div>
+                            <div className='card-title'>
+                                <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Materiales</h1>
+                            </div>
+                            <p className='card-description'>Gestión de materias primas, envasado e insumos</p>
+                        </div>
+                    </Can>
+                    <Can permission={null}>
+                        <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
+                            <div className='icons-container'>
+                                <div className="first-icon">
+                                    <i className="material-icons">straighten</i>
+                                </div>
+                                <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            </div>
+                            <div className='card-title'>
+                                <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Elementos de control</h1>
+                            </div>
+                            <p className='card-description'>Gestión de instrumentos de medición y elementos de control</p>
+                        </div>
+                    </Can>
+                    <Can permission={null}>
+                        <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
+                            <div className='icons-container'>
+                                <div className="first-icon">
+                                    <i className="material-icons">factory</i>
+                                </div>
+                                <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            </div>
+                            <div className='card-title'>
+                                <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Procesos</h1>
+                            </div>
+                            <p className='card-description'>Gestión de procesos productivos</p>
+                        </div>
+                    </Can>
                 </div>
             </div>
         </div>
