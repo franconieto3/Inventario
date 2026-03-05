@@ -12,6 +12,7 @@ import Register from "./features/auth/components/Register";
 import ProductsPage from './features/products/pages/ProductsPage';
 import ProductDetail from "./features/products/pages/ProductDetail";
 import { Ingenieria } from './features/ingenieria/pages/Ingenieria';
+import { Materiales } from './features/materiales/pages/Materiales';
 
 function App() {
 
@@ -54,6 +55,14 @@ function App() {
               element={
                 <PrivateRoute permission="acceso_ingenieria">
                   <Ingenieria/>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/materiales"
+              element={
+                <PrivateRoute permission={null}>
+                  <Materiales/>
                 </PrivateRoute>
               }
             />

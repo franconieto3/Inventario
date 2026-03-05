@@ -59,7 +59,7 @@ export default function HomePage(){
                         </div>
                     </Can>
                     <Can permission={null}>
-                        <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
+                        <div className="card" onClick={()=>navigate("/materiales")}>
                             <div className='icons-container'>
                                 <div className="first-icon">
                                     <i className="material-icons">grid_view</i>
@@ -72,6 +72,7 @@ export default function HomePage(){
                             <p className='card-description'>Gestión de materias primas, envasado e insumos</p>
                         </div>
                     </Can>
+
                     <Can permission={null}>
                         <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
                             <div className='icons-container'>
@@ -86,6 +87,7 @@ export default function HomePage(){
                             <p className='card-description'>Gestión de instrumentos de medición y elementos de control</p>
                         </div>
                     </Can>
+
                     <Can permission={null}>
                         <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
                             <div className='icons-container'>
