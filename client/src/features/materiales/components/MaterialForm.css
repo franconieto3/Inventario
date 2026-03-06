@@ -1,0 +1,129 @@
+/* MaterialForm.css */
+.mf-container {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0; /* slate-200 */
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.mf-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+}
+
+.mf-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a; /* slate-900 */
+}
+
+.mf-input, 
+.mf-select {
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.mf-input::placeholder {
+  color: #94a3b8; /* slate-400 */
+}
+
+/* shadcn focus ring */
+.mf-input:focus, 
+.mf-select:focus {
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.mf-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.mf-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e2e8f0;
+  accent-color: #0f172a;
+  cursor: pointer;
+}
+
+.mf-checkbox-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.mf-attr-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Botones inspirados en shadcn */
+.mf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 2.5rem;
+  padding: 0 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  border: none;
+  width: 100%;
+}
+
+.mf-btn-primary {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.mf-btn-primary:hover {
+  background-color: #1e293b; /* slate-800 */
+}
+
+.mf-btn-outline {
+  background-color: transparent;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+
+.mf-btn-outline:hover {
+  background-color: #f1f5f9; /* slate-100 */
+}
+
+.mf-btn-icon {
+  width: 2.5rem;
+  padding: 0;
+  flex-shrink: 0;
+  color: #64748b; /* slate-500 */
+}
+
+.mf-btn-icon:hover {
+  color: #ef4444; /* red-500 */
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+}
