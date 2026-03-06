@@ -1,19 +1,23 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import Can from '../components/Can';
+import { UserAuth } from '../features/auth/context/AuthContext';
 import NavBar from '../components/layout/NavBar';
 
 import "./HomePage.css"
-import Can from '../components/Can';
+
 
 export default function HomePage(){
     const navigate = useNavigate();
+    const {user} = UserAuth();
+    const nombreFormateado = user.name.split(' ')[0] || "";
+    
     return(
     <>
         <div>
             <NavBar />
             <div className='body-container'>
-                <h1 style={{"marginBottom":"30px", "fontFamily":"Inter", "fontWeight":"300","fontSize":"2.5rem", "fontStyle":"normal"}}>¡Bienvenido!</h1>
+                <h1 style={{"marginBottom":"30px", "fontFamily":"Inter", "fontWeight":"300","fontSize":"2.5rem", "fontStyle":"normal"}}>{`¡Hola, ${nombreFormateado}!`}</h1>
                 <div className="cards-container">
                     <Can permission="acceso_repositorio">
                         <div className="card" onClick={()=>navigate("/products")}>

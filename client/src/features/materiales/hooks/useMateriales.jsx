@@ -82,7 +82,7 @@ export const useMateriales = () => {
 
     const addMaterial = async (materialData) => {
         const { data } = await apiCall(`${API_URL}/api/materiales/nuevo`, {method:'POST', body: JSON.stringify(materialData)});
-        refreshMaterials;
+        refreshMaterials();
         return data;
     };
 
@@ -96,5 +96,6 @@ export const useMateriales = () => {
      page,
      setPage,
      setRubroSeleccionado,
+     refreshMaterials,
      addMaterial };
 };

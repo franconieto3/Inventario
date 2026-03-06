@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import './MaterialForm.css'; // Asegúrate de importar la hoja de estilos
+import { useState, useEffect } from 'react';
+import './EditarMaterial.css'; 
 import { apiCall } from '../../../services/api';
 import Button from '../../../components/ui/Button';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
+export function EditarMaterial({ material, rubros = [], unidades = [], onSubmit, onClose }) {
   const [formData, setFormData] = useState({
     id_rubro_material: '',
-    id_unidad_medida:'',
+    id_unidad_medida: '',
     descripcion: '',
     unidad_medida: 'unidades',
     es_trazable: false,
@@ -23,11 +23,40 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
     diam_mm: ''
   });
 
+  const [atributos, setAtributos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [atributos, setAtributos] = useState([]);
 
-  // Manejador para los atributos generales
+  // Cargar los datos del material seleccionado al abrir el modal
+  useEffect(() => {
+    if (material) {
+      setFormData({
+        id_rubro_material: material.id_rubro_material || '',
+        id_unidad_medida: material.id_unidad_medida || '',
+        descripcion: material.descripcion || '',
+        es_trazable: material.es_trazable || false,
+      });
+
+      // Procesar y separar los atributos que vienen de la BD
+      if (material.atributos && typeof material.atributos === 'object') {
+        const generalKeys = ['alto_cm', 'ancho_cm', 'largo_mts', 'kg', 'litros', 'diam_mm'];
+        const loadedGenerales = { alto_cm: '', ancho_cm: '', largo_mts: '', kg: '', litros: '', diam_mm: '' };
+        const loadedDinamicos = [];
+
+        Object.entries(material.atributos).forEach(([key, value]) => {
+          if (generalKeys.includes(key)) {
+            loadedGenerales[key] = value;
+          } else {
+            loadedDinamicos.push({ key, value });
+          }
+        });
+
+        setAtributosGenerales(loadedGenerales);
+        setAtributos(loadedDinamicos);
+      }
+    }
+  }, [material]);
+
   const handleAtributoGeneralChange = (e) => {
     const { name, value } = e.target;
     setAtributosGenerales(prev => ({
@@ -50,43 +79,26 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
     setAtributos(atributos.filter((_, i) => i !== index));
   };
 
-  const LimpiarFormulario =()=>{
-    setFormData({
-    id_rubro_material: '',
-    id_unidad_medida:'',
-    descripcion: '',
-    unidad_medida: 'unidades',
-    es_trazable: false,
-    });
-    setAtributosGenerales({
-    alto_cm: '',
-    ancho_cm: '',
-    largo_mts: '',
-    kg: '',
-    litros: '',
-    diam_mm: ''
-  });
-    setAtributos([])
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 1. Procesar atributos específicos dinámicos
+    // 1. Procesar atributos dinámicos
     const atributosDinamicosJson = atributos.reduce((acc, curr) => {
       if (curr.key) acc[curr.key] = curr.value;
       return acc;
     }, {});
 
-    // 2. Procesar atributos generales (desestimar los vacíos y parsear a número)
+    // 2. Procesar atributos generales
     const atributosGeneralesJson = Object.entries(atributosGenerales).reduce((acc, [key, val]) => {
-      if (val.trim() !== '') {
-        acc[key] = !isNaN(val) ? Number(val) : val;
+      // Validamos que val no sea undefined o null antes de usar trim()
+      const strVal = val != null ? String(val) : '';
+      if (strVal.trim() !== '') {
+        acc[key] = !isNaN(strVal) ? Number(strVal) : strVal;
       }
       return acc;
     }, {});
 
-    // 3. Unificar todos los atributos
+    // 3. Unificar atributos
     const atributosFinales = {
       ...atributosGeneralesJson,
       ...atributosDinamicosJson
@@ -97,18 +109,15 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
       atributos: Object.keys(atributosFinales).length > 0 ? atributosFinales : null,
     };
 
-    console.log("Enviando:", payload);
-
     try {
       setLoading(true);
       setError("");
-      const res = await apiCall(`${API_URL}/api/materiales/nuevo`, {
-        method: 'POST', 
+      // Asumiendo que tu endpoint de edición es PUT a /api/materiales/:id
+      const res = await apiCall(`${API_URL}/api/materiales/${material.id_material}`, {
+        method: 'PUT', 
         body: JSON.stringify(payload)
       });
-      LimpiarFormulario();
-      console.log("Material cargado con éxito");
-      // Si recibes onSubmit por props, es buena práctica llamarlo tras el éxito
+      
       if(onSubmit) onSubmit(res);
       if(onClose) onClose();
 
@@ -121,15 +130,14 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mf-container">
+    <form onSubmit={handleSubmit} className="em-container">
       
-      {/* Selector de Rubro */}
-      <div className="mf-form-group">
-        <label className="mf-label" htmlFor="rubro">Rubro</label>
+      <div className="em-form-group">
+        <label className="em-label" htmlFor="rubro">Rubro</label>
         <select 
           id="rubro"
           required
-          className="mf-select"
+          className="em-select"
           value={formData.id_rubro_material}
           onChange={(e) => setFormData({...formData, id_rubro_material: e.target.value})}
         >
@@ -142,27 +150,25 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
         </select>
       </div>
 
-      {/* Descripción (Ejemplo de input estándar) */}
-      <div className="mf-form-group">
-        <label className="mf-label" htmlFor="descripcion">Descripción</label>
+      <div className="em-form-group">
+        <label className="em-label" htmlFor="descripcion">Descripción</label>
         <input 
           id="descripcion"
           type="text"
           required
           placeholder="Ej: Barra Ø8mm. acero 316L"
-          className="mf-input"
+          className="em-input"
           value={formData.descripcion}
           onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
         />
       </div>
         
-      {/* Selector de unidades */}
-      <div className="mf-form-group">
-        <label className="mf-label" htmlFor="rubro">¿Cómo se mide su consumo?</label>
+      <div className="em-form-group">
+        <label className="em-label" htmlFor="unidad">¿Cómo se mide su consumo?</label>
         <select 
           id="unidad"
           required
-          className="mf-select"
+          className="em-select"
           value={formData.id_unidad_medida}
           onChange={(e) => setFormData({...formData, id_unidad_medida: e.target.value})}
         >
@@ -175,72 +181,69 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
         </select>
       </div>
 
-      {/* Trazabilidad (Checkbox) */}
-      <div className="mf-checkbox-group">
+      <div className="em-checkbox-group">
         <input 
-          id="es_trazable"
+          id="es_trazable_edit"
           type="checkbox" 
-          className="mf-checkbox"
+          className="em-checkbox"
           checked={formData.es_trazable}
           onChange={(e) => setFormData({...formData, es_trazable: e.target.checked})}
         />
-        <label htmlFor="es_trazable" className="mf-checkbox-label">
+        <label htmlFor="es_trazable_edit" className="em-checkbox-label">
           Es trazable
         </label>
       </div>
 
-      <div className="mf-form-group">
-        <label className="mf-label">Atributos Generales Físicos (Completar solo los necesarios)</label>
-        {/* Usamos un grid simple en línea para que quede compacto. Puedes moverlo a tu CSS */}
+      <div className="em-form-group">
+        <label className="em-label">Atributos Generales Físicos (Completar solo los necesarios)</label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '0.5rem' }}>
           <input 
-            type="number" step="any" name="alto_cm" placeholder="Alto (Cm)" className="mf-input"
+            type="number" step="any" name="alto_cm" placeholder="Alto (Cm)" className="em-input"
             value={atributosGenerales.alto_cm} onChange={handleAtributoGeneralChange}
           />
           <input 
-            type="number" step="any" name="ancho_cm" placeholder="Ancho (Cm)" className="mf-input"
+            type="number" step="any" name="ancho_cm" placeholder="Ancho (Cm)" className="em-input"
             value={atributosGenerales.ancho_cm} onChange={handleAtributoGeneralChange}
           />
           <input 
-            type="number" step="any" name="largo_mts" placeholder="Largo (Mts)" className="mf-input"
+            type="number" step="any" name="largo_mts" placeholder="Largo (Mts)" className="em-input"
             value={atributosGenerales.largo_mts} onChange={handleAtributoGeneralChange}
           />
           <input 
-            type="number" step="any" name="kg" placeholder="Peso (KG)" className="mf-input"
+            type="number" step="any" name="kg" placeholder="Peso (KG)" className="em-input"
             value={atributosGenerales.kg} onChange={handleAtributoGeneralChange}
           />
           <input 
-            type="number" step="any" name="litros" placeholder="Volumen (Lts)" className="mf-input"
+            type="number" step="any" name="litros" placeholder="Volumen (Lts)" className="em-input"
             value={atributosGenerales.litros} onChange={handleAtributoGeneralChange}
           />
           <input 
-            type="number" step="any" name="diam_mm" placeholder="Diám. (mm)" className="mf-input"
+            type="number" step="any" name="diam_mm" placeholder="Diám. (mm)" className="em-input"
             value={atributosGenerales.diam_mm} onChange={handleAtributoGeneralChange}
           />
         </div>
       </div>
 
-      {/* Atributos Dinámicos */}
-      <div className="mf-form-group">
-        <label className="mf-label">Atributos Específicos Adicionales</label>
+      <div className="em-form-group">
+        <label className="em-label">Atributos Específicos Adicionales</label>
         
         {atributos.map((attr, index) => (
-          <div key={index} className="mf-attr-row">
+          <div key={index} className="em-attr-row">
             <input 
               placeholder="Ej: espesor_mm" 
-              className="mf-input"
+              className="em-input"
               value={attr.key} 
               onChange={(e) => handleAtributoChange(index, 'key', e.target.value)}
             />
             <input 
               placeholder="Ej: 4.0" 
-              className="mf-input"
+              className="em-input"
               value={attr.value} 
               onChange={(e) => handleAtributoChange(index, 'value', e.target.value)}
             />
             <button 
               type="button" 
-              className="mf-btn mf-btn-outline mf-btn-icon" 
+              className="em-btn-icon" 
               onClick={() => handleRemoveAtributo(index)}
               title="Eliminar atributo"
             >
@@ -251,22 +254,18 @@ export const MaterialForm = ({ rubros= [], unidades=[], onSubmit, onClose}) => {
         
         <button 
           type="button" 
-          className="mf-btn mf-btn-outline" 
+          className="em-btn-outline" 
           onClick={handleAddAtributo}
-          style={{ marginTop: '0.25rem' }}
         >
           + Añadir Atributo
         </button>
       </div>
-      {/** 
-      <button type="submit" disabled={loading} className="mf-btn mf-btn-primary" style={{ marginTop: '1rem' }}>
-        {loading ? 'Guardando...' : 'Guardar Material'}
-      </button>*/}
+
       <Button variant="default" type="submit" disabled={loading}>
-        {loading ? 'Guardando...' : 'Guardar Material'}
+        {loading ? 'Actualizando...' : 'Actualizar Material'}
       </Button>
 
-      {error && <p style={{'color':'red', marginTop: '1rem'}}> {error} </p>}
+      {error && <p style={{ color: 'red', marginTop: '1rem' }}> {error} </p>}
     </form>
   );
-};
+}
