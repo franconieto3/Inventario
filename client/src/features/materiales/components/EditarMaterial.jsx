@@ -113,7 +113,7 @@ export function EditarMaterial({ material, rubros = [], unidades = [], onSubmit,
       setLoading(true);
       setError("");
       // Asumiendo que tu endpoint de edición es PUT a /api/materiales/:id
-      const res = await apiCall(`${API_URL}/api/materiales/${material.id_material}`, {
+      const res = await apiCall(`${API_URL}/api/materiales/edicion/${material.id_material}`, {
         method: 'PUT', 
         body: JSON.stringify(payload)
       });

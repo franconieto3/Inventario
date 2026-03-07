@@ -54,3 +54,51 @@ export const listarMateriales = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const updateMaterial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // Validación básica
+    if (!id) {
+      return res.status(400).json({ error: 'El ID del material es requerido' });
+    }
+
+    if (!updateData.descripcion || updateData.descripcion.trim() === '') {
+      return res.status(400).json({ error: 'La descripción es obligatoria' });
+    }
+
+    // Llamamos al servicio para ejecutar la lógica de negocio
+    const materialActualizado = await MaterialService.actualizarMaterial(id, updateData);
+
+    return res.status(200).json({
+      message: 'Material actualizado con éxito',
+      data: materialActualizado
+    });
+
+  } catch (error) {
+    console.error('Error en updateMaterial:', error);
+    
+    // Devolvemos un 400 o 500 dependiendo de si es un error de negocio o de servidor
+    const statusCode = error.message.includes('Ya existe') ? 400 : 500;
+    return res.status(statusCode).json({ error: error.message });
+  }
+};
+
+export const eliminacionMaterial = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'El ID del material es requerido' });
+    }
+
+    await MaterialService.eliminarMaterial(id);
+    
+    return res.status(200).json({ message: 'Material eliminado con éxito' });
+  } catch (err) {
+    console.error('Error en eliminacionMaterial:', err);
+    return res.status(500).json({ error: err.message });
+  }
+};

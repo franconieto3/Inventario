@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { crearMaterial, listarMateriales, obtenerRubros, obtenerUnidades } from "../controllers/material.controller.js";
+import { crearMaterial, eliminacionMaterial, listarMateriales, obtenerRubros, obtenerUnidades, updateMaterial } from "../controllers/material.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { materialPayloadSchema } from "../schemas/material.schemas.js";
 
@@ -15,4 +15,13 @@ router.post('/nuevo',
     validateSchema(materialPayloadSchema),
     crearMaterial);
 
+router.put('/edicion/:id',
+    verificarToken, 
+    validateSchema(materialPayloadSchema),
+    updateMaterial);
+
+router.delete('/eliminacion/:id',
+    verificarToken,
+    eliminacionMaterial  
+)
 export default router;

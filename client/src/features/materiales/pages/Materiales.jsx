@@ -6,6 +6,9 @@ import { MaterialForm } from "../components/MaterialForms";
 import { useMateriales } from "../hooks/useMateriales";
 import { Modal } from "../../../components/ui/Modal";
 import { EditarMaterial } from "../components/EditarMaterial";
+import { apiCall } from "../../../services/api";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function Materiales(){
     const {
@@ -27,7 +30,18 @@ export function Materiales(){
     const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
 
     const eliminarMaterial = async(m)=>{
-        console.log("Eliminando material", m);
+        if (window.confirm("¿Está seguro de querer eliminar este material?")){
+            try{
+                const res = await apiCall(`${API_URL}/api/materiales/eliminacion/${m.id_material}`,
+                    {
+                        method: 'DELETE'
+                    });
+                refreshMaterials();
+            }catch(err){
+                console.error("Error al eliminar:", err);
+                alert("Hubo un problema al intentar eliminar el material.");
+            }
+        }
     }
 
     const editarMaterial = async(m)=>{
