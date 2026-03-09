@@ -116,7 +116,8 @@ export const obtenerInfoPieza = async (idPieza) => {
         .single(),
 
         //Ultimas versiones de los documentos
-        supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza})
+        supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza}),
+        //supabase.rpc('obtener_materiales_pieza',{p_id_pieza: idPieza})
     ]);
 
     // Manejo de errores de la consulta de producto

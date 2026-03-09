@@ -25,7 +25,7 @@ export const getMateriales = async ({ page = 1, limit = 10, id_rubro_material })
 
   let query = supabase
     .from('material')
-    .select('*, rubro_material(descripcion)', { count: 'exact' });
+    .select('*, rubro_material(descripcion), unidad_medida(descripcion)', { count: 'exact' });
 
   if (id_rubro_material) {
     query = query.eq('id_rubro_material', id_rubro_material);
@@ -75,6 +75,30 @@ export const eliminarMaterial = async (id) => {
 
   if (error) {
     throw new Error(`Error al eliminar el material: ${error.message}`);
+  }
+
+  return data;
+};
+
+export const getMaterialesParaSelector = async () => {
+
+  const { data, error } = await supabase
+    .from('material')
+    .select('*, unidad_medida(unidad)')
+    .order('descripcion');
+    
+  if (error) throw error;
+  return data;
+};
+
+export const agregarMaterialPieza = async (idPieza, materiales) => {
+  const { data, error } = await supabase.rpc('asociar_materiales_pieza', {
+    p_id_pieza: idPieza,
+    p_materiales: materiales
+  });
+
+  if (error) {
+    throw new Error(`Error al asociar materiales a la pieza: ${error.message}`);
   }
 
   return data;

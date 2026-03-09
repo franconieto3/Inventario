@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 import Button from "../../../../../components/ui/Button";
+import {Modal} from "../../../../../components/ui/Modal";
+import { AgregarMaterial } from "../../../../materiales/components/AgregarMaterial";
 
 
-export function PartMaterials({pieza, onRefresh}){
+export function PartMaterials({pieza,producto, onRefresh}){
 
     const [activeMenuId, setActiveMenuId] = useState(null);
     const [mostrarAgregar, setMostrarAgregar] = useState(false);
@@ -46,11 +48,17 @@ export function PartMaterials({pieza, onRefresh}){
              
             
             {mostrarAgregar && (
-                <AgregarMateriales
-                    pieza={pieza} 
-                    onClose={() => setMostrarAgregar(false)} 
-                    onSuccess={onRefresh} 
-                />
+                <Modal 
+                    titulo="Agregar material" 
+                    descripcion={`${producto.nombre} ${pieza.nombre}`} 
+                    onClose={() => setMostrarAgregar(false)}
+                >
+                    <AgregarMaterial
+                        pieza={pieza} 
+                        onClose={() => setMostrarAgregar(false)} 
+                        onSuccess={onRefresh} 
+                    />
+                </Modal>
             )}
             
             {mostrarEditar && (

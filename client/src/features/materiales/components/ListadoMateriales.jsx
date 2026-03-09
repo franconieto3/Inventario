@@ -4,16 +4,16 @@ import Table from "../../../components/ui/Table";
 import { useMateriales } from "../hooks/useMateriales";
 
 export function ListadoMateriales({ 
-    rubros, 
-    materiales, 
-    loadingMaterials, 
-    totalPages, 
-    page, 
-    setPage, 
-    setRubroSeleccionado,
-    onEdit,
-    onDelete 
-}){
+        rubros, 
+        materiales, 
+        loadingMaterials, 
+        totalPages, 
+        page, 
+        setPage, 
+        setRubroSeleccionado,
+        onEdit,
+        onDelete 
+    }){
     
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -23,7 +23,7 @@ export function ListadoMateriales({
             header:"Descripcion"
         },
         {
-            key: "id_rubro_material",
+            key: "descripcion_rubro",
             header: "Rubro"
         },
        {
@@ -32,8 +32,18 @@ export function ListadoMateriales({
             render: (_)=> _ ? "Sí" : "No"
         },
         {
-            key: "id_unidad_medida",
-            header: "Criterio de medición"
+            key: "descripcion_unidad",
+            header: "Métrica de consumo"
+        },
+        {
+            key:"atributos",
+            header: "Atributos",
+            render: (_) =>
+            Object.keys(_).map(key => (
+                <p key={key}>
+                {key}: {_[key]}
+                </p>
+            ))
         },
         {
             key:"",

@@ -68,16 +68,9 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                     producto={producto} 
                                     onRefresh={fetchPart}
                                 />
-                                {/* 
-                                <div className='detalle-documentos'>
-                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
-                                        <i className='material-icons'>list</i>    
-                                        Materiales: 
-                                    </p>
-                                </div>
-*/}
                                 <PartMaterials
                                     pieza={pieza}
+                                    producto={producto} 
                                     onRefresh={fetchPart}
                                 />
                                 <div className='detalle-documentos'>

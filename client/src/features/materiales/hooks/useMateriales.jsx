@@ -25,6 +25,8 @@ export const useMateriales = () => {
         setRefreshTrigger(prev => prev + 1);
     }, []);
 
+
+
   useEffect(() => {
     const fetchRubros = async () => {
         try{

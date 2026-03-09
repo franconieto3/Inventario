@@ -87,7 +87,6 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre, nombrePie
     }
 
     useEffect(() => {
-        // console.log(componentes);
         setReload(reload + 1);
 
     }, [componentes]);
@@ -124,6 +123,7 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre, nombrePie
                                                 type="number" 
                                                 min="1"
                                                 className="shadcn-input"
+                                                placeholder="Consumo estimado"
                                                 value={c.cantidad}
                                                 onChange={(e) => handleQuantityChange(c.idComponente, e.target.value)}
                                             />

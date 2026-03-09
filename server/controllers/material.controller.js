@@ -42,14 +42,31 @@ export const crearMaterial = async (req, res) => {
 export const listarMateriales = async (req, res) => {
   try {
     const { page, limit, id_rubro_material } = req.query;
+
     const result = await MaterialService.getMateriales({ 
       page: parseInt(page), 
       limit: parseInt(limit), 
       id_rubro_material 
     });
 
-    console.log("Resultados: ", result)
-    res.json(result);
+    const mappedMateriales = result.materiales.map((item)=>(
+      {
+        ...item, 
+        'descripcion_rubro': item.rubro_material?.descripcion, 
+        'descripcion_unidad': item.unidad_medida?.descripcion
+      }
+    ));
+
+    console.log({
+        ...result,
+        materiales: mappedMateriales
+    });
+
+    res.json({
+        ...result,
+        materiales: mappedMateriales
+    });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -102,3 +119,40 @@ export const eliminacionMaterial = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
+
+export const obtenerMaterialesSelector = async (req, res) => {
+  try {
+    const materiales = await MaterialService.getMaterialesParaSelector();
+    const mappedMateriales = materiales.map(
+      (item)=>({...item, 'unidad': item.unidad_medida?.unidad})
+    )
+
+    res.json(mappedMateriales);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const asociarPieza = async (req, res) => {
+  try {
+    const { idPieza, materiales } = req.body;
+
+    // Validaciones básicas
+    if (!idPieza) {
+      return res.status(400).json({ error: 'El ID de la pieza es requerido.' });
+    }
+
+    if (!materiales || !Array.isArray(materiales) || materiales.length === 0) {
+      return res.status(400).json({ error: 'Se requiere una lista válida de materiales.' });
+    }
+
+    // Llamada al servicio
+    await MaterialService.agregarMaterialPieza(idPieza, materiales);
+    
+    return res.status(201).json({ message: "Materiales asociados a la pieza correctamente." });
+    
+  } catch(err) {
+    console.error('Error en asociarPieza:', err);
+    return res.status(500).json({ error: err.message });
+  }
+}
