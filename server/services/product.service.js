@@ -107,7 +107,7 @@ export const obtenerProducto = async (id)=>{
 }
 
 export const obtenerInfoPieza = async (idPieza) => {
-    const [piezaRes, documentosRes] = await Promise.all([
+    const [piezaRes, documentosRes, materialesRes] = await Promise.all([
         //Obtener información básica de la pieza
         supabase
         .from('pieza')
@@ -117,7 +117,7 @@ export const obtenerInfoPieza = async (idPieza) => {
 
         //Ultimas versiones de los documentos
         supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza}),
-        //supabase.rpc('obtener_materiales_pieza',{p_id_pieza: idPieza})
+        supabase.rpc('obtener_materiales_pieza',{p_id_pieza: idPieza})
     ]);
 
     // Manejo de errores de la consulta de producto
@@ -132,13 +132,21 @@ export const obtenerInfoPieza = async (idPieza) => {
         } 
     }
 
-    // Manejo de errores de la función RPC (opcional, podrías devolver [] si falla)
+    let documentos =[];
     if (documentosRes.error) {
         console.error("Error al obtener documentos:", documentosRes.error);
-        return [piezaRes, []];
+    }else{
+        documentos = documentosRes;
     }
 
-    return [piezaRes, documentosRes];
+    let materiales = [];
+    if(materialesRes.error){
+        console.error("Error al obtener materiales:", materialesRes.error);
+    }else{
+        materiales = materialesRes;
+    }
+
+    return [piezaRes, documentos, materiales];
     
 }
 

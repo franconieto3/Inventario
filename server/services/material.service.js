@@ -98,8 +98,48 @@ export const agregarMaterialPieza = async (idPieza, materiales) => {
   });
 
   if (error) {
+    if (error.code === '23505') {
+      console.error('Error: Intento de duplicado detectado.');
+      
+      // Lanzamos un error personalizado para que el controlador HTTP lo maneje
+      throw new Error('No se permiten materiales duplicados en una pieza.');
+    }
+
     throw new Error(`Error al asociar materiales a la pieza: ${error.message}`);
   }
 
   return data;
 };
+
+export const quitarMaterialPieza = async (idBom)=>{
+  
+  const {data, error} = await supabase
+    .from('pieza_bom')
+    .delete()
+    .eq('id_bom', idBom)
+    .select();
+
+  console.log("Eliminando: ", idBom);
+
+  if(error){
+    console.error(error);
+    throw new Error("No se pudo quitar el material");
+  }
+
+  return data;
+}
+
+export const modificarBom = async (id_bom, consumo_teorico) => {
+  const { data, error } = await supabase
+    .from('pieza_bom')
+    .update({ consumo_teorico: consumo_teorico })
+    .eq('id_bom', id_bom)
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudo modificar la cantidad del material.");
+  }
+
+  return data;
+}

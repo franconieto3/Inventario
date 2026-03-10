@@ -153,6 +153,32 @@ export const asociarPieza = async (req, res) => {
     
   } catch(err) {
     console.error('Error en asociarPieza:', err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message, message: err.message });
+  }
+}
+
+export const quitarMaterial= async(req, res)=>{
+  try{
+    
+    const {idBom} = req.query;
+    const data = await MaterialService.quitarMaterialPieza(idBom);
+    return res.status(200).json({message: "Material removido exitosamente", data: data});
+
+  }catch(err){
+    console.log(err);
+    return res.status(500).json({error: err.message});
+  }
+}
+
+export const edicionBom = async( req, res) =>{
+  try{
+    const {id_bom, consumo_teorico} = req.body;
+    const data = await MaterialService.modificarBom(id_bom, consumo_teorico);
+    
+    return res.status(200).json({message: "Petición recibida correctamente"});
+    
+  }catch(err){
+    console.error(err.message);
+    return res.status(err.statusCode? err.statusCode : 500).json({error: err.message, message: err.message});
   }
 }

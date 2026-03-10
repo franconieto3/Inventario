@@ -44,30 +44,7 @@ export const productos = async (req, res)=>{
 export const nuevoProducto = async (req, res) =>{
     try {
         const { nombre, id_registro_pm, id_rubro, piezas } = req.body;
-        /*
-        // Validaciones básicas de entrada
-        if (!nombre || !piezas || piezas.length === 0) {
-            return res.status(400).json({ error: "Datos incompletos" });
-        }
-        //Validar que no hayan coincidencias de nombres y piezas entre piezas
 
-        if(piezas.length > 1){
-            //Falta de denominación
-            if (piezas.some(p => !p.nombrePieza)) {
-                const err = new Error("Hay al menos una pieza sin denominación");
-                err.statusCode = 400;
-                throw err;
-            }
-
-            //Nombres duplicados
-            const nombres = piezas.map(p => p.nombrePieza);
-            if (new Set(nombres).size !== nombres.length) {
-                const err = new Error("Hay al menos dos piezas con la misma denominación");
-                err.statusCode = 400;
-                throw err;
-            }
-        }
-        */
         const data = await productService.cargarProductos(nombre, id_registro_pm, id_rubro, piezas);
 
         // Si todo salió bien
@@ -113,11 +90,12 @@ export const pieza = async (req, res) =>{
     try{
         const {id} = req.params;
         
-        const [piezaRes, documentosRes] = await productService.obtenerInfoPieza(id); 
+        const [piezaRes, documentos, materiales] = await productService.obtenerInfoPieza(id); 
 
         const respuestaFinal = {
             ...piezaRes.data,
-            documentos: documentosRes.data || []
+            documentos: documentos.data || [],
+            materiales: materiales.data || []
         };
 
         if(respuestaFinal.es_ensamble){
