@@ -1,16 +1,13 @@
 .cards-container{
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     flex-wrap: wrap;
     gap:20px;
 }
 
 .card{
-    flex: 1;
-    min-width: 300px;
-    max-width: 400px;
-    min-height: 200px;
+    flex: 1 1 350px;
     background-color: white;
     border-radius: 15px;
     padding: 25px;
