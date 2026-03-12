@@ -19,6 +19,7 @@ import { PartComponents } from './components/PartComponents';
 import { PartHeader } from './components/PartHeader';
 import { PartDocuments } from './components/PartDocuments';
 import { PartMaterials } from './components/PartMaterials';
+import { PartProcessRoutes } from './components/PartProcessRoutes';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -73,13 +74,9 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                     producto={producto} 
                                     onRefresh={fetchPart}
                                 />
-                                <div className='detalle-documentos'>
-                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
-                                        <i className='material-icons'>factory</i>    
-                                        Procesos: 
-                                    </p>
-                                </div>
-
+                                <PartProcessRoutes
+                                    pieza={pieza}
+                                />
                                 <div className='detalle-documentos'>
                                     <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
                                         <i className='material-icons'>straighten</i>    

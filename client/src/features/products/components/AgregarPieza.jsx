@@ -50,12 +50,12 @@ export function AgregarPieza({producto, onUploadSuccess}){
 
     return(
         <>
-        {!agregarPieza &&
+        
         <button className='add-span' onClick={()=>{setAgregarPieza(true)}}>
             <i className='material-icons' id="add-icon">add</i>
             Agregar pieza
         </button>
-        }
+        
         {agregarPieza &&
         <div className='overlay'>
             <div className='modal' style={{'width':'350px'}}>

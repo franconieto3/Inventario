@@ -14,6 +14,8 @@ import EdicionProducto from "../components/EdicionProducto";
 
 import "./ProductDetail.css"
 import Can from '../../../components/Can';
+import { NuevaRutaProcesos } from '../../procesos/components/NuevaRutaProcesos';
+import Button from '../../../components/ui/Button';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -29,6 +31,8 @@ export default function ProductDetail() {
   const [mostrarEdicion, setMostrarEdicion] = useState(false);
   const [rubros, setRubros] = useState(null);
   const [registrosPM, setRegistrosPM] = useState(null);
+
+  const [mostrarCrearRuta, setMostrarCrearRuta] = useState(false);
 
   const fetchProduct = useCallback(async () => {
     try{
@@ -117,6 +121,15 @@ export default function ProductDetail() {
           <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
         </Can>
         <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+
+        <button className='add-span' onClick={()=>{setMostrarCrearRuta(true)}}>
+            <i className='material-icons' id="add-icon">add</i>
+            Agregar ruta de procesos
+        </button>
+
+        {mostrarCrearRuta &&
+         <NuevaRutaProcesos onClose={()=>setMostrarCrearRuta(false)}/>
+         }
 
         {mostrarEdicion &&
           <EdicionProducto 
