@@ -128,7 +128,11 @@ export default function ProductDetail() {
         </button>
 
         {mostrarCrearRuta &&
-         <NuevaRutaProcesos onClose={()=>setMostrarCrearRuta(false)}/>
+         <NuevaRutaProcesos 
+          producto={producto.nombre}
+          piezas={producto.pieza}
+          onClose={()=>setMostrarCrearRuta(false)}
+          />
          }
 
         {mostrarEdicion &&
