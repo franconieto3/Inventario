@@ -132,6 +132,7 @@ export default function ProductDetail() {
           producto={producto.nombre}
           piezas={producto.pieza}
           onClose={()=>setMostrarCrearRuta(false)}
+          onSuccess={fetchProduct}
           />
          }
 

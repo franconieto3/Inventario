@@ -122,3 +122,57 @@
     justify-content: flex-end;
     margin-top: 15px;
 }
+
+/* --- Estilos para la sección de Piezas --- */
+.piezas-section {
+    margin-top: 24px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+}
+
+.piezas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.piezas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-bottom: 16px;
+}
+
+.pieza-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pieza-item:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Estilo dinámico cuando el checkbox está marcado */
+.pieza-item.selected {
+    background-color: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.pieza-nombre {
+    font-size: 14px;
+    color: #333333;
+    font-weight: 500;
+    margin-left: 8px;
+    user-select: none;
+}
