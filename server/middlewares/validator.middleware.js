@@ -6,11 +6,11 @@ export const validateSchema = (schema, source = 'body') => (req, res, next) => {
     next();
   } catch (err) {
       if (err instanceof z.ZodError) {
-        const errores = err.errors || [];
+        const errores = err.issues || err.errors || [];
         
         return res.status(400).json({ 
             error: "Datos inválidos", 
-            detalles: err.errors.map(e => ({ campo: e.path.join('.'), mensaje: e.message })) 
+            detalles: errores.map(e => ({ campo: e.path.join('.'), mensaje: e.message })) 
         });
       }
 

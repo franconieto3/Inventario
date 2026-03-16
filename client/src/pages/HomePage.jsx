@@ -93,7 +93,7 @@ export default function HomePage(){
                     </Can>
 
                     <Can permission={null}>
-                        <div className="card" /*onClick={()=>navigate("/ingenieria")}*/>
+                        <div className="card" onClick={()=>navigate("/procesos")}>
                             <div className='icons-container'>
                                 <div className="first-icon">
                                     <i className="material-icons">factory</i>

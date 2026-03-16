@@ -57,8 +57,8 @@ export const productoSchema = z.object({
 
 export const editarProductoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio"),
-  idRubro: z.coerce.number().int().positive("ID de rubro inválido"),
-  idRegistroPm: z.coerce.number().int().positive("ID de registro PM inválido")
+  idRubro: z.coerce.number().int("ID de rubro inválido"),
+  idRegistroPm: z.coerce.number().int("ID de registro PM inválido")
 });
 
 export const crearPiezaSchema = z.object({

@@ -13,6 +13,7 @@ import ProductsPage from './features/products/pages/ProductsPage';
 import ProductDetail from "./features/products/pages/ProductDetail";
 import { Ingenieria } from './features/ingenieria/pages/Ingenieria';
 import { Materiales } from './features/materiales/pages/Materiales';
+import { Procesos } from './features/procesos/pages/Procesos';
 
 function App() {
 
@@ -66,6 +67,14 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path='/procesos'
+              element={
+                <PrivateRoute permission={null}>
+                  <Procesos/>
+                </PrivateRoute>
+              }
+            /> 
             <Route 
               path="/producto/:id" 
               element={

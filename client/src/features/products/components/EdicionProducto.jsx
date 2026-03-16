@@ -41,6 +41,8 @@ export default function EdicionProducto({producto, rubros, registrosPM, onClose,
                 idRegistroPm: registro
             }
 
+            console.log(payload);
+
             const respuesta = await apiCall(`${API_URL}/api/productos/edicion/${producto.id_producto}`, {method: 'PUT', body: JSON.stringify(payload)});
             
             //alert("Producto modificado exitosamente.");

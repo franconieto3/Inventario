@@ -57,11 +57,6 @@ export const listarMateriales = async (req, res) => {
       }
     ));
 
-    console.log({
-        ...result,
-        materiales: mappedMateriales
-    });
-
     res.json({
         ...result,
         materiales: mappedMateriales

@@ -3,6 +3,7 @@ import  Buscador from "../../../components/ui/Buscador"
 import  Button from "../../../components/ui/Button"
 import { useState, useRef, useEffect } from "react"
 import { apiCall } from "../../../services/api";
+import { useProcesos } from "../hooks/useProcesos";
 
 import "./NuevaRutaProcesos.css"
 
@@ -10,38 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function NuevaRutaProcesos({producto, piezas, onClose, onSuccess}){
 
-    const rutas = [
-        {
-          id_ruta:1,
-          nombre: "Tornillos canulados"  
-        },
-        {
-            id_ruta: 2,
-            nombre: "Placas de titanio"
-        },
-        {
-            id_ruta: 3,
-            nombre: "Tallos de cadera acero"
-        }
-    ]
-    const procesos = [
-        {
-            id_proceso:1,
-            nombre: "Mecanizado"
-        },
-        {
-            id_proceso: 2,
-            nombre: "Corte por hilo"
-        },
-        {
-            id_proceso: 3,
-            nombre: "Anodizado"
-        },
-        {
-            id_proceso: 4,
-            nombre: "Grabado"
-        },
-    ]
+    const {procesos, rutas} = useProcesos();
 
     const [loading, setLoading] = useState(false);
     const [reload, setReload] = useState(0);
