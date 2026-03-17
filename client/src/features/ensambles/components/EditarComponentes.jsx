@@ -9,8 +9,11 @@ export function EditarComponente({
     onClose, 
     onSuccess}){
     
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    
     const [cantidad, setCantidad] = useState(componente.cantidad);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const submitComponents = async()=>{
 
@@ -21,12 +24,13 @@ export function EditarComponente({
 
         try{
             setLoading(true);
+            setError("");
             
             const res = await apiCall(`${API_URL}/api/componentes/edit`,{
                 method:'PUT',
                 body: JSON.stringify({
                     idPiezaPadre,
-                    idPiezaHijo: c.id_pieza,
+                    idPiezaHijo: componente.id_pieza,
                     cantidad: Number(cantidad)
                 })
             });
@@ -36,6 +40,7 @@ export function EditarComponente({
 
         }catch(err){
             console.log("Error al actualizar la cantidad:", err.message);
+            setError(err.message);
         }finally{
             setLoading(false);
         }
@@ -77,6 +82,7 @@ export function EditarComponente({
                             {loading ? "Guardando..." : "Guardar"}
                         </Button>
                     </div>
+                    {error && <p style={{'color': 'red'}}>{error}</p>}
                 </div>
             </div>
         </>

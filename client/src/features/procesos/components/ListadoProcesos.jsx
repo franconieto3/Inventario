@@ -4,6 +4,12 @@ import Table from "../../../components/ui/Table";
 
 export function ListadoProcesos({
     procesos,
+    tipos,
+    unidades,
+    page,
+    setPage,
+    totalPages,
+    setTipoSeleccionado,
     onEdit,
     onDelete 
 }){
@@ -15,11 +21,12 @@ export function ListadoProcesos({
             header:"Nombre"
         },
         {
-            key:"objeto_proceso",
-            header:"Tipo de proceso"
+            key:"",
+            header:"Tipo de proceso",
+            render: (_, row)=> <span>{row.tipo_proceso.descripcion}</span>
         },
         {
-            key: "unidad_medicion",
+            key: "unidad_tiempo",
             header: "Intervalo de medición"
         },
         {
@@ -49,6 +56,10 @@ export function ListadoProcesos({
         }
     ]
 
+    //Paginación
+    const handlePrevPage = () => setPage(prev => Math.max(1, prev - 1));
+    const handleNextPage = () => setPage(prev => Math.min(totalPages, prev + 1));
+
     return(
         <>
             <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between'}}>
@@ -58,8 +69,40 @@ export function ListadoProcesos({
                         Visualización, edición y eliminación de procesos
                     </p>
                 </div>
+
+                <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
+                    <select onChange={(e)=>{setTipoSeleccionado(e.target.value)}}>
+                    <option value="0">Todos los tipos</option>
+                    {tipos.map(
+                        (t)=>(
+                        <option key={t.id_tipo_proceso} value={t.id_tipo_proceso}>{t.descripcion}</option>
+                        )
+                    )}
+                    </select>
+                </div>
+
             </div>
-            <Table data={procesos} columns={columnas}></Table>
+            <Table data={procesos} columns={columnas}/>
+
+            {totalPages > 1 && (
+                <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
+                    <button 
+                        onClick={handlePrevPage} 
+                        disabled={page === 1 || loadingProcesos}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_left</i>
+                    </button>
+                    <span>{page} / {totalPages}</span>
+                    <button 
+                        onClick={handleNextPage} 
+                        disabled={page === totalPages || loadingProcesos}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_right</i>
+                    </button>
+                </div>
+            )}
         </>
     );
 }
