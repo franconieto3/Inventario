@@ -6,12 +6,14 @@ import { useProcesos } from "../hooks/useProcesos";
 import { Modal } from "../../../components/ui/Modal";
 import { CrearProceso } from "../components/CrearProceso";
 import { EditarProceso } from "../components/EditarProceso";
+import { CrearRuta} from "../components/CrearRuta";
 
 export function Procesos(){
     
     const [mostrarNewProceso, setMostrarNewProceso] = useState(false);
     const [mostrarEdicionProceso, setMostrarEdicionProceso] = useState(false);
     const [procesoSeleccionado, setProcesoSeleccionado] = useState(null);
+    const [mostrarNewRutaProceso, setMostrarNewRutaProceso] = useState(false);
 
     const {
         procesos, 
@@ -65,12 +67,17 @@ export function Procesos(){
                     onEdit={(row)=>editarProceso(row)}
                     onDelete={(row)=>eliminarProceso(row)}
                 />
-                  
+
+                <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
+                    <Button onClick={()=>setMostrarNewRutaProceso(true)}>
+                        Nueva ruta de procesos
+                    </Button>
+                </div>
             </div>
             {mostrarNewProceso &&
                 <Modal
                     titulo="Agregar nuevo proceso"
-                    descripcion={null}
+                    descripcion="Completa los datos para registrar un proceso en el sistema."
                     onClose={()=>setMostrarNewProceso(false)}
                 >
                     <CrearProceso
@@ -88,6 +95,19 @@ export function Procesos(){
                     <EditarProceso
                         onClose={()=>setMostrarEdicionProceso(false)}
                         onSuccess={refreshProcesos}
+                    />
+                </Modal>
+            }
+            {mostrarNewRutaProceso &&
+                <Modal
+                    titulo="Nueva ruta de procesos"
+                    descripcion="Seleccione los procesos y arrastrelos para definir el orden"
+                    onClose={()=>setMostrarNewRutaProceso(false)}
+                >
+                    <CrearRuta 
+                        onSubmit={(ruta)=>console.log(ruta)}
+                        onClose={()=>setMostrarNewRutaProceso(false)}
+                        onReturn={null}
                     />
                 </Modal>
             }

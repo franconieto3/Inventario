@@ -7,15 +7,15 @@ export function useProcesos(){
 
     const [rutas, setRutas] = useState([
         {
-          id_ruta:1,
+          id_bop:1,
           nombre: "Tornillos canulados"  
         },
         {
-            id_ruta: 2,
+            id_bop: 2,
             nombre: "Placas de titanio"
         },
         {
-            id_ruta: 3,
+            id_bop: 3,
             nombre: "Tallos de cadera acero"
         }
     ])
