@@ -7,19 +7,27 @@ import { Modal } from "../../../components/ui/Modal";
 import { CrearProceso } from "../components/CrearProceso";
 import { EditarProceso } from "../components/EditarProceso";
 import { CrearRuta} from "../components/CrearRuta";
+import { ListadoRutas } from "../components/ListadoRutas";
+import { useProcessRoutes } from "../hooks/useProcessRoutes";
+import { EditarRuta } from "../components/EditarRuta";
+import { apiCall } from "../../../services/api";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function Procesos(){
     
     const [mostrarNewProceso, setMostrarNewProceso] = useState(false);
     const [mostrarEdicionProceso, setMostrarEdicionProceso] = useState(false);
     const [procesoSeleccionado, setProcesoSeleccionado] = useState(null);
+
     const [mostrarNewRutaProceso, setMostrarNewRutaProceso] = useState(false);
+    const [mostrarEdicionRuta, setMostrarEdicionRuta] = useState(false);
+    const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
 
     const {
         procesos, 
         tipos,
         unidades,
-        rutas, 
         loading, 
         loadingProcesos, 
         page, 
@@ -31,13 +39,39 @@ export function Procesos(){
         refreshProcesos
     } = useProcesos();
 
+    const {refreshRutas,crearRuta}= useProcessRoutes();
+
     const editarProceso = (p)=>{
-        setMostrarEdicionProceso(true);
         setProcesoSeleccionado(p);
+        setMostrarEdicionProceso(true);
     }
 
     const eliminarProceso = async (p)=>{
-        return null;
+        if(window.confirm(`¿Desea eliminar el proceso ${p.nombre}?`)){
+            try{
+                const res = await apiCall(`${API_URL}/api/procesos/delete/${p.id_proceso}`,{method:'DELETE'});
+                refreshProcesos();
+            }catch(err){
+                console.error(err.message);
+            }
+        }
+    }
+
+    const editarRuta = (r)=>{
+        setRutaSeleccionada(r);
+        setMostrarEdicionRuta(true);
+    }
+
+    const eliminarRuta = async (r)=>{
+        if(window.confirm(`¿Desea eliminar la ruta ${r.nombre}?: `)){
+            console.log("Eliminando ruta... ", r.id_bop);
+            try{
+                const res = await apiCall(`${API_URL}/api/procesos/ruta/delete/${r.id_bop}`,{method:'DELETE'});
+                refreshRutas();
+            }catch(err){
+                console.error(err.message);
+            }
+        }
     }
 
     return(
@@ -49,30 +83,36 @@ export function Procesos(){
                         <p className='products-text'>Procesos</p>
                     </div>
                 </div>
-                <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
-                    <Button onClick={()=>setMostrarNewProceso(true)}>
-                        Agregar proceso
-                    </Button>
+                <div style={{marginBottom:'50px'}}>
+                    <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
+                        <Button onClick={()=>setMostrarNewProceso(true)}>
+                            Agregar proceso
+                        </Button>
+                    </div>
+                    <ListadoProcesos 
+                        procesos={procesos}
+                        tipos={tipos}
+                        unidades={unidades}
+                        page={page}
+                        setPage={setPage}
+                        totalPages={totalPages}
+                        loadingProcesos={loadingProcesos}
+                        tipoSeleccionado={tipoSeleccionado}
+                        setTipoSeleccionado={setTipoSeleccionado}
+                        onEdit={(row)=>editarProceso(row)}
+                        onDelete={(row)=>eliminarProceso(row)}
+                    />
                 </div>
-                <ListadoProcesos 
-                    procesos={procesos}
-                    tipos={tipos}
-                    unidades={unidades}
-                    page={page}
-                    setPage={setPage}
-                    totalPages={totalPages}
-                    loadingProcesos={loadingProcesos}
-                    tipoSeleccionado={tipoSeleccionado}
-                    setTipoSeleccionado={setTipoSeleccionado}
-                    onEdit={(row)=>editarProceso(row)}
-                    onDelete={(row)=>eliminarProceso(row)}
-                />
 
                 <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
                     <Button onClick={()=>setMostrarNewRutaProceso(true)}>
                         Nueva ruta de procesos
                     </Button>
                 </div>
+                <ListadoRutas 
+                    onEdit={(item)=>editarRuta(item)}
+                    onDelete={(item)=>eliminarRuta(item)}
+                />
             </div>
             {mostrarNewProceso &&
                 <Modal
@@ -93,6 +133,7 @@ export function Procesos(){
                     onClose={()=>setMostrarEdicionProceso(false)}
                 >
                     <EditarProceso
+                        proceso={procesoSeleccionado}
                         onClose={()=>setMostrarEdicionProceso(false)}
                         onSuccess={refreshProcesos}
                     />
@@ -105,9 +146,23 @@ export function Procesos(){
                     onClose={()=>setMostrarNewRutaProceso(false)}
                 >
                     <CrearRuta 
-                        onSubmit={(ruta)=>console.log(ruta)}
+                        onSubmit={crearRuta}
                         onClose={()=>setMostrarNewRutaProceso(false)}
                         onReturn={null}
+                    />
+                </Modal>
+            }
+            {mostrarEdicionRuta &&
+                <Modal
+                    titulo="Editar ruta de procesos"
+                    descripcion={`Ruta seleccionada: ${rutaSeleccionada.nombre}`}
+                    onClose={()=>setMostrarEdicionRuta(false)}
+                >
+                    <EditarRuta
+                        rutaEdit={rutaSeleccionada}
+                        onSubmit={refreshRutas}
+                        onReturn={null}
+                        onClose={()=>setMostrarEdicionRuta(false)}
                     />
                 </Modal>
             }

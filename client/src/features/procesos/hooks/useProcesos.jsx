@@ -5,21 +5,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function useProcesos(){
 
-    const [rutas, setRutas] = useState([
-        {
-          id_bop:1,
-          nombre: "Tornillos canulados"  
-        },
-        {
-            id_bop: 2,
-            nombre: "Placas de titanio"
-        },
-        {
-            id_bop: 3,
-            nombre: "Tallos de cadera acero"
-        }
-    ])
-
     const [procesos, setProcesos] = useState([]);
     const [tipos, setTipos] = useState([]);
     const [unidades, setUnidades] = useState([]);
@@ -101,5 +86,5 @@ export function useProcesos(){
         return data;
     };
 
-    return {procesos, tipos, unidades, rutas, loading, loadingProcesos, page, totalPages, tipoSeleccionado, setPage, setTotalPages, setTipoSeleccionado, refreshProcesos}
+    return {procesos, tipos, unidades, loading, loadingProcesos, page, totalPages, tipoSeleccionado, setPage, setTotalPages, setTipoSeleccionado, refreshProcesos}
 }

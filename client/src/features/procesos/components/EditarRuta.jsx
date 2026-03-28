@@ -1,77 +1,111 @@
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import Buscador from "../../../components/ui/Buscador";
 import { useProcesos } from "../hooks/useProcesos";
 import Button from "../../../components/ui/Button";
 import { apiCall } from "../../../services/api";
 
-import './CrearRuta.css';
+// Puedes reutilizar el mismo CSS
+import './CrearRuta.css'; 
 
-export function CrearRuta({onSubmit, onReturn, onClose}){
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-    const {procesos} = useProcesos();
+export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
+
+    const { procesos } = useProcesos();
     
-    //Creación de ruta
+    // Estados de edición
     const [nombreRuta, setNombreRuta] = useState("");
     const [rutaSecuencia, setRutaSecuencia] = useState([]);
 
-    const [errorCreacionRuta, setErrorCreacionRuta] = useState("");
+    const [errorEdicionRuta, setErrorEdicionRuta] = useState("");
     const [loading, setLoading] = useState(false);
-
     const [reload, setReload] = useState(0);
 
     const dragItem = useRef();
     const dragOverItem = useRef();
 
+    // Inicializar el estado con los datos recibidos
+    useEffect(() => {
+        if (rutaEdit) {
+            setNombreRuta(rutaEdit.nombre || "");
+            
+            if (rutaEdit.proceso_bop) {
+                // Mapeamos la estructura anidada a la estructura plana que usa la UI
+                const secuenciaInicial = [...rutaEdit.proceso_bop]
+                    .sort((a, b) => a.orden_secuencia - b.orden_secuencia)
+                    .map(item => ({
+                        id_proceso: item.proceso.id_proceso,
+                        nombre: item.proceso.nombre,
+                        // Mantenemos el id_proceso_ruta original si existe, sino generamos uno
+                        stepId: item.id_proceso_ruta ? item.id_proceso_ruta.toString() : Date.now().toString() + Math.random().toString(36).substring(2),
+                        requiereInspeccion: item.requiere_inspeccion,
+                        id_proceso_ruta: item.id_proceso_ruta // Útil para que el backend sepa si es un proceso existente
+                    }));
+                
+                setRutaSecuencia(secuenciaInicial);
+            }
+        }
+    }, [rutaEdit]);
+
     const handleSeleccionarProceso = (id) => {
         const procesoSeleccionado = procesos.find(p => p.id_proceso === id);
         if (procesoSeleccionado) {
-            // Usamos Date.now() para generar un ID único de paso, 
-            // permitiendo que el mismo proceso se añada varias veces a la ruta.
             const nuevoPaso = {
-                ...procesoSeleccionado,
+                id_proceso: procesoSeleccionado.id_proceso,
+                nombre: procesoSeleccionado.nombre,
                 stepId: Date.now().toString() + Math.random().toString(36).substring(2),
-                requiereInspeccion: false
+                requiereInspeccion: false,
+                id_proceso_ruta: null // Es nuevo, no tiene ID de ruta en la BD aún
             };
             setRutaSecuencia([...rutaSecuencia, nuevoPaso]);
         }
-        setReload(reload+1)
+        setReload(reload + 1);
     };
     
-    const handleCrearRuta = async ()=>{
-        setErrorCreacionRuta("")
-        if(!nombreRuta){
-            setErrorCreacionRuta("El nombre de la ruta es obligatorio")
+    const handleGuardarRuta = async () => {
+        setErrorEdicionRuta("");
+        if (!nombreRuta) {
+            setErrorEdicionRuta("El nombre de la ruta es obligatorio");
             return;
         }
-        if(rutaSecuencia.length === 0){
-            setErrorCreacionRuta("La ruta a crear debe incluir al menos un proceso");
+        if (rutaSecuencia.length === 0) {
+            setErrorEdicionRuta("La ruta debe incluir al menos un proceso");
             return;
-        }
-        try{
-            await onSubmit({
-                nombre: nombreRuta,
-                procesos: rutaSecuencia.map((item, i)=>{
-                    return {...item, orden_secuencia: i+1}
-                })
-            });
-
-            console.log("Ruta creada exitosamente");
-            if(onClose) onClose();
-
-        }catch(err){
-            setErrorCreacionRuta(err.message);
         }
         
+        try {
+            setLoading(true);
+            const res = await apiCall(`${API_URL}/api/procesos/ruta/update/${rutaEdit.id_bop}`,{
+                method: 'PUT',
+                body: JSON.stringify({
+                        id_bop: rutaEdit.id_bop,
+                        nombre: nombreRuta,
+                        procesos: rutaSecuencia.map((item, i) => ({
+                            id_proceso: item.id_proceso,
+                            id_proceso_ruta: item.id_proceso_ruta, // null si fue agregado en esta edición
+                            orden_secuencia: i + 1,
+                            requiere_inspeccion: item.requiereInspeccion
+                        }
+                        ))
+                    })
+            }
+            );
 
-        setNombreRuta("");
-        setRutaSecuencia([])
-    }
+            console.log("Ruta editada exitosamente");
+            if (onSubmit) onSubmit();
+            if (onClose) onClose();
+
+        } catch (err) {
+            setErrorEdicionRuta(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleEliminarPaso = (stepId) => {
         setRutaSecuencia(rutaSecuencia.filter(paso => paso.stepId !== stepId));
     };
 
-    // Nueva función para manejar el cambio del checkbox
     const handleToggleInspeccion = (stepId) => {
         setRutaSecuencia(rutaSecuencia.map(paso => 
             paso.stepId === stepId 
@@ -90,38 +124,33 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
     };
 
     const handleDragEnd = () => {
-        // Clonamos la ruta actual
         const nuevaRuta = [...rutaSecuencia];
-        // Extraemos el item que estamos arrastrando
         const draggedItemContent = nuevaRuta[dragItem.current];
         
-        // Reordenamos el array
-        nuevaRuta.splice(dragItem.current, 1); // Lo quitamos de su posición original
-        nuevaRuta.splice(dragOverItem.current, 0, draggedItemContent); // Lo insertamos en la nueva
+        nuevaRuta.splice(dragItem.current, 1);
+        nuevaRuta.splice(dragOverItem.current, 0, draggedItemContent);
         
-        // Reseteamos las referencias
         dragItem.current = null;
         dragOverItem.current = null;
         
-        // Actualizamos el estado
         setRutaSecuencia(nuevaRuta);
     };
     
     return(
         <>
-            <h3 className="modal-title" style={{textAlign:'start', marginBottom:'10px'}}>Crear nueva ruta</h3>
+            <h3 className="modal-title" style={{textAlign:'start', marginBottom:'10px'}}>Editar ruta</h3>
             <input 
                 type="text" 
                 className="nombre-ruta" 
                 placeholder="Nombre de la ruta..."
-                onChange={(e)=>setNombreRuta(e.target.value)}
+                onChange={(e) => setNombreRuta(e.target.value)}
                 value={nombreRuta}
             />
             
             <Buscador
                 key={reload}
                 opciones={procesos}
-                placeholder="Seleccionar procesos"
+                placeholder="Añadir más procesos"
                 keys={['id_proceso','nombre']}
                 onChange={handleSeleccionarProceso}
                 idField="id_proceso"
@@ -141,7 +170,7 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
                             onDragStart={(e) => handleDragStart(e, index)}
                             onDragEnter={(e) => handleDragEnter(e, index)}
                             onDragEnd={handleDragEnd}
-                            onDragOver={(e) => e.preventDefault()} // Necesario para permitir el drop
+                            onDragOver={(e) => e.preventDefault()}
                         >
                             <div className="ruta-item-info">
                                 <span className="material-icons drag-icon">drag_indicator</span>
@@ -170,31 +199,29 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
                     ))}
                 </div>
             )}
+            
             <div style={{display:'flex', gap:'20px', alignItems:'center', justifyContent:'end'}}>
                 {onReturn &&
                     <Button 
                         variant="secondary" 
-                        onClick={
-                        ()=>{
-                            setRutaSecuencia([])
+                        onClick={() => {
+                            setRutaSecuencia([]);
                             setNombreRuta("");
-                            //setMostrarCrearRuta(false)
-                            //setMostrarSeleccionarRuta(true)
                             onReturn();
                         }}
                     >
-                        Volver
+                        Cancelar
                     </Button>
                 }
                 <Button
                     variant="default" 
-                    onClick={handleCrearRuta}
+                    onClick={handleGuardarRuta}
                     disabled={loading}
                 >
-                    Listo
+                    Guardar cambios
                 </Button>
             </div>
-            {errorCreacionRuta && <p style={{color:'red', textAlign:'center', marginTop:'15px', marginBottom:'0'}}>{errorCreacionRuta}</p>}
+            {errorEdicionRuta && <p style={{color:'red', textAlign:'center', marginTop:'15px', marginBottom:'0'}}>{errorEdicionRuta}</p>}
         </>
     )
 }

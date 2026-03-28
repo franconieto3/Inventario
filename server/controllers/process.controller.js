@@ -1,4 +1,4 @@
-import { deleteProceso, getProcesos, getTiposProcesos, getUnidadesTiempo, insertProceso, insertRutaProceso, updateProceso } from "../services/process.service.js";
+import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertProceso, insertRutaProceso, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
 
 
 export const obtenerTiposProcesos = async (req, res) => {
@@ -110,8 +110,8 @@ export const eliminacionProceso = async (req, res) => {
 
 export const nuevaRutaProcesos = async (req, res)=>{
   try{
-    const {ruta, piezas} = req.body;
-    
+    const { ruta, piezas} = req.body;
+
     await insertRutaProceso(ruta, piezas);
 
     return res.status(200).json({message: "Datos recibidos exitosamente"})
@@ -119,5 +119,72 @@ export const nuevaRutaProcesos = async (req, res)=>{
   }catch(err){
     console.log(err);
     return res.status(500).json({error:"Ocurrió un error creando la ruta de procesos"});
+  }
+}
+
+export const listadoRutas = async(req, res)=>{
+  try{
+    const {page, limit} = req.query;
+
+    const result = await getRutasPaginadas({
+      page: page ? parseInt(page) : undefined,
+      limit: limit ? parseInt(limit) : undefined
+    });
+
+    return res.status(200).json(result)
+
+  }catch(err){
+    console.error(err);
+    return res.status(err.statusCode? err.statusCode: 500).json(err.message);
+  }
+}
+
+// Controlador para el detalle (Ver/Editar)
+export const obtenerRuta = async (req, res) => {
+  try {
+    // Es convención usar req.params.id para recursos específicos (ej. /ruta/15)
+    const { id } = req.params; 
+    
+    const data = await getRuta(id);
+    return res.status(200).json(data);
+
+  } catch (error) {
+    console.error('Error al obtener detalle de ruta:', error);
+    return res.status(error.statusCode ? error.statusCode : 500).json({ error: error.message });
+  }
+};
+
+export const actualizarRutaProcesos = async (req, res)=>{
+  try{
+    const {id} = req.params;
+    const {nombre, procesos} = req.body;
+    const rutaOriginal = await getRuta(id);
+
+    //Modificación del nombre de la ruta
+    if(rutaOriginal.nombre !== nombre ) {
+      const nombreActualizado = await updateNombreRuta(id, nombre)
+    }
+
+    //Modificación en la secuencia de procesos
+    const ids = calcularDiferenciasRuta(rutaOriginal.procesos, procesos);
+    const data = await updateSecuenciaRuta(id, ids);
+    return res.status(200).json({message: "Ruta de procesos actualiza exitosamente"})
+  
+  }catch(error){
+    console.error('Error al actualizar ruta de procesos:', error);
+    return res.status(error.statusCode ? error.statusCode : 500).json({ error: error.message || 'Error al actualizar ruta de procesos:'});
+  }
+}
+
+export const eliminacionRuta = async (req, res)=>{
+  try{
+    const {id} = req.params;
+    const data = await eliminarRuta(id);
+
+    return res.status(200).json({message: 'Ruta eliminada exitosamente'});
+
+  }catch(err){
+    console.error('Error al eliminar ruta de procesos:', error);
+    return res.status(error.statusCode ? error.statusCode : 500).json({ error: error.message || 'Error al actualizar ruta de procesos:'});
   }
 }

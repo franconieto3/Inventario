@@ -16,6 +16,8 @@ export const getUnidadesTiempo = async ()=>{
   }
 }
 
+//Procesos
+
 export const getProcesos = async ({ page = 1, limit = 10, id_tipo_proceso }) => {
 
   const from = (page - 1) * limit;
@@ -144,6 +146,8 @@ export const deleteProceso = async (idProceso) => {
   return true; // Indicador simple de éxito
 };
 
+//Rutas de procesos
+
 export const insertRutaProceso = async (ruta, piezas)=>{
 
   const payload = {
@@ -200,9 +204,253 @@ export const insertRutaProceso = async (ruta, piezas)=>{
   return data;
 } 
 
-export const updateRuta = async(ruta)=>{
-  //Se puede modificar el nombre
-  //Se puede modificar la secuencia de procesos: modificando el orden de la secuencia o si el proceso requiere controles de calidad
-  //Se pueden agregar pasos a la secuencia de procesos
-  //Se pueden eliminar pasos de la secuencia de procesos
+export const getRutasPaginadas = async ({ page = 1, limit = 20 }) => {
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  // Solo traemos lo esencial para la tabla: id y nombre
+  const { data, count, error } = await supabase
+    .from('bill_of_process')
+    .select(`
+      id_bop,
+      nombre,
+      proceso_bop(
+        id_proceso_ruta,
+        orden_secuencia,
+        requiere_inspeccion,
+        proceso(
+          id_proceso,
+          nombre,
+          unidad_tiempo,
+          tipo_proceso(
+            descripcion
+          )
+        )
+      )
+       `,
+      { count: 'exact' })
+    .range(from, to)
+    .order('id_bop', { ascending: false });
+
+  if (error) {
+    const err = new Error("Error al obtener el listado de rutas");
+    err.statusCode = 500;
+    throw err;
+  }
+
+  return { 
+    rutas: data, 
+    total: count, 
+    totalPages: Math.ceil(count / limit), 
+    currentPage: page 
+  };
+};
+
+
+export const getRuta = async (idBop)=>{
+
+  const {data, error} = await supabase
+    .from('bill_of_process')
+    .select(`
+      id_bop,
+      nombre,
+      proceso_bop(
+        id_proceso_ruta,
+        orden_secuencia,
+        requiere_inspeccion,
+        proceso(
+          id_proceso,
+          nombre,
+          unidad_tiempo,
+          tipo_proceso(
+            descripcion
+          )
+        )
+      )
+       `)
+    .eq('id_bop', idBop)
+    .single();
+
+  if(error){
+    const err = new Error("Ocurrió un error obteniendo la ruta");
+    err.statusCode = 500;
+    throw err;
+  }
+
+  const res = {
+    id_bop: data.id_bop,
+    nombre: data.nombre,
+    procesos: data.proceso_bop.map(
+      (p)=>{
+        return {
+          id_proceso: p.proceso.id_proceso,
+          id_proceso_ruta: p.id_proceso_ruta,
+          orden_secuencia: p.orden_secuencia,
+          requiere_inspeccion: p.requiere_inspeccion
+        }
+      }
+    )
+  }
+
+  return res;
 }
+
+
+export function calcularDiferenciasRuta(estadoOriginal, estadoNuevo) {
+    const idsToDelete = [];
+    const updates = [];
+    const inserts = [];
+
+    console.log("estadoOriginal: ", estadoOriginal);
+    console.log("estadoNuevo: ", estadoNuevo);
+
+    // 1. Crear un mapa del estado NUEVO para búsquedas rápidas por id_proceso_ruta
+    const mapaNuevo = new Map();
+    estadoNuevo.forEach(item => {
+        // Solo mapeamos los que ya existían (tienen id_proceso_ruta)
+        if (item.id_proceso_ruta) {
+            mapaNuevo.set(item.id_proceso_ruta, item);
+        }
+    });
+    
+    // 2. Detectar ELIMINACIONES (Están en el original, pero no en el nuevo)
+    estadoOriginal.forEach(itemOriginal => {
+        if (!mapaNuevo.has(itemOriginal.id_proceso_ruta)) {
+            idsToDelete.push(itemOriginal.id_proceso_ruta);
+        }
+    });
+    
+    // 3. Detectar INSERCIONES y ACTUALIZACIONES
+    estadoNuevo.forEach((itemNuevo, index) => {
+        // Normalizamos el valor del checkbox manejando la diferencia de nombres (UI vs BD)
+        const requiereInspeccion = itemNuevo.requiereInspeccion !== undefined 
+            ? itemNuevo.requiereInspeccion 
+            : itemNuevo.requiere_inspeccion;
+
+        // El orden de secuencia real es el índice del array + 1
+        const ordenSecuenciaReal = index + 1;
+
+        if (!itemNuevo.id_proceso_ruta) {
+            // A. Es una INSERCIÓN: No tiene id_proceso_ruta
+            inserts.push({
+                id_proceso: itemNuevo.id_proceso,
+                orden_secuencia: ordenSecuenciaReal,
+                requiere_inspeccion: requiereInspeccion
+            });
+        } else {
+            // B. Es una ACTUALIZACIÓN potencial: Ya existía, verificamos si cambió algo
+            const itemOriginal = estadoOriginal.find(o => o.id_proceso_ruta === itemNuevo.id_proceso_ruta);
+
+            if (itemOriginal) {
+                const cambioOrden = itemOriginal.orden_secuencia !== ordenSecuenciaReal;
+                const cambioInspeccion = itemOriginal.requiere_inspeccion !== requiereInspeccion;
+
+                if (cambioOrden || cambioInspeccion) {
+                    updates.push({
+                        id_proceso_ruta: itemNuevo.id_proceso_ruta,
+                        orden_secuencia: ordenSecuenciaReal,
+                        requiere_inspeccion: requiereInspeccion
+                    });
+                }
+            }
+        }
+    });
+    return {
+        p_ids_to_delete: idsToDelete.length > 0 ? idsToDelete : null,
+        p_updates: updates.length > 0 ? updates : null,
+        p_inserts: inserts.length > 0 ? inserts : null
+    };
+}
+
+export const updateNombreRuta = async (idBop, nombre)=>{
+  const {data, error} = await supabase.rpc('update_nombre_bop',{
+    p_id_bop: idBop,
+    p_nombre: nombre
+  })
+
+  if (error) {
+    if (error.code === '23505') {
+      throw new Error('El nombre ingresado ya existe en otro registro. Por favor, elige otro.');
+    }
+    throw new Error(`Error inesperado al actualizar el nombre: ${error.message}`);
+  }
+
+  if (data === false) {
+    throw new Error('No se encontró el BOP para actualizar.');
+  }
+
+  return data;
+}
+
+export const updateSecuenciaRuta = async(idBop, payload)=>{
+
+  const {data, error} = await supabase.rpc('update_secuencia_bop',{
+    p_id_bop: idBop,
+    p_ids_to_delete: payload.p_ids_to_delete || [], 
+    p_inserts: payload.p_inserts || [],
+    p_updates: payload.p_updates || []        
+  })
+
+if (error) {
+    // Creamos un error personalizado según el código devuelto por Postgres
+    const err = new Error();
+    err.originalError = error;
+
+    switch (error.code) {
+      case '23503':
+        err.message = 'Error de referencia: Estás intentando asignar un proceso que no existe o eliminar uno en uso.';
+        break;
+      case '23505':
+        err.message = 'Error de duplicado: El proceso o el orden de secuencia ya existe en este BOP.';
+        break;
+      case '23502':
+        err.message = 'Faltan datos obligatorios en los procesos enviados.';
+        break;
+      case '22P02':
+      case '22023':
+        err.message = 'El formato de los datos enviados es incorrecto (ej. texto en lugar de número).';
+        break;
+      default:
+        err.message = `Error inesperado al actualizar el BOP: ${error.message}`;
+    }
+    
+    throw err;
+  }
+
+  return data;
+} 
+
+export const eliminarRuta = async (idBop) => {
+
+  const { data, error } = await supabase
+    .from('bill_of_process')
+    .delete()
+    .eq('id_bop', idBop)
+    .select();
+
+  if (error) {
+    let err = new Error();
+
+    switch (error.code) {
+      case '23503':
+        err.message = 'No se puede eliminar esta ruta de procesos porque está siendo utilizado por otros registros en el sistema.';
+        err.statusCode = 409;
+        break;
+
+      default:
+        err.message = 'Error interno del servidor al intentar eliminar la ruta.';
+        err.statusCode = 500;
+        break;
+    }
+
+    throw err;
+  }
+
+  if (!data || data.length === 0) {
+    const err = new Error('No se encontró una ruta de procesos con el ID proporcionado para eliminar.');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  return true;
+};

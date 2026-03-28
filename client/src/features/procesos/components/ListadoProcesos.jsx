@@ -31,27 +31,30 @@ export function ListadoProcesos({
         },
         {
             key: "",
-            header: "Acciones",
-            render: (_, row) =>
-                (<DropdownMenu
-                    isOpen={openDropdownId === row.id_proceso}
-                    onToggle={() => setOpenDropdownId(openDropdownId === row.id_proceso ? null : row.id_proceso)}
-                    items={
-                        [
-                            {
-                                label: 'Editar proceso',
-                                icon:'edit',
-                                onClick:()=>{onEdit(row)}
-                            },
-                            {
-                                label: 'Eliminar proceso',
-                                icon: 'delete',
-                                color: 'red',
-                                onClick: ()=>{onDelete(row)}
-                            }
-                        ]
-                    }   
-                />)
+            header: "",
+            render: (_, row) =>(
+                <div style={{display:'flex', justifyContent: 'end'}}>
+                    <DropdownMenu
+                        isOpen={openDropdownId === row.id_proceso}
+                        onToggle={() => setOpenDropdownId(openDropdownId === row.id_proceso ? null : row.id_proceso)}
+                        items={
+                            [
+                                {
+                                    label: 'Editar proceso',
+                                    icon:'edit',
+                                    onClick:()=>{onEdit(row)}
+                                },
+                                {
+                                    label: 'Eliminar proceso',
+                                    icon: 'delete',
+                                    color: 'red',
+                                    onClick: ()=>{onDelete(row)}
+                                }
+                            ]
+                        }   
+                    />
+                </div>
+                )
             
         }
     ]

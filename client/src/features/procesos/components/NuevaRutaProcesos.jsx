@@ -7,13 +7,15 @@ import { useProcesos } from "../hooks/useProcesos";
 
 import "./NuevaRutaProcesos.css"
 import { CrearRuta } from "./CrearRuta";
+import { useProcessRoutes } from "../hooks/useProcessRoutes";
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function NuevaRutaProcesos({producto, piezas, onClose, onSuccess}){
 
-    const {procesos, rutas} = useProcesos();
+    const {procesos} = useProcesos();
+    const {rutas} = useProcessRoutes();
 
     const [loading, setLoading] = useState(false);
     const [reload, setReload] = useState(0);
