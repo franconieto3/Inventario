@@ -20,6 +20,7 @@ export const registrosPM = async (req, res) =>{
         res.status(500).json({ error: "Error al obtener registros PM" });
     }
 }
+//CRUD productos 
 
 export const productos = async (req, res)=>{
     try{
@@ -86,16 +87,61 @@ export const producto = async (req, res)=>{
     }
 }
 
+export const edicionProducto = async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const {nombre, idRubro, idRegistroPm} = req.body;
+        
+        //Validaciones
+        if(nombre===""){
+            res.status(400).json({error:"Es obligatorio especificar el nombre de la pieza"});
+            return;
+        }
+
+        //Servicios
+        const data = productService.editarProducto(id, nombre, idRegistroPm, idRubro);
+        res.status(201).json({message: "Pieza editada correctamente"});
+    
+    }catch(err){
+        console.error(err);
+        res.status(err.statusCode? err.statusCode: 500).json({error : err.message});
+    }    
+    
+}
+
+export const eliminacionProducto = async (req, res)=>{
+    try{
+        const {id} = req.params;
+        
+        const seElimino = await productService.eliminarProducto(id);
+
+        if (!seElimino) {
+            return res.status(404).json({ 
+                error: "No se encontró el producto o ya estaba eliminado" 
+            });
+        }
+
+        res.status(200).json({ message: "Producto eliminado exitosamente" });
+
+    }catch(err){
+        console.error(err);
+        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
+    }
+}
+
+//CRUD pieza
+
 export const pieza = async (req, res) =>{
     try{
         const {id} = req.params;
         
-        const [piezaRes, documentos, materiales] = await productService.obtenerInfoPieza(id); 
+        const [piezaRes, documentos, materiales, procesos] = await productService.obtenerInfoPieza(id); 
 
         const respuestaFinal = {
             ...piezaRes.data,
             documentos: documentos.data || [],
-            materiales: materiales.data || []
+            materiales: materiales.data || [],
+            procesos: procesos.data || []
         };
 
         if(respuestaFinal.es_ensamble){
@@ -153,28 +199,6 @@ export const edicionPieza = async (req, res)=>{
     }
 }
 
-export const edicionProducto = async(req,res)=>{
-    try{
-        const {id} = req.params;
-        const {nombre, idRubro, idRegistroPm} = req.body;
-        
-        //Validaciones
-        if(nombre===""){
-            res.status(400).json({error:"Es obligatorio especificar el nombre de la pieza"});
-            return;
-        }
-
-        //Servicios
-        const data = productService.editarProducto(id, nombre, idRegistroPm, idRubro);
-        res.status(201).json({message: "Pieza editada correctamente"});
-    
-    }catch(err){
-        console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json({error : err.message});
-    }    
-    
-}
-
 export const eliminacionPieza = async (req,res)=>{
     try{
         const {id} = req.params;
@@ -188,26 +212,6 @@ export const eliminacionPieza = async (req,res)=>{
         }
 
         res.status(200).json({ message: "Pieza eliminada exitosamente" });
-
-    }catch(err){
-        console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
-    }
-}
-
-export const eliminacionProducto = async (req, res)=>{
-    try{
-        const {id} = req.params;
-        
-        const seElimino = await productService.eliminarProducto(id);
-
-        if (!seElimino) {
-            return res.status(404).json({ 
-                error: "No se encontró el producto o ya estaba eliminado" 
-            });
-        }
-
-        res.status(200).json({ message: "Producto eliminado exitosamente" });
 
     }catch(err){
         console.error(err);

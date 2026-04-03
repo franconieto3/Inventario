@@ -1,7 +1,7 @@
 import { supabase } from "../config/supabase.js";
 
 export const getTiposProcesos = async()=>{
-  const { data, error } = await supabase.from('tipo_proceso').select('*').order('descripcion');
+  const { data, error } = await supabase.from('tipo_ruta').select('*').order('descripcion');
   if (error) throw error;
   return data;
 }
@@ -18,36 +18,27 @@ export const getUnidadesTiempo = async ()=>{
 
 //Procesos
 
-export const getProcesos = async ({ page = 1, limit = 10, id_tipo_proceso }) => {
+export const getProcesos = async () => {
 
-  const from = (page - 1) * limit;
-  const to = from + limit - 1;
-
-  let query = supabase
+  const { data, error } = await supabase
     .from('proceso')
-    .select('*, tipo_proceso(id_tipo_proceso,descripcion)', { count: 'exact' });
+    .select('*')
+    .order('id_proceso', { ascending: false });
 
-  if (id_tipo_proceso) {
-    query = query.eq('id_tipo_proceso', id_tipo_proceso);
-  }
-
-  const { data, count, error } = await query.range(from, to).order('id_proceso', { ascending: false });
   if (error) throw error;
 
-  return { procesos: data, total: count, totalPages: Math.ceil(count / limit), currentPage: page };
-
+  return data;
 };
 
 export const insertProceso = async (procesoData) => {
 
-  const { nombre, id_tipo_proceso, unidad_tiempo } = procesoData;
+  const { nombre, unidad_tiempo } = procesoData;
   
   const { data, error } = await supabase
     .from('proceso')
     .insert([
       {
         nombre: nombre.trim(),
-        id_tipo_proceso: id_tipo_proceso ? parseInt(id_tipo_proceso) : null, 
         unidad_tiempo: unidad_tiempo
       }
     ])
@@ -63,9 +54,6 @@ export const insertProceso = async (procesoData) => {
     if (error.code === '22P02') {
       throw new Error(`La unidad de tiempo "${unidadFinal}" no es válida según el sistema.`);
     }
-    if (error.code === '23503') {
-      throw new Error("El tipo de proceso seleccionado no existe en la base de datos.");
-    }
 
     throw new Error(`Error al crear el proceso: ${error.message}`);
   }
@@ -74,12 +62,11 @@ export const insertProceso = async (procesoData) => {
 };
 
 export const updateProceso = async (idProceso, datosActualizados) => {
-  const { nombre, id_tipo_proceso, unidad_tiempo } = datosActualizados;
+  const { nombre, unidad_tiempo } = datosActualizados;
 
   const { data, error } = await supabase.rpc('update_proceso', {
     p_id_proceso: idProceso,
     p_nombre: nombre,
-    p_id_tipo_proceso: id_tipo_proceso,
     p_unidad_tiempo: unidad_tiempo
   });
 
@@ -93,10 +80,6 @@ export const updateProceso = async (idProceso, datosActualizados) => {
       case '23505':
         err.message = 'Ya existe un proceso registrado con ese nombre.' ;
         err.statusCode = 409; 
-        break;
-      case '23503':
-        err.message = 'El tipo de proceso (id_tipo_proceso) indicado no existe.';
-        err.statusCode = 400; 
         break;
       case '22P02':
         if (error.message.includes('unidad_tiempo_enum')) {
@@ -151,11 +134,12 @@ export const deleteProceso = async (idProceso) => {
 export const insertRutaProceso = async (ruta, piezas)=>{
 
   const payload = {
-    piezas: Array.isArray(piezas) ? piezas : []
+    piezas: Array.isArray(piezas) ? piezas.map((p)=>({id_pieza: p})) : []
   }
 
   if(ruta.nombre && ruta.procesos) {
-    payload.nombre = ruta.nombre
+    payload.nombre = ruta.nombre;
+    payload.id_tipo_ruta = Number(ruta.id_tipo_ruta);
     payload.procesos = Array.isArray(ruta.procesos) ? ruta.procesos : [];
   }
 
@@ -204,16 +188,16 @@ export const insertRutaProceso = async (ruta, piezas)=>{
   return data;
 } 
 
-export const getRutasPaginadas = async ({ page = 1, limit = 20 }) => {
-  const from = (page - 1) * limit;
-  const to = from + limit - 1;
+export const getRutasPaginadas = async () => {
 
   // Solo traemos lo esencial para la tabla: id y nombre
-  const { data, count, error } = await supabase
+  const { data, error } = await supabase
     .from('bill_of_process')
     .select(`
       id_bop,
       nombre,
+      id_tipo_ruta,
+      tipo_ruta(descripcion),
       proceso_bop(
         id_proceso_ruta,
         orden_secuencia,
@@ -221,15 +205,11 @@ export const getRutasPaginadas = async ({ page = 1, limit = 20 }) => {
         proceso(
           id_proceso,
           nombre,
-          unidad_tiempo,
-          tipo_proceso(
-            descripcion
-          )
+          unidad_tiempo
         )
       )
-       `,
-      { count: 'exact' })
-    .range(from, to)
+       `
+    )
     .order('id_bop', { ascending: false });
 
   if (error) {
@@ -237,13 +217,7 @@ export const getRutasPaginadas = async ({ page = 1, limit = 20 }) => {
     err.statusCode = 500;
     throw err;
   }
-
-  return { 
-    rutas: data, 
-    total: count, 
-    totalPages: Math.ceil(count / limit), 
-    currentPage: page 
-  };
+  return {rutas: data};
 };
 
 
@@ -254,6 +228,8 @@ export const getRuta = async (idBop)=>{
     .select(`
       id_bop,
       nombre,
+      id_tipo_ruta,
+      tipo_ruta(descripcion),
       proceso_bop(
         id_proceso_ruta,
         orden_secuencia,
@@ -261,10 +237,7 @@ export const getRuta = async (idBop)=>{
         proceso(
           id_proceso,
           nombre,
-          unidad_tiempo,
-          tipo_proceso(
-            descripcion
-          )
+          unidad_tiempo
         )
       )
        `)
@@ -276,7 +249,7 @@ export const getRuta = async (idBop)=>{
     err.statusCode = 500;
     throw err;
   }
-
+  /*
   const res = {
     id_bop: data.id_bop,
     nombre: data.nombre,
@@ -291,8 +264,8 @@ export const getRuta = async (idBop)=>{
       }
     )
   }
-
-  return res;
+*/
+  return data;
 }
 
 
@@ -300,9 +273,6 @@ export function calcularDiferenciasRuta(estadoOriginal, estadoNuevo) {
     const idsToDelete = [];
     const updates = [];
     const inserts = [];
-
-    console.log("estadoOriginal: ", estadoOriginal);
-    console.log("estadoNuevo: ", estadoNuevo);
 
     // 1. Crear un mapa del estado NUEVO para búsquedas rápidas por id_proceso_ruta
     const mapaNuevo = new Map();
@@ -323,8 +293,8 @@ export function calcularDiferenciasRuta(estadoOriginal, estadoNuevo) {
     // 3. Detectar INSERCIONES y ACTUALIZACIONES
     estadoNuevo.forEach((itemNuevo, index) => {
         // Normalizamos el valor del checkbox manejando la diferencia de nombres (UI vs BD)
-        const requiereInspeccion = itemNuevo.requiereInspeccion !== undefined 
-            ? itemNuevo.requiereInspeccion 
+        const requiere_inspeccion = itemNuevo.requiere_inspeccion !== undefined 
+            ? itemNuevo.requiere_inspeccion 
             : itemNuevo.requiere_inspeccion;
 
         // El orden de secuencia real es el índice del array + 1
@@ -335,7 +305,7 @@ export function calcularDiferenciasRuta(estadoOriginal, estadoNuevo) {
             inserts.push({
                 id_proceso: itemNuevo.id_proceso,
                 orden_secuencia: ordenSecuenciaReal,
-                requiere_inspeccion: requiereInspeccion
+                requiere_inspeccion: requiere_inspeccion
             });
         } else {
             // B. Es una ACTUALIZACIÓN potencial: Ya existía, verificamos si cambió algo
@@ -343,13 +313,13 @@ export function calcularDiferenciasRuta(estadoOriginal, estadoNuevo) {
 
             if (itemOriginal) {
                 const cambioOrden = itemOriginal.orden_secuencia !== ordenSecuenciaReal;
-                const cambioInspeccion = itemOriginal.requiere_inspeccion !== requiereInspeccion;
+                const cambioInspeccion = itemOriginal.requiere_inspeccion !== requiere_inspeccion;
 
                 if (cambioOrden || cambioInspeccion) {
                     updates.push({
                         id_proceso_ruta: itemNuevo.id_proceso_ruta,
                         orden_secuencia: ordenSecuenciaReal,
-                        requiere_inspeccion: requiereInspeccion
+                        requiere_inspeccion: requiere_inspeccion
                     });
                 }
             }

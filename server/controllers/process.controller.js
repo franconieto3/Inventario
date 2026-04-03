@@ -26,14 +26,7 @@ export const obtenerUnidadesTiempo = async (req, res)=>{
 
 export const listarProcesos = async (req, res)=>{
   try {
-    const { page, limit, id_tipo_proceso} = req.query;
-
-    const result = await getProcesos({ 
-      page: page? parseInt(page) : undefined, 
-      limit: limit ? parseInt(limit): undefined ,
-      id_tipo_proceso
-    });
-
+    const result = await getProcesos();
     res.json(result);
 
   } catch (error) {
@@ -44,17 +37,12 @@ export const listarProcesos = async (req, res)=>{
 
 export const creacionProceso = async (req, res) => {
   try {
-    if (!req.body.nombre) {
-      return res.status(400).json({ error: "El nombre del proceso es obligatorio." });
-    }
-
     const nuevoProceso = await insertProceso(req.body);
     
     res.status(201).json({
       message: "Proceso creado exitosamente",
       data: nuevoProceso
     });
-
   } catch (err) {
     const statusCode = err.message.includes("Error al crear") ? 500 : 400;
     res.status(statusCode).json({ error: err.message });
@@ -64,11 +52,10 @@ export const creacionProceso = async (req, res) => {
 export const actualizarProceso = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, id_tipo_proceso, unidad_tiempo } = req.body;
+    const { nombre, unidad_tiempo } = req.body;
 
     const procesoActualizado = await updateProceso(id, {
       nombre,
-      id_tipo_proceso,
       unidad_tiempo
     });
 
@@ -124,12 +111,7 @@ export const nuevaRutaProcesos = async (req, res)=>{
 
 export const listadoRutas = async(req, res)=>{
   try{
-    const {page, limit} = req.query;
-
-    const result = await getRutasPaginadas({
-      page: page ? parseInt(page) : undefined,
-      limit: limit ? parseInt(limit) : undefined
-    });
+    const result = await getRutasPaginadas({});
 
     return res.status(200).json(result)
 
@@ -142,9 +124,7 @@ export const listadoRutas = async(req, res)=>{
 // Controlador para el detalle (Ver/Editar)
 export const obtenerRuta = async (req, res) => {
   try {
-    // Es convención usar req.params.id para recursos específicos (ej. /ruta/15)
     const { id } = req.params; 
-    
     const data = await getRuta(id);
     return res.status(200).json(data);
 
@@ -160,13 +140,25 @@ export const actualizarRutaProcesos = async (req, res)=>{
     const {nombre, procesos} = req.body;
     const rutaOriginal = await getRuta(id);
 
+    const rutaOriginalProcesos = rutaOriginal.proceso_bop
+    .map(
+          (p)=>{
+            return {
+              id_proceso: p.proceso.id_proceso,
+              id_proceso_ruta: p.id_proceso_ruta,
+              orden_secuencia: p.orden_secuencia,
+              requiere_inspeccion: p.requiere_inspeccion
+            }
+          }
+        )
+    
     //Modificación del nombre de la ruta
     if(rutaOriginal.nombre !== nombre ) {
       const nombreActualizado = await updateNombreRuta(id, nombre)
     }
 
     //Modificación en la secuencia de procesos
-    const ids = calcularDiferenciasRuta(rutaOriginal.procesos, procesos);
+    const ids = calcularDiferenciasRuta(rutaOriginalProcesos, procesos);
     const data = await updateSecuenciaRuta(id, ids);
     return res.status(200).json({message: "Ruta de procesos actualiza exitosamente"})
   

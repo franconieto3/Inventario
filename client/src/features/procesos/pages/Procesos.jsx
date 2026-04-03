@@ -25,21 +25,28 @@ export function Procesos(){
     const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
 
     const {
-        procesos, 
-        tipos,
+        procesos,
         unidades,
         loading, 
         loadingProcesos, 
-        page, 
-        totalPages,
-        tipoSeleccionado, 
-        setPage, 
-        setTotalPages,
-        setTipoSeleccionado, 
+        page: pageProcesos, 
+        totalPages: totalPagesProcesos,
+        setPage: setPageProcesos, 
         refreshProcesos
     } = useProcesos();
 
-    const {refreshRutas,crearRuta}= useProcessRoutes();
+    const {
+        rutas,
+        tipos,
+        page: pageRutas,
+        totalPages: totalPagesRutas,
+        setPage: setPageRutas,
+        tipoSeleccionado,
+        setTipoSeleccionado,
+        refreshRutas,
+        crearRuta,
+        loadingRoutes
+    }= useProcessRoutes();
 
     const editarProceso = (p)=>{
         setProcesoSeleccionado(p);
@@ -47,7 +54,7 @@ export function Procesos(){
     }
 
     const eliminarProceso = async (p)=>{
-        if(window.confirm(`¿Desea eliminar el proceso ${p.nombre}?`)){
+        if(window.confirm(`¿Desea eliminar el proceso ${p.nombre}? Esto afectara a todas las rutas asociadas`)){
             try{
                 const res = await apiCall(`${API_URL}/api/procesos/delete/${p.id_proceso}`,{method:'DELETE'});
                 refreshProcesos();
@@ -63,7 +70,7 @@ export function Procesos(){
     }
 
     const eliminarRuta = async (r)=>{
-        if(window.confirm(`¿Desea eliminar la ruta ${r.nombre}?: `)){
+        if(window.confirm(`¿Desea eliminar la ruta ${r.nombre}? Esto afectara a todas las piezas asociadas a esta ruta`)){
             console.log("Eliminando ruta... ", r.id_bop);
             try{
                 const res = await apiCall(`${API_URL}/api/procesos/ruta/delete/${r.id_bop}`,{method:'DELETE'});
@@ -91,11 +98,10 @@ export function Procesos(){
                     </div>
                     <ListadoProcesos 
                         procesos={procesos}
-                        tipos={tipos}
                         unidades={unidades}
-                        page={page}
-                        setPage={setPage}
-                        totalPages={totalPages}
+                        page={pageProcesos}
+                        setPage={setPageProcesos}
+                        totalPages={totalPagesProcesos}
                         loadingProcesos={loadingProcesos}
                         tipoSeleccionado={tipoSeleccionado}
                         setTipoSeleccionado={setTipoSeleccionado}
@@ -109,7 +115,15 @@ export function Procesos(){
                         Nueva ruta de procesos
                     </Button>
                 </div>
-                <ListadoRutas 
+                <ListadoRutas
+                    rutas={rutas}
+                    tipos={tipos}
+                    page={pageRutas}
+                    totalPages={totalPagesRutas}
+                    setPage={setPageRutas}
+                    tipoSeleccionado={tipoSeleccionado}
+                    setTipoSeleccionado={setTipoSeleccionado}
+                    refreshRutas={refreshRutas} 
                     onEdit={(item)=>editarRuta(item)}
                     onDelete={(item)=>eliminarRuta(item)}
                 />
@@ -146,6 +160,7 @@ export function Procesos(){
                     onClose={()=>setMostrarNewRutaProceso(false)}
                 >
                     <CrearRuta 
+                        tipos={tipos}
                         onSubmit={crearRuta}
                         onClose={()=>setMostrarNewRutaProceso(false)}
                         onReturn={null}

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listarProcesos, nuevaRutaProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo } from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { actualizarProcesoSchema, crearProcesoSchema } from "../schemas/process.schemas.js";
+import { procesoSchema } from "../schemas/process.schemas.js";
 
 
 const router = Router();
@@ -21,13 +21,13 @@ router.get('/listado',
 
 router.post('/new', 
     verificarToken, 
-    validateSchema(crearProcesoSchema),
+    validateSchema(procesoSchema),
     creacionProceso
 );
 
 router.put('/edicion/:id',
     verificarToken,
-    validateSchema(actualizarProcesoSchema),
+    validateSchema(procesoSchema),
     actualizarProceso
 );
 

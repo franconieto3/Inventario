@@ -9,11 +9,11 @@ import Button from "../../../components/ui/Button";
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function EditarProceso({ proceso, onClose, onSuccess }) {
-  const { tipos, unidades } = useProcesos();
+  const { unidades } = useProcesos();
   
   const [formData, setFormData] = useState({
     nombre: proceso?.nombre || "",
-    id_tipo_proceso: proceso?.tipo_proceso?.id_tipo_proceso || proceso?.id_tipo_proceso || "",
+    //id_tipo_proceso: proceso?.tipo_proceso?.id_tipo_proceso || proceso?.id_tipo_proceso || "",
     unidad_tiempo: proceso?.unidad_tiempo || "",
   });
   
@@ -24,7 +24,7 @@ export function EditarProceso({ proceso, onClose, onSuccess }) {
     if (proceso) {
       setFormData({
         nombre: proceso.nombre || "",
-        id_tipo_proceso: proceso.tipo_proceso?.id_tipo_proceso || proceso.id_tipo_proceso || "",
+        //id_tipo_proceso: proceso.tipo_proceso?.id_tipo_proceso || proceso.id_tipo_proceso || "",
         unidad_tiempo: proceso.unidad_tiempo || "",
       });
     }
@@ -84,7 +84,7 @@ export function EditarProceso({ proceso, onClose, onSuccess }) {
             required
           />
         </div>
-
+{/* 
         <div className="shadcn-form-group">
           <label htmlFor="id_tipo_proceso" className="shadcn-label">
             Tipo de Proceso
@@ -105,7 +105,7 @@ export function EditarProceso({ proceso, onClose, onSuccess }) {
             ))}
           </select>
         </div>
-
+*/}
         <div className="shadcn-form-group">
           <label htmlFor="unidad_tiempo" className="shadcn-label">
             Unidad de Medición (Tiempo)

@@ -5,13 +5,15 @@ import Button from "../../../components/ui/Button";
 import { apiCall } from "../../../services/api";
 
 import './CrearRuta.css';
+import { useEffect } from "react";
 
-export function CrearRuta({onSubmit, onReturn, onClose}){
+export function CrearRuta({tipos, onSubmit, onReturn, onClose}){
 
-    const {procesos} = useProcesos();
+    const {allProcesos} = useProcesos();
     
     //Creación de ruta
     const [nombreRuta, setNombreRuta] = useState("");
+    const [tipoRuta, setTipoRuta] = useState("");
     const [rutaSecuencia, setRutaSecuencia] = useState([]);
 
     const [errorCreacionRuta, setErrorCreacionRuta] = useState("");
@@ -23,14 +25,14 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
     const dragOverItem = useRef();
 
     const handleSeleccionarProceso = (id) => {
-        const procesoSeleccionado = procesos.find(p => p.id_proceso === id);
+        const procesoSeleccionado = allProcesos.find(p => p.id_proceso === id);
         if (procesoSeleccionado) {
             // Usamos Date.now() para generar un ID único de paso, 
             // permitiendo que el mismo proceso se añada varias veces a la ruta.
             const nuevoPaso = {
                 ...procesoSeleccionado,
                 stepId: Date.now().toString() + Math.random().toString(36).substring(2),
-                requiereInspeccion: false
+                requiere_inspeccion: false
             };
             setRutaSecuencia([...rutaSecuencia, nuevoPaso]);
         }
@@ -43,6 +45,10 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
             setErrorCreacionRuta("El nombre de la ruta es obligatorio")
             return;
         }
+        if(!tipoRuta){
+            setErrorCreacionRuta("Es obligatorio especificar el tipo de ruta");
+            return;
+        }
         if(rutaSecuencia.length === 0){
             setErrorCreacionRuta("La ruta a crear debe incluir al menos un proceso");
             return;
@@ -50,6 +56,7 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
         try{
             await onSubmit({
                 nombre: nombreRuta,
+                id_tipo_ruta: Number(tipoRuta),
                 procesos: rutaSecuencia.map((item, i)=>{
                     return {...item, orden_secuencia: i+1}
                 })
@@ -58,13 +65,14 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
             console.log("Ruta creada exitosamente");
             if(onClose) onClose();
 
+            setNombreRuta("");
+            setTipoRuta("");
+            setRutaSecuencia([]);
+
         }catch(err){
             setErrorCreacionRuta(err.message);
         }
         
-
-        setNombreRuta("");
-        setRutaSecuencia([])
     }
 
     const handleEliminarPaso = (stepId) => {
@@ -75,7 +83,7 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
     const handleToggleInspeccion = (stepId) => {
         setRutaSecuencia(rutaSecuencia.map(paso => 
             paso.stepId === stepId 
-                ? { ...paso, requiereInspeccion: !paso.requiereInspeccion }
+                ? { ...paso, requiere_inspeccion: !paso.requiere_inspeccion }
                 : paso
         ));
     };
@@ -117,10 +125,29 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
                 onChange={(e)=>setNombreRuta(e.target.value)}
                 value={nombreRuta}
             />
+
+            <div className="shadcn-form-group">
+                <select
+                    id="id_tipo_ruta"
+                    name="id_tipo_ruta"
+                    className="shadcn-select"
+                    value={tipoRuta}
+                    onChange={(e)=>setTipoRuta(e.target.value)}
+                    required
+                >
+                    <option value="" disabled>Tipo de ruta...</option>
+                    {tipos?.map((tipo) => (
+                    
+                    <option key={tipo.id_tipo_ruta} value={tipo.id_tipo_ruta}>
+                        {tipo.descripcion}
+                    </option>
+                    ))}
+                </select>
+            </div>
             
             <Buscador
                 key={reload}
-                opciones={procesos}
+                opciones={allProcesos}
                 placeholder="Seleccionar procesos"
                 keys={['id_proceso','nombre']}
                 onChange={handleSeleccionarProceso}
@@ -152,7 +179,7 @@ export function CrearRuta({onSubmit, onReturn, onClose}){
                                 <label className="checkbox-container">
                                     <input 
                                         type="checkbox" 
-                                        checked={paso.requiereInspeccion}
+                                        checked={paso.requiere_inspeccion}
                                         onChange={() => handleToggleInspeccion(paso.stepId)}
                                     />
                                     <span className="checkbox-label">Control de calidad</span>

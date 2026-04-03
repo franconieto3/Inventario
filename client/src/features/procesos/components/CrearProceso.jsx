@@ -8,11 +8,10 @@ import Button from "../../../components/ui/Button";
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function CrearProceso({ onClose, onSuccess }) {
-  const { tipos, unidades } = useProcesos();
+  const { unidades } = useProcesos();
   
   const [formData, setFormData] = useState({
     nombre: "",
-    id_tipo_proceso: "",
     unidad_tiempo: "",
   });
   
@@ -68,29 +67,7 @@ export function CrearProceso({ onClose, onSuccess }) {
             required
           />
         </div>
-
-        <div className="shadcn-form-group">
-          <label htmlFor="id_tipo_proceso" className="shadcn-label">
-            Tipo de Proceso
-          </label>
-          <select
-            id="id_tipo_proceso"
-            name="id_tipo_proceso"
-            className="shadcn-select"
-            value={formData.id_tipo_proceso}
-            onChange={handleChange}
-            required
-          >
-            <option value="" disabled>Selecciona un tipo...</option>
-            {tipos?.map((tipo) => (
-              /* Asumo que tus objetos tienen 'id' y 'nombre', ajusta si tus keys son distintas */
-              <option key={tipo.id_tipo_proceso} value={tipo.id_tipo_proceso}>
-                {tipo.descripcion}
-              </option>
-            ))}
-          </select>
-        </div>
-
+        
         <div className="shadcn-form-group">
           <label htmlFor="unidad_tiempo" className="shadcn-label">
             Unidad de Medición (Tiempo)

@@ -36,10 +36,26 @@ export const apiCall = async (endpoint, options = {}) => {
             // Si el servidor mandó un error en JSON, usamos su mensaje. Si no, el texto genérico.
             // A veces 'data' será un objeto {message: "error"}, a veces un string "Error".
             console.log(data);
+            /*
             const errorMessage = (typeof data === 'object' && data.message) 
                 ? data.message 
                 : (typeof data === 'string' ? data : 'Error en la petición');
-                
+             
+           */   
+            let errorMessage = "";
+            if(typeof data === 'object'){
+                if(data.message){
+                    errorMessage = data.message;
+                }
+                if(data.error){
+                    errorMessage = data.error;
+                }
+            }else if(typeof data === 'string'){
+                errorMessage = data;
+            }else{
+                errorMessage = "Error en la petición";
+            }
+            
             throw new Error(errorMessage);
         }
 

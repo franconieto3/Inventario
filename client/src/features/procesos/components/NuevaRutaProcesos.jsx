@@ -14,8 +14,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function NuevaRutaProcesos({producto, piezas, onClose, onSuccess}){
 
-    const {procesos} = useProcesos();
-    const {rutas} = useProcessRoutes();
+    const {allProcesos} = useProcesos();
+    const {allRutas, tipos} = useProcessRoutes();
 
     const [loading, setLoading] = useState(false);
     const [reload, setReload] = useState(0);
@@ -114,7 +114,7 @@ export function NuevaRutaProcesos({producto, piezas, onClose, onSuccess}){
                                 <h3 className="modal-title" style={{textAlign:'start', marginBottom:'10px'}}>Seleccionar ruta</h3>
                                 <Buscador
                                     key={reload}
-                                    opciones={rutas}
+                                    opciones={allRutas}
                                     placeholder="Seleccione una ruta ya existente"
                                     keys={['id_bop','nombre']}
                                     onChange={(id,nombre, ruta)=>{
@@ -166,6 +166,7 @@ export function NuevaRutaProcesos({producto, piezas, onClose, onSuccess}){
                         { !rutaSeleccionada &&
                             <>
                                 <CrearRuta 
+                                    tipos={tipos}
                                     onSubmit={(r)=>setRutaSeleccionada(r)}
                                     onReturn={()=>{
                                         setMostrarCrearRuta(false)

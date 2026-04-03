@@ -38,7 +38,7 @@ export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
                         nombre: item.proceso.nombre,
                         // Mantenemos el id_proceso_ruta original si existe, sino generamos uno
                         stepId: item.id_proceso_ruta ? item.id_proceso_ruta.toString() : Date.now().toString() + Math.random().toString(36).substring(2),
-                        requiereInspeccion: item.requiere_inspeccion,
+                        requiere_inspeccion: item.requiere_inspeccion,
                         id_proceso_ruta: item.id_proceso_ruta // Útil para que el backend sepa si es un proceso existente
                     }));
                 
@@ -54,7 +54,7 @@ export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
                 id_proceso: procesoSeleccionado.id_proceso,
                 nombre: procesoSeleccionado.nombre,
                 stepId: Date.now().toString() + Math.random().toString(36).substring(2),
-                requiereInspeccion: false,
+                requiere_inspeccion: false,
                 id_proceso_ruta: null // Es nuevo, no tiene ID de ruta en la BD aún
             };
             setRutaSecuencia([...rutaSecuencia, nuevoPaso]);
@@ -84,7 +84,7 @@ export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
                             id_proceso: item.id_proceso,
                             id_proceso_ruta: item.id_proceso_ruta, // null si fue agregado en esta edición
                             orden_secuencia: i + 1,
-                            requiere_inspeccion: item.requiereInspeccion
+                            requiere_inspeccion: item.requiere_inspeccion
                         }
                         ))
                     })
@@ -109,7 +109,7 @@ export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
     const handleToggleInspeccion = (stepId) => {
         setRutaSecuencia(rutaSecuencia.map(paso => 
             paso.stepId === stepId 
-                ? { ...paso, requiereInspeccion: !paso.requiereInspeccion }
+                ? { ...paso, requiere_inspeccion: !paso.requiere_inspeccion }
                 : paso
         ));
     };
@@ -181,7 +181,7 @@ export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
                                 <label className="checkbox-container">
                                     <input 
                                         type="checkbox" 
-                                        checked={paso.requiereInspeccion}
+                                        checked={paso.requiere_inspeccion}
                                         onChange={() => handleToggleInspeccion(paso.stepId)}
                                     />
                                     <span className="checkbox-label">Control de calidad</span>

@@ -9,7 +9,8 @@ export function ListadoProcesos({
     page,
     setPage,
     totalPages,
-    setTipoSeleccionado,
+    loadingProcesos,
+    //setTipoSeleccionado,
     onEdit,
     onDelete 
 }){
@@ -19,11 +20,6 @@ export function ListadoProcesos({
         {
             key:"nombre",
             header:"Nombre"
-        },
-        {
-            key:"",
-            header:"Tipo de proceso",
-            render: (_, row)=> <span>{row.tipo_proceso.descripcion}</span>
         },
         {
             key: "unidad_tiempo",
@@ -72,18 +68,6 @@ export function ListadoProcesos({
                         Visualización, edición y eliminación de procesos
                     </p>
                 </div>
-
-                <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
-                    <select onChange={(e)=>{setTipoSeleccionado(e.target.value)}}>
-                    <option value="0">Todos los tipos</option>
-                    {tipos.map(
-                        (t)=>(
-                        <option key={t.id_tipo_proceso} value={t.id_tipo_proceso}>{t.descripcion}</option>
-                        )
-                    )}
-                    </select>
-                </div>
-
             </div>
             <Table data={procesos} columns={columnas}/>
 
