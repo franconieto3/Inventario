@@ -3,10 +3,13 @@ import { apiCall } from "../../../../../services/api";
 import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 import { HistorialVersiones } from "../../HistorialVersiones";
 import { SolicitudCambio } from "../../SolicitudCambio";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function PartDocuments({ documentos, idPieza, onRefresh }) {
+    const navigate = useNavigate();
+
     const [activeMenuId, setActiveMenuId] = useState(null);
     
     // Estados para modales
@@ -19,14 +22,17 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
 
     const toggleMenu = (id) => setActiveMenuId(activeMenuId === id ? null : id);
 
-    const handleVerPlano = async (pathArchivo) => {
+    const handleVerPlano = async (idVersion, pathArchivo) => {
+        /*
         try {
             const params = new URLSearchParams({ path: pathArchivo });
             const { signedUrl } = await apiCall(`${API_URL}/api/documentos/obtener-url-documento?${params.toString()}`, { method: 'GET' });
             window.open(signedUrl, '_blank');
         } catch (err) {
             alert(err.message);
-        }
+        }*/
+       window.open(`/documento/${idVersion}`, '_blank');
+       
     };
 
     const handleEliminarVersion = async (idDocumento) => {
@@ -50,7 +56,7 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
             <div>
                 {documentos.map((d) => (
                     <div key={d.id_tipo_documento} className='display-documento'>
-                        <div style={{ cursor: 'pointer' }} onClick={() => handleVerPlano(d.path)}>
+                        <div style={{ cursor: 'pointer' }} onClick={() => handleVerPlano(d.id_version, d.path)}>
                             <i className='material-icons'>open_in_new</i>
                             <span style={{ color: 'blue', textDecoration: 'underline', marginLeft: '5px' }}>
                                 Ver {d.descripcion}

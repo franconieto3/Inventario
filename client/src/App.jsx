@@ -14,6 +14,7 @@ import ProductDetail from "./features/products/pages/ProductDetail";
 import { Ingenieria } from './features/ingenieria/pages/Ingenieria';
 import { Materiales } from './features/materiales/pages/Materiales';
 import { Procesos } from './features/procesos/pages/Procesos';
+import { DocumentDetail } from './features/documentos/DocumentDetail';
 
 function App() {
 
@@ -82,6 +83,14 @@ function App() {
                   <ProductDetail />
                 </PrivateRoute>
                 } 
+            />
+            <Route
+              path="/documento/:id"
+              element={
+                <PrivateRoute permission={null}>
+                  <DocumentDetail></DocumentDetail>
+                </PrivateRoute>
+              }
             />
             </Routes>
           </BrowserRouter>

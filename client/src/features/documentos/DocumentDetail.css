@@ -1,0 +1,193 @@
+
+/* Layout Principal */
+.viewer-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+  font-family: system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+}
+
+.viewer-layout * {
+  box-sizing: border-box;
+}
+
+/* Barra de Herramientas */
+.viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Permite que los elementos bajen en pantallas chicas */
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+  z-index: 10;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title-section {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.badge {
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+.indicator-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+  min-width: 3.5rem;
+  text-align: center;
+  user-select: none;
+}
+
+/* Botones estilo UI Component */
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-btn.icon-only {
+  padding: 0.4rem;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toolbar-btn.primary {
+  background-color: #0f172a;
+  color: white;
+  border-color: #0f172a;
+  padding: 0.5rem 1rem;
+}
+
+.toolbar-btn.primary:hover {
+  background-color: #334155;
+  border-color: #334155;
+}
+
+/* Área del Visor */
+.viewer-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden; /* Ocultamos el overflow aquí para delegarlo al scroll-container */
+  background-color: #cbd5e1; /* Fondo un poco más oscuro para contrastar la hoja blanca */
+}
+
+/* Contenedor clave para el Paneo / Scroll */
+.pdf-scroll-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Habilita el scroll horizontal y vertical */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem; /* Espacio alrededor de la hoja */
+}
+
+/* Estilización de la hoja del PDF */
+.pdf-document {
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  background-color: white;
+  transition: transform 0.2s ease; /* Suaviza las rotaciones */
+}
+
+/* Scrollbars personalizados estilo Shadcn */
+.pdf-scroll-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.pdf-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.pdf-scroll-container::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+}
+.pdf-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Mensajes de estado */
+.viewer-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.error-msg {
+  color: #ef4444;
+}
+
+/* Media Queries para Celulares */
+@media (max-width: 640px) {
+  .viewer-toolbar {
+    padding: 0.5rem;
+    justify-content: center;
+  }
+  
+  .pdf-scroll-container {
+    padding: 1rem;
+    justify-content: flex-start; /* Evita que el inicio del documento quede oculto al hacer zoom en móviles */
+  }
+
+  .btn-text {
+    display: none; /* Oculta la palabra "Descargar" en celulares, deja solo el ícono */
+  }
+  
+  .doc-title {
+    display: none; /* Simplifica la cabecera */
+  }
+}

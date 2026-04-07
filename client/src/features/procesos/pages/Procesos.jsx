@@ -91,11 +91,6 @@ export function Procesos(){
                     </div>
                 </div>
                 <div style={{marginBottom:'50px'}}>
-                    <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
-                        <Button onClick={()=>setMostrarNewProceso(true)}>
-                            Agregar proceso
-                        </Button>
-                    </div>
                     <ListadoProcesos 
                         procesos={procesos}
                         unidades={unidades}
@@ -107,14 +102,10 @@ export function Procesos(){
                         setTipoSeleccionado={setTipoSeleccionado}
                         onEdit={(row)=>editarProceso(row)}
                         onDelete={(row)=>eliminarProceso(row)}
+                        onNewProcess={()=>setMostrarNewProceso(true)}
                     />
                 </div>
-
-                <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
-                    <Button onClick={()=>setMostrarNewRutaProceso(true)}>
-                        Nueva ruta de procesos
-                    </Button>
-                </div>
+                
                 <ListadoRutas
                     rutas={rutas}
                     tipos={tipos}
@@ -126,6 +117,7 @@ export function Procesos(){
                     refreshRutas={refreshRutas} 
                     onEdit={(item)=>editarRuta(item)}
                     onDelete={(item)=>eliminarRuta(item)}
+                    onNewRoute={()=>setMostrarNewRutaProceso(true)}
                 />
             </div>
             {mostrarNewProceso &&

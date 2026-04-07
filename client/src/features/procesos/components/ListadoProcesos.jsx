@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Table from "../../../components/ui/Table";
+import Button from "../../../components/ui/Button";
 
 export function ListadoProcesos({
     procesos,
@@ -12,7 +13,8 @@ export function ListadoProcesos({
     loadingProcesos,
     //setTipoSeleccionado,
     onEdit,
-    onDelete 
+    onDelete,
+    onNewProcess 
 }){
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -61,12 +63,17 @@ export function ListadoProcesos({
 
     return(
         <>
-            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between'}}>
+            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between', flexWrap:'wrap-reverse'}}>
                 <div>
                     <h3 style={{fontWeight:'500'}}>Listado de procesos</h3>
                     <p className="table-description">
                         Visualización, edición y eliminación de procesos
                     </p>
+                </div>
+                <div style={{marginBottom:'15px', marginTop:'15px'}}>
+                    <Button onClick={onNewProcess}>
+                        Agregar proceso
+                    </Button>
                 </div>
             </div>
             <Table data={procesos} columns={columnas}/>

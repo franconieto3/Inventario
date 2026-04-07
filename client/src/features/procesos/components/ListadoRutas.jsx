@@ -5,6 +5,7 @@ import { useProcessRoutes } from "../hooks/useProcessRoutes";
 import { Modal } from "../../../components/ui/Modal";
 import { useEffect } from "react";
 import { DetalleRuta } from "./DetalleRuta";
+import Button from "../../../components/ui/Button";
 
 export function ListadoRutas({
     rutas, 
@@ -16,7 +17,9 @@ export function ListadoRutas({
     setTipoSeleccionado,
     setPage, 
     onEdit, 
-    onDelete}
+    onDelete,
+    onNewRoute
+}
 ){
 
     const [mostrarRuta, setMostrarRuta] = useState(false);
@@ -80,22 +83,28 @@ export function ListadoRutas({
 
     return (
         <>
-            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between'}}>
+            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between', flexWrap:'wrap-reverse'}}>
                 <div>
                     <h3 style={{fontWeight:'500'}}>Listado de rutas de procesos</h3>
                     <p className="table-description">
                         Visualización, edición y eliminación de rutas de procesos
                     </p>
                 </div>
-                <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
+                <div style={{display:'flex', gap:'15px', alignItems:'center', justifyContent:'start'}}>
                     <select onChange={(e)=>{setTipoSeleccionado(e.target.value)}}>
-                    <option value="0">Todos los tipos</option>
-                    {tipos.map(
-                        (t)=>(
-                        <option key={t.id_tipo_ruta} value={t.id_tipo_ruta}>{t.descripcion}</option>
-                        )
-                    )}
+                        <option value="0">Todos los tipos</option>
+                        {tipos.map(
+                            (t)=>(
+                            <option key={t.id_tipo_ruta} value={t.id_tipo_ruta}>{t.descripcion}</option>
+                            )
+                        )}
                     </select>
+                    <div style={{marginBottom:'15px', marginTop:'15px'}}>
+                        <Button onClick={onNewRoute}>
+                            Nueva ruta de procesos
+                        </Button>
+                    </div>
+                    
                 </div>
             </div>
 
