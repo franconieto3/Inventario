@@ -27,6 +27,8 @@ export const obtenerTiposDocumento = async()=>{
     return data;
 }
 
+//Creación
+
 export const signedUploadUrl = async (path)=>{
 
     const {data,error} = await supabaseAdmin
@@ -94,6 +96,8 @@ export const guardarDocumento = async (datos)=>{
     return idVersionCreada;
 }
 
+//Proyección
+
 export const signedUrl = async (path)=>{
 
     // Expira en 60 segundos. El usuario solo necesita el link para iniciar la carga en el navegador.
@@ -111,6 +115,18 @@ export const signedUrl = async (path)=>{
 
     return data;
 }
+
+export const getDocumentById = async (idDocumento)=>{
+    const {data, error} = await supabase
+        .from('version')
+        .select('path')
+        .eq('id_version', idDocumento)
+        .single();
+
+    if(error) throw new Error("No se pudo recuperar el documento seleccionado");
+
+    return data;
+}   
 
 export const obtenerHistorialVersiones = async (idPieza, idTipoDocumento) =>{
     
@@ -131,6 +147,8 @@ export const obtenerHistorialVersiones = async (idPieza, idTipoDocumento) =>{
 
     return data;
 }
+
+//Eliminación
 
 export const eliminarVersion = async (idVersion)=>{
     
@@ -173,6 +191,8 @@ export const obtenerPiezasVersion = async (idVersion) => {
 
     return piezas;
 }
+
+//Solicitudes de cambio de documentos
 
 export const crearSolicitudCambio = async(idUsuario, mensaje, idVersion)=>{
 

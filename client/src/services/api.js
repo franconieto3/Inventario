@@ -2,12 +2,7 @@ const getToken = ()=> localStorage.getItem('token');
 
 export const apiCall = async (endpoint, options = {}) => {
     const token = getToken();
-    /*
-    const headers = {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
-        ...options.headers,
-    };*/
+
     const headers = {
         ...(!options.body || typeof options.body === 'string' ? { 'Content-Type': 'application/json' } : {}),
         ...(token && { 'Authorization': `Bearer ${token}` }),
@@ -29,14 +24,6 @@ export const apiCall = async (endpoint, options = {}) => {
     const contentType = response.headers.get("content-type");
 
     let data;
-    /*
-    if (contentType && contentType.includes("application/json")) {
-        // Si es JSON, lo parseamos como tal
-        data = await response.json();
-    } else {
-        // Si es texto plano (o HTML/XML), lo leemos como texto para que no rompa
-        data = await response.text();
-    }*/
 
     // 2. NUEVO: Lógica para parsear la respuesta dependiendo de lo esperado o del Content-Type
     if (options.responseType === 'blob' || (contentType && (contentType.includes("application/pdf") || contentType.includes("application/octet-stream")))) {
@@ -52,7 +39,7 @@ export const apiCall = async (endpoint, options = {}) => {
     } else {
         data = await response.text();
     }
-
+  
     if (!response.ok) {
             let errorMessage = "";
             if (data instanceof Blob) {
@@ -65,8 +52,9 @@ export const apiCall = async (endpoint, options = {}) => {
             }else{
                 errorMessage = "Error en la petición";
             }
-            
-            throw new Error(errorMessage);
+            const err = new Error(errorMessage);
+            err.status = response.status;
+            throw err;
         }
 
     return data;

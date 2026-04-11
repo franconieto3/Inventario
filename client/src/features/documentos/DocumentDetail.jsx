@@ -5,6 +5,7 @@ import { apiCall } from '../../services/api';
 import './DocumentDetail.css';
 import Button from '../../components/ui/Button';
 import Can from '../../components/Can';
+import { Spinner } from '../../components/ui/Spinner';
 
 // Configuración del worker de PDF.js
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -40,6 +41,7 @@ export const DocumentDetail = () => {
         const url = URL.createObjectURL(blob);
         setBlobUrl(url);
       } catch (err) {
+        console.log("Codigo de error", err.status);
         setError('No tienes permisos o el archivo no existe.');
       }
     };
@@ -82,8 +84,35 @@ export const DocumentDetail = () => {
     }
   };  
 
-  if (error) return <div className="viewer-message error-msg">{error}</div>;
-  if (!blobUrl) return <div className="viewer-message">Cargando documento seguro...</div>;
+  if (error) return (
+    <div style={{backgroundColor:'yellow', textAlign:'center'}}>
+      <div className="viewer-message error-msg">
+        {error}
+      </div>
+      <div style={{marginTop:'10px'}}>
+        <Button 
+          variant='default' 
+          onClick={()=>console.log("Solicitando acceso")}
+        >
+          Solicitar acceso
+        </Button>
+      </div>
+    </div>
+  );
+
+  if (!blobUrl) return (
+    <>
+      <div style={{ position: 'relative', minHeight: '200px' }}>
+          <Spinner 
+            size={40} 
+            color="#64748b" 
+            center 
+            label = 'Cargando documento seguro...'
+          />
+      </div>
+    </>
+    
+  );
 
   return (
     <div className="viewer-layout">

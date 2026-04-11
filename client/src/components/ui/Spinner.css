@@ -1,0 +1,44 @@
+/* Spinner.css */
+.ui-spinner-container {
+  display: inline-flex;
+  flex-direction: column; /* Apila el spinner y el texto */
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Espaciado entre el spinner y el texto */
+}
+
+.ui-spinner {
+  animation: ui-spin 1s linear infinite;
+  transition: stroke 0.3s ease; 
+}
+
+@keyframes ui-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ui-spinner-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* NUEVO: Estilos para el epígrafe */
+.ui-spinner-label {
+  font-family: inherit;
+  font-size: 0.875rem; /* Tamaño de texto pequeño (14px) */
+  font-weight: 500; /* Medium */
+  color: #64748b; /* Color sutil, equivalente a text-slate-500 */
+  margin: 0;
+}
+
+/* OPCIONAL: Un suave efecto de pulso para el texto */
+.ui-spinner-label-pulse {
+  animation: ui-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes ui-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}

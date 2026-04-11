@@ -1,0 +1,7 @@
+.disable-select {
+  /* Evita que se despliegue el menú en iOS/Android */
+  -webkit-touch-callout: none; 
+  /* Opcional: evita que el usuario seleccione el texto */
+  -webkit-user-select: none;
+  user-select: none;
+}

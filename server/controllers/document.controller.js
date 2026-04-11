@@ -1,6 +1,6 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud} from "../services/document.service.js";
-
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById} from "../services/document.service.js";
+import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
     try{
@@ -16,6 +16,8 @@ export const tiposDocumento = async (req, res)=>{
         }
     }
 }
+
+//Creación de documentos
 
 export const subirDocumento = async (req, res)=>{
     try{
@@ -99,6 +101,7 @@ export const documento = async (req, res)=>{
     }
 }
 
+//Proyección de documentos
 export const visualizarDocumento = async (req, res)=>{
     try {
         const { path } = req.query;
@@ -115,6 +118,37 @@ export const visualizarDocumento = async (req, res)=>{
         }
     }
 }
+
+export const streamDocument = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.usuario.id_usuario;
+
+    // Obtener info del documento de la BD (para saber su path)
+    const document = await getDocumentById(id);
+
+    // Obtener la URL firmada temporal
+    const url = await signedUrl(document.path);
+
+    // Hacer proxy del archivo al cliente
+    const response = await fetch(url.signedUrl);
+    
+    if (!response.ok) throw new Error('Error al descargar el archivo');
+
+    // Configurar cabeceras para forzar visualización (inline) y tipo de contenido
+    res.setHeader('Content-Type', response.headers.get('content-type') || 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="documento.pdf"');
+    
+    // Canalizar el stream de Supabase hacia el cliente
+    Readable.fromWeb(response.body).pipe(res);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al transmitir el documento', error: error.message });
+  }
+};
+
+//Historial de versiones
 
 export const historialDocumentos = async (req, res) =>{
     try{
@@ -234,5 +268,13 @@ export const estadoSolicitud = async(req, res)=>{
     }catch(err){
         console.error(err);
         return res.status(err.statusCode? err.statusCode :500).json({error: err.message});  
+    }
+}
+
+export const crearSolicitudAcceso = async (req, res)=>{
+    try{
+        
+    }catch(err){
+
     }
 }

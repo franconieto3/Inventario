@@ -15,6 +15,7 @@ import { Ingenieria } from './features/ingenieria/pages/Ingenieria';
 import { Materiales } from './features/materiales/pages/Materiales';
 import { Procesos } from './features/procesos/pages/Procesos';
 import { DocumentDetail } from './features/documentos/DocumentDetail';
+import RightClickBlocker from './components/layout/RightClickBlocker';
 
 function App() {
 
@@ -88,7 +89,9 @@ function App() {
               path="/documento/:id"
               element={
                 <PrivateRoute permission={null}>
-                  <DocumentDetail></DocumentDetail>
+                  <RightClickBlocker>
+                    <DocumentDetail></DocumentDetail>
+                  </RightClickBlocker>
                 </PrivateRoute>
               }
             />

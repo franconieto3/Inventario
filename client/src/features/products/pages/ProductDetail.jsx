@@ -16,6 +16,7 @@ import "./ProductDetail.css"
 import Can from '../../../components/Can';
 import { NuevaRutaProcesos } from '../../procesos/components/NuevaRutaProcesos';
 import Button from '../../../components/ui/Button';
+import { Spinner } from '../../../components/ui/Spinner';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -85,7 +86,10 @@ export default function ProductDetail() {
   }, []);
 
  
-  if (!producto) return <div>Cargando...</div>;
+  if (!producto) return             
+    <div style={{ position: 'relative', minHeight: '200px' }}>
+        <Spinner size={32} color="#64748b" center />
+    </div>;
 
   return (
     <>

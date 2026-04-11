@@ -7,6 +7,7 @@ import NavBar from "../../../components/layout/NavBar";
 import { useProducts } from "../hooks/useProducts";
 import EdicionProducto from "../components/EdicionProducto";
 import Buscador from "../../../components/ui/Buscador";
+import { Spinner } from '../../../components/ui/Spinner';
 import NewProduct from "../components/NewProduct";
 import Can from "../../../components/Can";
 import { ListadoProductos } from "../components/ListadoProductos";
@@ -102,7 +103,12 @@ export default function ProductsPage(){
     };
 
     if (loadingAux && page === 1 && productos.length === 0) {
-        return <div className="loading-state">Cargando productos...</div>;
+        {/*return <div className="loading-state">Cargando productos...</div>;*/}
+        return(
+            <div style={{ position: 'relative', minHeight: '200px' }}>
+                <Spinner size={32} color="#64748b" center />
+            </div>
+        );
     }
     
     return (

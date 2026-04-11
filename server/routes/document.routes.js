@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
@@ -23,11 +23,19 @@ router.post('/guardar-documento',
     validateSchema(DocumentoPayloadSchema), 
     documento);
 
+//----
+
 router.get('/obtener-url-documento', 
     verificarToken,
     validateSchema(VisualizarDocumentoSchema,'query'), 
     visualizarDocumento);
 
+router.get('/:id/stream', 
+    verificarToken, 
+    //checkPermission(['ver_documentos']), 
+    streamDocument);
+
+//----
 router.get('/historial-versiones-pieza', 
     verificarToken, 
     validateSchema(HistorialVersionesSchema, 'query'), 
@@ -66,6 +74,11 @@ router.get('/estados-solicitud',
     verificarToken,
     requirePermission('modificar_solicitud_cambio'),
     estadoSolicitud
+)
+
+router.get('/solicitud_acceso/:id',
+    verificarToken,
+    crearSolicitudAcceso
 )
 
 export default router;
