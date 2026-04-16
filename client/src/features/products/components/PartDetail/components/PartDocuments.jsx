@@ -23,14 +23,6 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
     const toggleMenu = (id) => setActiveMenuId(activeMenuId === id ? null : id);
 
     const handleVerPlano = async (idVersion, pathArchivo) => {
-        /*
-        try {
-            const params = new URLSearchParams({ path: pathArchivo });
-            const { signedUrl } = await apiCall(`${API_URL}/api/documentos/obtener-url-documento?${params.toString()}`, { method: 'GET' });
-            window.open(signedUrl, '_blank');
-        } catch (err) {
-            alert(err.message);
-        }*/
        window.open(`/documento/${idVersion}`, '_blank');
        
     };

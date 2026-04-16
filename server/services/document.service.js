@@ -265,3 +265,124 @@ export const obtenerEstadosSolicitud = async ()=>{
 
     return data
 }
+
+export const nuevaSolicitudAcceso = async (idVersion, idSolicitante) => {
+    const { data, error } = await supabase
+        .from('solicitud_acceso_documento')
+        .insert({
+            'id_version': idVersion, 
+            'id_solicitante': idSolicitante
+        })
+        .select();
+
+    if (error) {
+        if (error.code === '23503') {
+            const err = new Error("La versión del documento o el usuario solicitante no existen en el sistema.");
+            err.statusCode = 404; 
+            if (error.message.includes('id_solicitante')) {
+                err.message = "El usuario solicitante no existe.";
+            } else if (error.message.includes('id_version')) {
+                err.message = "La versión del documento no existe.";
+            }
+            
+            throw err;
+        }
+        
+        const err = new Error("Ocurrió un error interno. No se pudo realizar la solicitud.");
+        err.statusCode = 500;
+        throw err;
+    }
+    
+    return data;
+}
+
+export const verificarAccesoProvisorio = async (idVersion, idUsuario) => {
+    const { data, error } = await supabase.rpc('verificar_estado_solicitud_acceso', {
+        p_id_version: parseInt(idVersion),
+        p_id_usuario: idUsuario
+    });
+    
+    if (error) {
+        console.error("Error verificando acceso provisorio:", error);
+        throw new Error("No se pudo verificar el estado de los permisos provisorios");
+    }
+    
+    return data; 
+}
+
+export async function fetchSolicitudes({ page = 1, pageSize = 10, estado = null } = {}) {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    // Llamada al Stored Procedure
+    const { data, error } = await supabase.rpc('get_solicitudes_paginadas', {
+      p_limit: pageSize,
+      p_offset: offset,
+      p_estado: estado
+    });
+
+    if (error) {
+      throw new Error(`Error de Supabase: ${error.message}`);
+    }
+
+    // Cálculo de la paginación basado en el count(*) de la base de datos
+    const totalCount = data && data.length > 0 ? Number(data[0].total_count) : 0;
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    // Opcional: Limpiamos la propiedad total_count de cada registro para no ensuciar la respuesta
+    const cleanData = data ? data.map(({ total_count, ...rest }) => rest) : [];
+
+    return {
+      success: true,
+      data: cleanData,
+      meta: {
+        totalCount,
+        totalPages,
+        currentPage: page,
+        pageSize
+      }
+    };
+
+  } catch (error) {
+    console.error('[fetchSolicitudes] Excepción capturada:', error.message);
+    // En un backend real, podrías lanzar el error para que un middleware lo maneje
+    return {
+      success: false,
+      error: error.message,
+      data: null
+    };
+  }
+}
+
+export const updateSolicitudAcceso = async (id, data, idAprobador = null)=>{
+
+    const { hora_inicio, hora_fin, fecha_vencimiento, estado } = data;
+
+    // Preparamos el objeto de actualización
+    const updateData = {
+        hora_inicio,
+        hora_fin,
+        fecha_vencimiento,
+        estado,
+    };
+
+    // Si tenemos un aprobador, lo asignamos
+    if (idAprobador) {
+        updateData.id_aprobador = idAprobador;
+    }
+
+    const { data: updatedRow, error } = await supabase
+        .from('solicitud_acceso_documento')
+        .update(updateData)
+        .eq('id_solicitud', id)
+        .select(); // Devolvemos el registro actualizado
+
+    if (error) {
+        throw new Error(`Error en base de datos: ${error.message}`);
+    }
+
+    return {
+        success: true,
+        data: updatedRow[0]
+    };
+}

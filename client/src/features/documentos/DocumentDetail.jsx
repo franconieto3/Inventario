@@ -19,7 +19,10 @@ export const DocumentDetail = () => {
   const { id } = useParams();
   const [blobUrl, setBlobUrl] = useState(null);
   const [error, setError] = useState(null);
-  
+
+  //Estado de carga
+  const [loading, setLoading] = useState(false);
+
   // Estados para react-pdf
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -28,6 +31,8 @@ export const DocumentDetail = () => {
   // Nuevo estado para el Zoom (Resolución dinámica)
   // Iniciamos en 1.5 o 1.2 para móviles para no saturar la memoria inicial
   const [scale, setScale] = useState(1.2); 
+
+  const [estadoSolicitud, setEstadoSolicitud] = useState(null);
 
   const printIframeRef = useRef(null);
 
@@ -40,9 +45,23 @@ export const DocumentDetail = () => {
         });
         const url = URL.createObjectURL(blob);
         setBlobUrl(url);
+
       } catch (err) {
-        console.log("Codigo de error", err.status);
-        setError('No tienes permisos o el archivo no existe.');
+        if (err.status === 403) {
+          const estadoDB = err.data?.estado_solicitud;
+          setEstadoSolicitud(estadoDB);
+
+          if (estadoDB === 'PENDIENTE') {
+            setError('Ya posees una solicitud en curso para visualizar este documento. Aguarda su aprobación.');
+          } else {
+            setError('No tienes permisos para ver el documento.');
+          }
+
+        } else if (err.status === 404) {
+            setError('El documento no existe');
+        } else {
+            setError('Ocurrió un error cargando el documento. Intente más tarde');
+        }
       }
     };
     fetchDocument();
@@ -84,18 +103,46 @@ export const DocumentDetail = () => {
     }
   };  
 
+  const solicitarAcceso = async () => {
+    try{
+      setLoading(true);
+      const res = await apiCall(`${API_URL}/api/documentos/solicitud-acceso/${id}`,{
+        method:'POST'
+      })
+
+      setEstadoSolicitud('PENDIENTE');
+      setError('Ya posees una solicitud en curso para visualizar este documento. Aguarda su aprobación.');
+    
+    }catch(err){
+      console.log(err.message);
+      alert(err.message);
+    }finally{
+      setLoading(false);
+    }
+  }
+
   if (error) return (
-    <div style={{backgroundColor:'yellow', textAlign:'center'}}>
+    <div style={{textAlign:'center', padding: '20px'}}>
       <div className="viewer-message error-msg">
         {error}
       </div>
-      <div style={{marginTop:'10px'}}>
-        <Button 
-          variant='default' 
-          onClick={()=>console.log("Solicitando acceso")}
-        >
-          Solicitar acceso
-        </Button>
+      <div style={{marginTop:'15px'}}>
+        {estadoSolicitud === 'PENDIENTE' ? (
+          // UI para cuando ya está pedida
+          <div style={{ color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
+            <i className='material-icons' style={{verticalAlign: 'middle', marginRight: '5px'}}>hourglass_empty</i>
+            Solicitud en revisión
+          </div>
+        ) : (
+          // UI para cuando se puede pedir
+          <Button 
+            variant='default' 
+            onClick={solicitarAcceso}
+            disabled={loading}
+          >
+            {loading ? 'Procesando...' : 'Solicitar acceso'}
+          </Button>
+        )}
       </div>
     </div>
   );

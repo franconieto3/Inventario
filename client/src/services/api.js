@@ -54,6 +54,7 @@ export const apiCall = async (endpoint, options = {}) => {
             }
             const err = new Error(errorMessage);
             err.status = response.status;
+            err.data = data? data: null ;
             throw err;
         }
 

@@ -8,6 +8,7 @@ import { useDocuments } from "../../products/hooks/useDocuments";
 //Estilos
 import "./Ingenieria.css"
 import { useEffect } from "react";
+import { ListadoSolicitudesAcceso } from "../components/ListadoSolicitudesAcceso";
 
 export function Ingenieria(){
 
@@ -21,6 +22,10 @@ export function Ingenieria(){
         refreshRequests} = useChangeRequest();
     
     const {verDocumento} = useDocuments();
+
+    const handleVerPlano = async (idVersion) => {
+       window.open(`/documento/${idVersion}`, '_blank');
+    };
     
     //Paginación
     const handlePrevPage = () => setPage(prev => Math.max(1, prev - 1));
@@ -36,10 +41,10 @@ export function Ingenieria(){
         render: (_)=> new Date(_).toLocaleDateString()
       },
       {
-        key: "path",
+        key: "id_version",
         header: "Versión afectada",
         render: (_)=>(
-          <div style={{'display':'flex','alignItems':'center','gap':'5px','cursor':'pointer'}} onClick={()=>verDocumento(_)}>
+          <div style={{'display':'flex','alignItems':'center','gap':'5px','cursor':'pointer'}} onClick={()=>handleVerPlano(_)}>
             <i className="material-icons">open_in_new</i>
             <span> Ver documento</span>
           </div>
@@ -143,6 +148,8 @@ export function Ingenieria(){
                     </button>
                 </div>
               )}
+
+              <ListadoSolicitudesAcceso/>
 
             </div>
         </>

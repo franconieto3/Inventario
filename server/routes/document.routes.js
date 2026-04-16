@@ -1,9 +1,9 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
-import { requirePermission } from "../middlewares/checkPermission.js";
+import { checkStreamPermission, requirePermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
 
@@ -31,8 +31,8 @@ router.get('/obtener-url-documento',
     visualizarDocumento);
 
 router.get('/:id/stream', 
-    verificarToken, 
-    //checkPermission(['ver_documentos']), 
+    verificarToken,
+    checkStreamPermission, 
     streamDocument);
 
 //----
@@ -76,9 +76,19 @@ router.get('/estados-solicitud',
     estadoSolicitud
 )
 
-router.get('/solicitud_acceso/:id',
+router.post('/solicitud-acceso/:id',
     verificarToken,
+    //Validar solicitud: revisar en la base de datos si existe alguna solicitud no expirada que esté aprobada o pendiente para el id_version e id_usuario. Si está pendiente devolver una excepción
     crearSolicitudAcceso
 )
+
+router.get('/solicitudes-acceso', 
+    verificarToken,
+    getSolicitudesAcceso);
+
+router.put('/solicitud-acceso/edicion/:id',
+    verificarToken,
+    actualizarSolicitudAcceso
+);
 
 export default router;

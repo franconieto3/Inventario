@@ -1,5 +1,5 @@
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso} from "../services/document.service.js";
 import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
@@ -273,8 +273,109 @@ export const estadoSolicitud = async(req, res)=>{
 
 export const crearSolicitudAcceso = async (req, res)=>{
     try{
-        
-    }catch(err){
+        const userId = req.usuario.id_usuario;
+        const {id} = req.params;
 
+        // Validar si ya existe una pendiente o aprobada
+        const estadoExistente = await verificarAccesoProvisorio(id, userId);
+        
+        if (estadoExistente === 'PENDIENTE' || estadoExistente === 'APROBADA') {
+            return res.status(400).json({ 
+                error: `Ya existe una solicitud no expirada en estado: ${estadoExistente}` 
+            });
+        }
+
+        const data = await nuevaSolicitudAcceso(Number(id), userId)
+
+        return res.status(200).json({message: "Solicitud enviada exitosamente"});
+
+    }catch(err){
+        console.log(err);
+        return res.status(err.statusCode? err.statusCode :500).json({error: err.message}); 
+    }
+}
+
+export const getSolicitudesAcceso = async (req, res) => {
+    try {
+        // 1. Extraer parámetros de la query de la URL
+        // Ejemplo de URL esperada: /api/documentos/solicitudes-acceso?page=1&limit=20&estado=PENDIENTE
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const estado = req.query.estado || null;
+
+        // 2. Llamar al servicio
+        const result = await fetchSolicitudes({ 
+            page, 
+            pageSize: limit, 
+            estado 
+        });
+
+        // 3. Manejar la respuesta del servicio
+        if (!result.success) {
+            // Si el servicio devolvió un error controlado
+            return res.status(400).json({
+                success: false,
+                message: result.error || 'Error al obtener las solicitudes de acceso.'
+            });
+        }
+
+        // 4. Enviar respuesta exitosa
+        return res.status(200).json({
+            success: true,
+            data: result.data,
+            meta: result.meta
+        });
+
+    } catch (error) {
+        console.error('[Controller - getSolicitudesAcceso] Error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor al procesar la solicitud.',
+            error: error.message
+        });
+    }
+};
+
+export const actualizarSolicitudAcceso = async (req, res)=>{
+    try{
+        const userId = req.usuario.id_usuario;
+        const {id} = req.params;
+        const {hora_inicio, hora_fin, fecha_vencimiento, estado} = req.body;
+
+        // 1. Validación de campos obligatorios
+        if (!id || !hora_inicio || !hora_fin || !fecha_vencimiento || !estado) {
+            return res.status(400).json({
+                success: false,
+                message: 'Faltan campos obligatorios para actualizar la solicitud.'
+            });
+        }
+
+        const result = await updateSolicitudAcceso(id, {
+            hora_inicio,
+            hora_fin,
+            fecha_vencimiento,
+            estado
+        },userId);
+
+        if (!result.success) {
+            return res.status(400).json({
+                success: false,
+                message: result.error
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Solicitud actualizada correctamente.',
+            data: result.data
+        });
+
+    }catch(err){
+        console.error('[Controller - actualizarSolicitudAcceso] Error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+            error: error.message
+        });
     }
 }
