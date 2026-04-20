@@ -16,6 +16,7 @@ import { Materiales } from './features/materiales/pages/Materiales';
 import { Procesos } from './features/procesos/pages/Procesos';
 import { DocumentDetail } from './features/documentos/DocumentDetail';
 import RightClickBlocker from './components/layout/RightClickBlocker';
+import { Instrumentos } from './features/instrumentos/pages/Instrumentos';
 
 function App() {
 
@@ -74,6 +75,14 @@ function App() {
               element={
                 <PrivateRoute permission={null}>
                   <Procesos/>
+                </PrivateRoute>
+              }
+            /> 
+            <Route
+              path='/instrumentos'
+              element={
+                <PrivateRoute permission={null}>
+                  <Instrumentos/>
                 </PrivateRoute>
               }
             /> 

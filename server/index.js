@@ -6,6 +6,7 @@ import documentRoutes from "./routes/document.routes.js";
 import componentRoutes from "./routes/component.routes.js";
 import materialRoutes from "./routes/material.routes.js";
 import processRoutes from "./routes/process.routes.js";
+import instrumentRoutes from "./routes/instruments.routes.js";
 
 // Middlewares
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/documentos', documentRoutes);
 app.use('/api/componentes', componentRoutes);
 app.use('/api/materiales', materialRoutes);
 app.use('/api/procesos', processRoutes);
+app.use('/api/instrumentos', instrumentRoutes);
 
 
 const PORT = 4000;
