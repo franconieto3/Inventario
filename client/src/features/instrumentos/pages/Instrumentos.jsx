@@ -5,9 +5,15 @@ import { Modal } from "../../../components/ui/Modal";
 import { AgregarInstrumento } from "../components/AgregarInstrumento";
 import { useInstruments } from "../hooks/useInstruments";
 import { ListadoInstrumentos } from "../components/ListadoInstrumentos";
+import { EditarInstrumentos } from "../components/EditarInstrumentos";
+import { apiCall } from "../../../services/api";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function Instrumentos(){
     const [crearInstrumento, setCrearInstrumento] = useState(false);
+    const [editarInstrumento, setEditarInstrumento] = useState(false);
+    const [instrumentoSeleccionado, setInstrumentoSeleccionado] = useState(null)
 
     // Estado para controlar la paginación y filtros desde el componente padre
     const [params, setParams] = useState({ 
@@ -31,11 +37,21 @@ export function Instrumentos(){
 
     // Funciones placeholders para las acciones del Dropdown
     const handleEdit = (instrumento) => {
-        console.log("Editar instrumento:", instrumento);
+        setInstrumentoSeleccionado(instrumento)
+        setEditarInstrumento(true);
     };
 
-    const handleDelete = (instrumento) => {
+    const handleDelete = async (instrumento) => {
         console.log("Eliminar instrumento:", instrumento);
+        if(window.confirm("¿Desea eliminar el instrumento seleccionado?")){
+            try{
+                const res = await apiCall(`${API_URL}/api/instrumentos/${instrumento.id_instrumento}`, {method: 'DELETE'});
+                refetch();
+
+            }catch(err){
+                console.log(err.message);
+            }
+        }
     };
 
     return(
@@ -84,14 +100,33 @@ export function Instrumentos(){
                 >
                     <AgregarInstrumento
                         onClose={() => setCrearInstrumento(false)} 
-                        onSuccess={(nuevoInstrumento) => {
-                            // Aquí en el futuro llamarás a mutate() o refrescarás el state de tu tabla
-                            console.log("Guardado con éxito:", nuevoInstrumento);
-                        }}
+                        onSuccess={refetch}
                         sectores={sectores}
                         enums={enums} 
                     >
                     </AgregarInstrumento>
+                </Modal>
+            }
+            {
+                editarInstrumento &&
+                <Modal
+                    titulo="Editar instrumento"
+                    descripcion= {instrumentoSeleccionado.nro_serie? instrumentoSeleccionado.nro_serie : ''}
+                    onClose={()=>{
+                            setEditarInstrumento(false);
+                            setInstrumentoSeleccionado(null);
+                        }
+                    }
+                >
+                    <EditarInstrumentos 
+                        instrumento={instrumentoSeleccionado}
+                        onSuccess={refetch} 
+                        onClose={() => {
+                            setEditarInstrumento(false);
+                            setInstrumentoSeleccionado(null);
+                        }}
+                        enums={enums} 
+                    />
                 </Modal>
             }
         </>    

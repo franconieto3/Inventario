@@ -65,3 +65,28 @@ export const crearInstrumentoSchema = z.object({
         }
     }
 });
+
+export const editarInstrumentoSchema = z.object({
+    descripcion: z.string({
+        required_error: "La descripción es obligatoria"
+    }).trim().min(3, "La descripción debe tener al menos 3 caracteres"),
+
+    // Campos de texto generales
+    marca: z.string().trim().optional().nullable().transform(val => val === '' ? null : val),
+    modelo: z.string().trim().optional().nullable().transform(val => val === '' ? null : val),
+    nro_serie: z.string().trim().optional().nullable().transform(val => val === '' ? null : val),
+    mes_vencimiento: z.string().trim().optional().nullable().transform(val => val === '' ? null : val),
+
+    // Campos condicionales (los manejamos como opcionales en el parseo)
+    tipo_proveedor: z.enum(['INTERNO', 'EXTERNO']).optional().nullable(),
+    
+    frecuencia_meses: z.union([z.string(), z.number()])
+        .optional()
+        .nullable()
+        .transform(val => val === '' ? null : Number(val)),
+
+    usos_maximos: z.union([z.string(), z.number()])
+        .optional()
+        .nullable()
+        .transform(val => val === '' ? null : Number(val)),
+});

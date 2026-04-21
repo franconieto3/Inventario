@@ -76,55 +76,7 @@ export const getSectores = async ()=>{
     if (error) throw new Error(`Error al obtener sectores: ${error.message}`);
     return data;
   }
-/*
-  // Obtener instrumentos paginados, filtrados y ordenados
-export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId }) => {
-    // Calculamos el rango para la paginación de Supabase (0-indexado)
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
 
-    // Iniciamos la query pidiendo también el conteo total exacto
-    let query = supabase
-      .from('instrumentos')
-      .select(`
-        *,
-        sector:sector ( id_sector, descripcion )
-      `, { count: 'exact' });
-
-    // Aplicamos filtros condicionales
-    if (tipo) {
-      query = query.eq('tipo', tipo);
-    }
-    if (sectorId) {
-      query = query.eq('sector', sectorId);
-    }
-
-    // Aplicamos el ordenamiento dinámico según los requerimientos de negocio
-    if (tipo === 'ESTANDAR') {
-      // Orden descendente por fecha de vencimiento (los nulos van al final)
-      query = query.order('mes_vencimiento', { ascending: false, nullsFirst: false });
-    } else if (tipo === 'PROBADOR') {
-      // Orden descendente por usos actuales
-      query = query.order('usos_actuales', { ascending: false });
-    } else {
-      // Orden por defecto si traemos una lista mixta (sin filtro 'tipo')
-      query = query.order('created_at', { ascending: false });
-    }
-
-    // Aplicamos la paginación
-    query = query.range(from, to);
-
-    // Ejecutamos la consulta
-    const { data, count, error } = await query;
-
-    if (error) throw new Error(`Error al obtener instrumentos: ${error.message}`);
-
-    return {
-      items: data,
-      total: count
-    };
-  }
-*/
 
 export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, estado }) => {
     const from = (page - 1) * limit;
@@ -162,3 +114,91 @@ export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, es
       total: count
     };
   }
+
+  export const updateInstrumento = async (id, data) => {
+
+    const payload = {
+        descripcion: data.descripcion,
+        marca: data.marca !== undefined ? data.marca : null,
+        modelo: data.modelo !== undefined ? data.modelo : null,
+        nro_serie: data.nro_serie !== undefined ? data.nro_serie : null,
+        mes_vencimiento: data.mes_vencimiento !== undefined ? data.mes_vencimiento : null,
+    };
+
+    // 2. Agregamos los campos condicionales solo si el frontend los envió
+    if (data.tipo_proveedor !== undefined) payload.tipo_proveedor = data.tipo_proveedor;
+    if (data.frecuencia_meses !== undefined) payload.frecuencia_meses = data.frecuencia_meses;
+    if (data.usos_maximos !== undefined) payload.usos_maximos = data.usos_maximos;
+
+    // 3. Actualización en Supabase
+    const { data: instrumentoActualizado, error } = await supabase
+        .from('instrumentos')
+        .update(payload)
+        .eq('id_instrumento', id) // Asegúrate de que el Primary Key se llame id_instrumento en tu DB
+        .select()
+        .single();
+
+    // 4. Manejo de Errores
+    if (error) {
+        // Violación de Check Constraint
+        if (error.code === '23514') {
+            if (error.message.includes('chk_estandar_requerimientos')) {
+                throw new Error("Error de validación: Los instrumentos ESTANDAR requieren proveedor y frecuencia en meses.");
+            }
+            if (error.message.includes('chk_probador_requerimientos')) {
+                throw new Error("Error de validación: Los instrumentos PROBADOR requieren definir los usos máximos.");
+            }
+            throw new Error("Error: Los datos enviados no cumplen con las restricciones de la base de datos.");
+        }
+
+        // Sintaxis de entrada inválida
+        if (error.code === '22P02') {
+            throw new Error("Error: El formato de los datos es incorrecto. Verifique los campos ingresados.");
+        }
+
+        throw new Error(error.message || "Ocurrió un error inesperado al actualizar el instrumento.");
+    }
+
+    if (!instrumentoActualizado) {
+        throw new Error("Instrumento no encontrado o no se pudo actualizar.");
+    }
+
+    return instrumentoActualizado;
+};
+
+export const deleteInstrumento = async (id)=>{
+  const { data, error } = await supabase
+    .from('instrumentos')
+    .delete()
+    .eq('id_instrumento', id)
+    .select(); 
+  
+  if (error) {
+    // Manejo de Foreign Key constraint (el instrumento está en uso)
+    if (error.code === '23503') {
+        throw { statusCode: 409, message: "No se puede eliminar: el instrumento tiene registros asociados." };
+    }
+    throw { statusCode: 500, message: "Ocurrió un error en la base de datos al eliminar." }; 
+  }
+
+  // Verificar si realmente se borró algo
+  if (!data || data.length === 0) {
+    throw { statusCode: 404, message: "Instrumento no encontrado o ya fue eliminado." };
+  }
+
+  return data;
+}
+
+export const getInstrument = async (id)=>{
+  const {data, error} = await supabase
+    .from('instrumentos')
+    .select('*')
+    .eq('id_instrumento', id)
+    .single();
+
+  if(error){
+      throw { statusCode: 500, message: "Ocurrió un error, no se encontró el instrumento solicitado" };
+  }
+
+  return data;
+}

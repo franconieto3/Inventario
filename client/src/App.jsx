@@ -17,6 +17,7 @@ import { Procesos } from './features/procesos/pages/Procesos';
 import { DocumentDetail } from './features/documentos/DocumentDetail';
 import RightClickBlocker from './components/layout/RightClickBlocker';
 import { Instrumentos } from './features/instrumentos/pages/Instrumentos';
+import { InstrumentDetail } from './features/instrumentos/pages/InstrumentDetail';
 
 function App() {
 
@@ -29,81 +30,89 @@ function App() {
               <Route path="/login" element={<Login />} />
               
                
-            {/* Rutas Privadas */}
-            <Route 
-              path="/register" 
-              element={
-                <PrivateRoute permission="acceso_usuarios">
-                  <Register />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/homepage" 
-              element={
-                <PrivateRoute>
-                  <HomePage />
-                </PrivateRoute>
-              } 
-            />
-            <Route
-              path="/products" 
-              element={
-                <PrivateRoute permission="acceso_repositorio">
-                  <ProductsPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/ingenieria"
-              element={
-                <PrivateRoute permission="acceso_ingenieria">
-                  <Ingenieria/>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/materiales"
-              element={
-                <PrivateRoute permission={null}>
-                  <Materiales/>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path='/procesos'
-              element={
-                <PrivateRoute permission={null}>
-                  <Procesos/>
-                </PrivateRoute>
-              }
-            /> 
-            <Route
-              path='/instrumentos'
-              element={
-                <PrivateRoute permission={null}>
-                  <Instrumentos/>
-                </PrivateRoute>
-              }
-            /> 
-            <Route 
-              path="/producto/:id" 
-              element={
-                <PrivateRoute permission="acceso_repositorio">
-                  <ProductDetail />
-                </PrivateRoute>
+              {/* Rutas Privadas */}
+              <Route 
+                path="/register" 
+                element={
+                  <PrivateRoute permission="acceso_usuarios">
+                    <Register />
+                  </PrivateRoute>
                 } 
-            />
-            <Route
-              path="/documento/:id"
-              element={
-                <PrivateRoute permission={null}>
-                  <RightClickBlocker>
-                    <DocumentDetail></DocumentDetail>
-                  </RightClickBlocker>
-                </PrivateRoute>
-              }
-            />
+              />
+              <Route 
+                path="/homepage" 
+                element={
+                  <PrivateRoute>
+                    <HomePage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route
+                path="/products" 
+                element={
+                  <PrivateRoute permission="acceso_repositorio">
+                    <ProductsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/ingenieria"
+                element={
+                  <PrivateRoute permission="acceso_ingenieria">
+                    <Ingenieria/>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/materiales"
+                element={
+                  <PrivateRoute permission={null}>
+                    <Materiales/>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path='/procesos'
+                element={
+                  <PrivateRoute permission={null}>
+                    <Procesos/>
+                  </PrivateRoute>
+                }
+              /> 
+              <Route
+                path='/instrumentos'
+                element={
+                  <PrivateRoute permission={null}>
+                    <Instrumentos/>
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="/producto/:id" 
+                element={
+                  <PrivateRoute permission="acceso_repositorio">
+                    <ProductDetail />
+                  </PrivateRoute>
+                  } 
+              />
+              <Route
+                path="/documento/:id"
+                element={
+                  <PrivateRoute permission={null}>
+                    <RightClickBlocker>
+                      <DocumentDetail></DocumentDetail>
+                    </RightClickBlocker>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                  path='/instrumento/:id'
+                  element={
+                    <PrivateRoute permission={null}>
+                      <InstrumentDetail />
+                    </PrivateRoute>
+                  }
+              />
             </Routes>
           </BrowserRouter>
         </AuthContextProvider>

@@ -11,32 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export const useInstruments = (initialParams) => {
   const [instrumentos, setInstrumentos] = useState([]);
-  const [sectores, setSectores] = useState([
-        {
-            id_sector: 1,
-            descripcion: "Ingeniería"
-        },
-        {
-            id_sector: 2,
-            descripcion: "Mecanizado 1"
-        },
-        {
-            id_sector: 3,
-            descripcion: "Mecanizado 2"
-        },
-        {
-            id_sector: 4,
-            descripcion: "Mecanizado 3"
-        },
-        {
-            id_sector: 5,
-            descripcion: "Control de calidad"
-        },
-        {
-            id_sector: 6,
-            descripcion: "Pulido"
-        }
-    ]);
+  const [sectores, setSectores] = useState([]);
 
   const [totalRecords, setTotalRecords] = useState(0);
   

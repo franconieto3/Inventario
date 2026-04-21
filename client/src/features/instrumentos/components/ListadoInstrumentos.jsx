@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Table from "../../../components/ui/Table";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
+import { useNavigate } from "react-router-dom";
 
 export function ListadoInstrumentos({
     data,
@@ -12,6 +13,8 @@ export function ListadoInstrumentos({
     onEdit,
     onDelete
 }) {
+    const navigate = useNavigate();
+
     // Controla qué dropdown está abierto usando el ID del instrumento
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -34,10 +37,33 @@ export function ListadoInstrumentos({
 
     // Definición de las columnas de la tabla
     const columns = [
-        { key: "descripcion", header: "Descripción" },
-        {key: "nro_serie", header: "N° de serie"},
-        {key: "marca", header:"Marca"},
-        {key: "modelo", header: "Modelo"},
+        { 
+            key: "descripcion", 
+            header: "Descripción",
+            render: (_,row)=> (
+                <span 
+                    onClick={()=>navigate(`/instrumento/${row.id_instrumento}`)}
+                    style={{cursor:'pointer'}}
+                >
+                    {_}
+                </span>
+            )
+        },
+        {
+            key: "nro_serie", 
+            header: "N° de serie",
+            render: (_, row)=> _? _ : 'Sin definir' 
+        },
+        {
+            key: "marca", 
+            header:"Marca",
+            render: (_)=> _? _ : 'Sin definir'
+        },
+        {
+            key: "modelo", 
+            header: "Modelo",
+            render: (_)=> _ ? _ : 'Sin definir'
+        },
         {key: "tipo", header: "Tipo" },
         { 
             key: "sector", 
