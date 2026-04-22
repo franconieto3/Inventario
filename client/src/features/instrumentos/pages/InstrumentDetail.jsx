@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import NavBar from "../../../components/layout/NavBar";
+import {DropdownMenu} from "../../../components/ui/DropdownMenu";
 import { apiCall } from "../../../services/api";
 import { useParams } from "react-router-dom";
+import { EditarInstrumentos } from "../components/EditarInstrumentos";
+
+import './instrumentDetail.css'
+import { Modal } from "../../../components/ui/Modal";
+import { useInstruments } from "../hooks/useInstruments";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 const DetailItem = ({ label, value }) => (
     <div className="detail-item">
-        <span className="detail-label">{label}</span>
+        <span className="detail-label">{label}: </span>
         <span className="detail-value">{value !== null && value !== undefined ? value : '-'}</span>
     </div>
 );
@@ -19,21 +25,43 @@ export function InstrumentDetail(){
     const [instrumento, setInstrumento] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    //Estado de DropdownMenu
+    const [activeMenu, setActiveMenu] = useState(false)
+    
+    //Edición
+    const [mostrarEdicion, setMostrarEdicion] = useState(false);
+    const [params, setParams] = useState({ 
+        page: 1, 
+        limit: 10, 
+        tipo: '', 
+        sectorId: '' ,
+        estado: ''
+    });
+    const {enums} = useInstruments(params);
+
+    //Agregar archivos
+    const [mostrarAgregarArchivos, setMostrarAgregarArchivos] = useState(false);
+
+    //Agregar verificación
+    const [mostrarAgregarVerificacion, setMostrarAgregarVerificacion] = useState(false);
+
+    const fetchInstrument = useCallback(async ()=>{
+        setError("");
+        try{
+            setLoading(true);
+            const res = await apiCall(`${API_URL}/api/instrumentos/detalle/${id}`, {});
+            setInstrumento(res);
+
+        }catch(err){
+            setError(err.message);
+        }finally{
+            setLoading(false);
+        }
+    },[refreshTrigger])
 
     useEffect(()=>{
-        const fetchInstrument = async ()=>{
-            setError("");
-            try{
-                setLoading(true);
-                const res = await apiCall(`${API_URL}/api/instrumentos/detalle/${id}`, {});
-                setInstrumento(res);
-
-            }catch(err){
-                setError(err.message);
-            }finally{
-                setLoading(false);
-            }
-        }
         fetchInstrument()
     },[])
 
@@ -55,16 +83,45 @@ export function InstrumentDetail(){
                 )}
 
                 {!loading && !error && instrumento && (
-                    <div className="card">
-                        <div className="card-header">
+                    <div className="icard">
+                        <div className="icard-header">
                             <div>
-                                <h2 className="card-title">Detalle de Instrumento</h2>
-                                <p className="card-description">Información técnica y estado de calibración</p>
+                                <h2 className="icard-title">Detalle de Instrumento</h2>
+                                <p className="icard-description">Información técnica y estado de calibración</p>
                             </div>
-                            <span className="badge">{instrumento.tipo}</span>
+                            <div style={{display: 'flex', alignItems:'center', gap: '5px'}}>
+                                <span className="badge">{instrumento.tipo}</span>
+                                <DropdownMenu
+                                    isOpen={activeMenu}
+                                    onToggle={()=>setActiveMenu(!activeMenu)}
+                                    items={[
+                                        {
+                                            label: 'Editar',
+                                            icon: 'edit',
+                                            onClick: ()=>setMostrarEdicion(true)
+                                        },
+                                        {
+                                            label: 'Agregar archivo',
+                                            icon: 'upload',
+                                            onClick: ()=>setMostrarAgregarArchivos(true)
+                                        },
+                                        {
+                                            label: 'Agregar verificación',
+                                            icon: 'check',
+                                            onClick: ()=> setMostrarAgregarVerificacion(true)
+                                        },
+                                        {
+                                            label: 'Dar de baja',
+                                            icon: 'cancel',
+                                            color: 'red',
+                                            onClick: ()=>console.log('Dando de baja...')
+                                        }
+                                    ]}
+                                />
+                            </div>
                         </div>
 
-                        <div className="card-content">
+                        <div className="icard-content">
                             <DetailItem label="Descripción" value={instrumento.descripcion} />
                             <DetailItem label="Marca" value={instrumento.marca} />
                             <DetailItem label="Modelo" value={instrumento.modelo} />
@@ -89,7 +146,38 @@ export function InstrumentDetail(){
                         </div>
                     </div>
                 )}
-
+                {mostrarEdicion && instrumento &&
+                    <Modal
+                        titulo="Modificar instrumento"
+                        descripcion=""
+                        onClose={()=>setMostrarEdicion(false)}
+                    >
+                        <EditarInstrumentos
+                            instrumento={instrumento}
+                            onClose={()=>setMostrarEdicion(false)}
+                            onSuccess={()=>setRefreshTrigger(refreshTrigger+1)}
+                            enums={enums}
+                        />
+                    </Modal>
+                }
+                {mostrarAgregarArchivos &&
+                    <Modal
+                        titulo="Adjuntar archivos"
+                        descripcion="Agregar imágenes, manuales, instructivos, etc"
+                        onClose={()=>setMostrarAgregarArchivos(false)}
+                    >
+                        <p>Agregar Archivos</p>
+                    </Modal>
+                }
+                {mostrarAgregarVerificacion &&
+                    <Modal
+                        titulo="Nueva verificación"
+                        descripcion=""
+                        onClose={()=>setMostrarAgregarVerificacion(false)}
+                    >
+                        <p>Agregar verificación</p>
+                    </Modal>
+                }
             </div>
         </>
     );

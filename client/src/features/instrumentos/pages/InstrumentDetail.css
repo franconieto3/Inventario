@@ -1,6 +1,6 @@
 /* InstrumentDetail.css */
 
-.card {
+.icard {
     background-color: #ffffff;
     border: 1px solid #e4e4e7; /* Borde sutil */
     border-radius: 0.5rem; /* 8px */
@@ -11,7 +11,7 @@
 }
 
 /* Cabecera de la tarjeta */
-.card-header {
+.icard-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -19,7 +19,7 @@
     border-bottom: 1px solid #e4e4e7;
 }
 
-.card-title {
+.icard-title {
     margin: 0;
     font-size: 1.25rem; /* 20px */
     font-weight: 600;
@@ -27,7 +27,7 @@
     letter-spacing: -0.025em;
 }
 
-.card-description {
+.icard-description {
     margin: 0.25rem 0 0 0;
     font-size: 0.875rem; /* 14px */
     color: #71717a;
@@ -45,7 +45,7 @@
 }
 
 /* Contenido / Grilla de datos */
-.card-content {
+.icard-content {
     padding: 1.5rem;
     display: grid;
     grid-template-columns: 1fr;
@@ -54,7 +54,7 @@
 
 /* Pasa a 2 columnas en pantallas medianas o grandes */
 @media (min-width: 640px) {
-    .card-content {
+    .icard-content {
         grid-template-columns: repeat(2, 1fr);
     }
 }
