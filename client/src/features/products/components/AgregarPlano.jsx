@@ -6,6 +6,7 @@ import { apiCall } from "../../../services/api";
 //import "../styles/ProductDetail.css"
 import "./AgregarDocumento.css"
 import { useDocuments } from "../hooks/useDocuments";
+import { limpiarNombreArchivo } from "../../../services/formatearNombreArchivo";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -89,7 +90,7 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             setError("Debe seleccionar al menos una pieza");
             return;
         }
-        const nombreLimpio = limpiarNombreArchivo(file.name);
+        //const nombreLimpio = limpiarNombreArchivo(file.name);
 
         try{
             setLoading(true)
@@ -98,10 +99,12 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             const { signedUrl, path, uploadToken } = await apiCall(
                 `${API_URL}/api/documentos/subir-plano`,
                  {method: 'POST', 
-                  body: JSON.stringify({fileName:nombreLimpio, 
+                  body: JSON.stringify({fileName:limpiarNombreArchivo(file.name), 
                   fileType: file.type, 
                   fileSize: file.size,
-                  idTipoDocumento: 1})
+                  //idTipoDocumento: 1
+                  idTipoDocumento: idTipoDocumento
+                })
                 })
             
             //2. Subir archivo al bucket con la url firmada
@@ -149,14 +152,15 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             setLoading(false);
         }
     }
-
+/*
     const limpiarNombreArchivo = (nombre) => {
         return nombre
         .normalize("NFD") // Descompone caracteres (á -> a + ´)
         .replace(/[\u0300-\u036f]/g, "") // Elimina los acentos
         .replace(/[^a-zA-Z0-9.\-]/g, "_"); // Reemplaza todo lo que no sea letra, número, punto o guion por "_"
     };
-    
+ */
+
     const handleSelectAll = (e)=>{
         e.preventDefault();
         
@@ -221,7 +225,13 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                             {tiposDocumento.map((td)=><option key={td.id_tipo_documento} value={td.id_tipo_documento}>{td.descripcion}</option>)}
                         </select>
 
-                        {idTipoDocumento && <SubirArchivo key={resetKey} acceptedFileTypes={formatosPermitidos} onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)} onRemove={limpiarFormulario}/>}
+                        {idTipoDocumento && 
+                            <SubirArchivo 
+                                key={resetKey} 
+                                acceptedFileTypes={formatosPermitidos} 
+                                onUpload={(plano)=> plano.length > 0 ? setFile(plano[0]) : setFile(null)} 
+                                onRemove={limpiarFormulario}
+                        />}
 
                         {seleccionarPiezas && <div className="inputs-documentos">
                             <div className='upload-content'>

@@ -8,6 +8,8 @@ import { EditarInstrumentos } from "../components/EditarInstrumentos";
 import './instrumentDetail.css'
 import { Modal } from "../../../components/ui/Modal";
 import { useInstruments } from "../hooks/useInstruments";
+import { AgregarArchivo } from "../components/AgregarArchivo";
+import { AgregarVerificacion } from "../components/AgregarVerificacion";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -59,11 +61,11 @@ export function InstrumentDetail(){
         }finally{
             setLoading(false);
         }
-    },[refreshTrigger])
+    },[id])
 
     useEffect(()=>{
         fetchInstrument()
-    },[])
+    },[fetchInstrument, refreshTrigger])
 
     
     return (
@@ -166,7 +168,7 @@ export function InstrumentDetail(){
                         descripcion="Agregar imágenes, manuales, instructivos, etc"
                         onClose={()=>setMostrarAgregarArchivos(false)}
                     >
-                        <p>Agregar Archivos</p>
+                        <AgregarArchivo></AgregarArchivo>
                     </Modal>
                 }
                 {mostrarAgregarVerificacion &&
@@ -175,7 +177,15 @@ export function InstrumentDetail(){
                         descripcion=""
                         onClose={()=>setMostrarAgregarVerificacion(false)}
                     >
-                        <p>Agregar verificación</p>
+                        <AgregarVerificacion
+                            onSuccess={
+                                ()=>{
+                                    setMostrarAgregarVerificacion(false);
+                                    setRefreshTrigger(refreshTrigger+1);
+                                }
+                            }
+                            idInstrumento={id}
+                        />
                     </Modal>
                 }
             </div>

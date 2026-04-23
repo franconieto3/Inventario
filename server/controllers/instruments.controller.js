@@ -1,3 +1,4 @@
+import { signedUploadUrl } from "../services/document.service.js";
 import { crearInstrumento, deleteInstrumento, getInstrument, getInstrumentos, getSectores, updateInstrumento } from "../services/instruments.service.js";
 
 
@@ -103,5 +104,52 @@ export const instrumento = async (req, res)=>{
 
     }catch(err){
         return res.status(err.statusCode).json({message: err.message});
+    }
+}
+
+export const agregarVerificacion = async (req, res)=>{
+    try{
+        const {fileName, fileType, fileSize} = req.body;
+
+        //Creación de path temporal(servicio) 
+        const path = `temp/${Date.now()}-${fileName}`;
+
+        //Generación de url de carga
+        const data = await signedUploadUrl(path);
+
+        return res.json({
+            signedUrl: data.signedUrl,
+            uploadToken: data.token,
+            path: path,
+            meta: {
+                destinationFolder: config.bucket_folder
+            }
+        });
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({error: "Ocurrió un error"})
+    }
+}
+
+export const guardarVerificacion = async(req, res)=>{
+    try{
+        const {date, path} = req.body;
+
+        //Path temporal
+        const tempPath = path;
+        
+        //Obtención de la ubicación del bucket
+
+        //Definicion del path final
+
+        //Mover archivo
+
+        //Guardar datos en DB
+
+        //Respuesta exitosa
+        
+    }catch(err){
+
     }
 }
