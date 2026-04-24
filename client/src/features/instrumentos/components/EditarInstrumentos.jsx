@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
 import { apiCall } from "../../../services/api";
+import Buscador from "../../../components/ui/Buscador";
+import Button from "../../../components/ui/Button";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
+export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sectores }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [resetBuscador, setResetBuscador] = useState(0);
 
     // Inicializamos el estado formateando la fecha si existe
     const [formData, setFormData] = useState({
-        descripcion: '',
+        //descripcion: '',
         marca: '',
         modelo: '',
         nro_serie: '',
-        tipo_proveedor: 'INTERNO',
-        frecuencia_meses: '',
-        usos_maximos: '',
+       // tipo_proveedor: 'INTERNO',
+        //frecuencia_meses: '',
+        //usos_maximos: '',
         mes_vencimiento: ''
     });
 
@@ -23,13 +26,13 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
     useEffect(() => {
         if (instrumento) {
             setFormData({
-                descripcion: instrumento.descripcion || '',
+                //descripcion: instrumento.descripcion || '',
                 marca: instrumento.marca || '',
                 modelo: instrumento.modelo || '',
                 nro_serie: instrumento.nro_serie || '',
-                tipo_proveedor: instrumento.tipo_proveedor || 'INTERNO',
-                frecuencia_meses: instrumento.frecuencia_meses || '',
-                usos_maximos: instrumento.usos_maximos || '',
+               // tipo_proveedor: instrumento.tipo_proveedor || 'INTERNO',
+               // frecuencia_meses: instrumento.frecuencia_meses || '',
+               // usos_maximos: instrumento.usos_maximos || '',
                 // Aseguramos que la fecha tenga el formato YYYY-MM-DD para el input type="date"
                 mes_vencimiento: instrumento.mes_vencimiento 
                     ? instrumento.mes_vencimiento.split('T')[0] 
@@ -50,13 +53,13 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
 
         // Preparamos el payload base
         const payload = {
-            descripcion: formData.descripcion,
+            //descripcion: formData.descripcion,
             marca: formData.marca || null,
             modelo: formData.modelo || null,
             nro_serie: formData.nro_serie || null,
             mes_vencimiento: formData.mes_vencimiento || null
         };
-
+/*
         // Agregamos campos condicionales según el tipo de instrumento original
         if (instrumento.tipo === 'ESTANDAR') {
             payload.tipo_proveedor = formData.tipo_proveedor;
@@ -64,7 +67,7 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
         } else if (instrumento.tipo === 'PROBADOR') {
             payload.usos_maximos = formData.usos_maximos ? parseInt(formData.usos_maximos) : null;
         }
-
+*/
         try {
             // Se utiliza PATCH o PUT pasando el ID del instrumento
             const response = await apiCall(`${API_URL}/api/instrumentos/${instrumento.id_instrumento}`, {
@@ -90,6 +93,7 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
 
             <div className="ai-form-grid">
                 {/* DESCRIPCIÓN */}
+                {/*
                 <div className="ai-form-group ai-col-span-2">
                     <label htmlFor="descripcion" className="ai-form-label">Descripción *</label>
                     <input 
@@ -102,7 +106,37 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
                         required 
                     />
                 </div>
-
+                */}
+                {/*
+                <div className="ai-form-group ai-col-span-2">
+                    <label htmlFor="descripcion" className="ai-form-label">Sector</label>
+                    <Buscador 
+                        opciones={sectores}
+                        key={resetBuscador}
+                        placeholder="Sector..."
+                        keys={['id_sector', 'descripcion']}
+                        onChange={(e)=>handleChange({target: {name:'sector', value: e}})}
+                        idField="id_sector"
+                        displayField="descripcion"
+                        showId={false}
+                        //valorInicial={instrumento.sector}
+                    />
+                    <Button 
+                        type='button'
+                        variant="secondary" 
+                        onClick={
+                            ()=>{
+                                handleChange({target: {name: 'sector',value: ''}});
+                                setResetBuscador(resetBuscador + 1)
+                        }
+                        }
+                        style={{maxWidth:'50px', marginBottom:'11px'}}
+                    >
+                        <i className="material-icons" style={{color:'red'}}>delete</i>
+                    </Button>
+                    
+                </div>
+                */}
                 {/* MARCA, MODELO, NRO SERIE */}
                 <div className="ai-form-group">
                     <label htmlFor="marca" className="ai-form-label">Marca</label>
@@ -127,7 +161,7 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
                 </div>
 
                 {/* ---------------- CAMPOS CONDICIONALES ---------------- */}
-                {instrumento.tipo === 'ESTANDAR' && (
+                {/*instrumento.tipo === 'ESTANDAR' && (
                     <>
                         <div className="ai-form-group">
                             <label htmlFor="tipo_proveedor" className="ai-form-label">Proveedor *</label>
@@ -136,7 +170,7 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
                                 className="ai-form-input" value={formData.tipo_proveedor} onChange={handleChange}
                                 required
                             >
-                                {/* Validar que enums se esté pasando como prop para iterar aquí */}
+                                
                                 {enums?.tiposProveedor?.map((item, i) => (
                                     <option key={i} value={item}>{item}</option>                   
                                 ))}
@@ -162,7 +196,7 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums }) {
                             required
                         />
                     </div>
-                )}
+                )*/}
                 {/* -------------------------------------------------------- */}
 
                 {/* MES VENCIMIENTO */}

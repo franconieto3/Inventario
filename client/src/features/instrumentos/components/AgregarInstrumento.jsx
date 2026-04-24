@@ -7,11 +7,12 @@ import Button from "../../../components/ui/Button";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function AgregarInstrumento({ onClose, onSuccess, sectores, enums }) {
+export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, categorias }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [resetBuscador, setResetBuscador] = useState(0);
+    const [resetBuscadorCategoria, setResetBuscadorCategoria] = useState(0);
 
     const meses = [
         "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -25,6 +26,7 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums }) {
         modelo: '',
         nro_serie: '',
         sector: '',
+        id_categoria:'',
         // Campos ESTANDAR
         tipo_proveedor: 'INTERNO',
         frecuencia_meses: '',
@@ -53,6 +55,7 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums }) {
             modelo: formData.modelo || null,
             nro_serie: formData.nro_serie || null,
             sector: formData.sector ? parseInt(formData.sector) : null,
+            categoria: formData.id_categoria ? parseInt(formData.id_categoria) : null,
             mes_vencimiento: formData.mes_vencimiento || null
         };
 
@@ -116,6 +119,35 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums }) {
                         placeholder="Ej: Calibre pie de rey 150mm"
                         required 
                     />
+                </div>
+
+                <div className="ai-form-group ai-col-span-2">
+                    <label htmlFor="categoria" className="ai-form-label">Descripción *</label>
+                    <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
+                        <Buscador
+                            opciones={categorias}
+                            key={resetBuscadorCategoria}
+                            placeholder="Ej: calibre digital..."
+                            keys={['id_categoria', 'descripcion']}
+                            onChange={(e)=>handleChange({target: {name:'id_categoria', value: e}})}
+                            idField="id_categoria"
+                            displayField="descripcion"
+                            showId={false}
+                        />      
+                        <Button 
+                            type='button'
+                            variant="secondary" 
+                            onClick={
+                                ()=>{
+                                    handleChange({target: {name: 'id_categoria',value: ''}});
+                                    setResetBuscadorCategoria(resetBuscadorCategoria + 1)
+                            }
+                            }
+                            style={{maxWidth:'50px', marginBottom:'11px'}}
+                        >
+                            <i className="material-icons" style={{color:'red'}}>delete</i>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* MARCA, MODELO, NRO SERIE */}

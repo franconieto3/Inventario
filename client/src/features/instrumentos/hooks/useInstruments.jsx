@@ -12,6 +12,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export const useInstruments = (initialParams) => {
   const [instrumentos, setInstrumentos] = useState([]);
   const [sectores, setSectores] = useState([]);
+  const [categorias, setCategorias] = useState([]);
 
   const [totalRecords, setTotalRecords] = useState(0);
   
@@ -31,6 +32,15 @@ export const useInstruments = (initialParams) => {
       setSectores(data);
     } catch (err) {
       console.error("Error al cargar los sectores:", err);
+    }
+  };
+
+  const fetchCategorias = async () => {
+    try {
+      const data = await apiCall(`${API_URL}/api/instrumentos/categorias`, {})
+      setCategorias(data);
+    } catch (err) {
+      console.error("Error al cargar las categorias de elementos de control:", err);
     }
   };
 
@@ -62,6 +72,7 @@ export const useInstruments = (initialParams) => {
   // Carga inicial de sectores
   useEffect(() => {
     fetchSectores();
+    fetchCategorias();
   }, []);
 
   // Efecto que reacciona a los cambios en la paginación o filtros
@@ -76,9 +87,12 @@ export const useInstruments = (initialParams) => {
     fetchInstrumentos
   ]);
 
+  useEffect(()=>console.log(categorias), [categorias])
+
   return {
     instrumentos,
     sectores,
+    categorias,
     enums,
     totalRecords,
     loading,

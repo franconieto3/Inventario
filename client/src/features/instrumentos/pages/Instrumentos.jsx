@@ -7,6 +7,7 @@ import { useInstruments } from "../hooks/useInstruments";
 import { ListadoInstrumentos } from "../components/ListadoInstrumentos";
 import { EditarInstrumentos } from "../components/EditarInstrumentos";
 import { apiCall } from "../../../services/api";
+import { AgregarCategoria } from "../components/AgregarCategoria";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -14,6 +15,7 @@ export function Instrumentos(){
     const [crearInstrumento, setCrearInstrumento] = useState(false);
     const [editarInstrumento, setEditarInstrumento] = useState(false);
     const [instrumentoSeleccionado, setInstrumentoSeleccionado] = useState(null)
+    const [nuevaCategoria, setNuevaCategoria] = useState(false);
 
     // Estado para controlar la paginación y filtros desde el componente padre
     const [params, setParams] = useState({ 
@@ -28,6 +30,7 @@ export function Instrumentos(){
     const {
         instrumentos,
         sectores,
+        categorias,
         enums,
         totalRecords,
         loading,
@@ -68,9 +71,15 @@ export function Instrumentos(){
                             Seguimiento de todas los instrumentos de medición y control.
                         </p>
                     </div>
-                    <Button variant="default" onClick={()=>setCrearInstrumento(true)} style={{marginTop:'15px', marginBottom:'15px'}}>
-                        Agregar elemento de control
-                    </Button>
+                    <div style={{display:'flex', gap:'15px', alignItems:'center'}}
+                    >
+                        <Button variant="secondary" onClick={()=> setNuevaCategoria(true)}>
+                            Agregar categoría
+                        </Button>
+                        <Button variant="default" onClick={()=>setCrearInstrumento(true)} style={{marginTop:'15px', marginBottom:'15px'}}>
+                            Agregar elemento de control
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Manejo de estados de carga, error y renderizado del Listado */}
@@ -103,6 +112,7 @@ export function Instrumentos(){
                         onSuccess={refetch}
                         sectores={sectores}
                         enums={enums} 
+                        categorias={categorias}
                     >
                     </AgregarInstrumento>
                 </Modal>
@@ -111,7 +121,7 @@ export function Instrumentos(){
                 editarInstrumento &&
                 <Modal
                     titulo="Editar instrumento"
-                    descripcion= {instrumentoSeleccionado.nro_serie? instrumentoSeleccionado.nro_serie : ''}
+                    descripcion= {instrumentoSeleccionado.descripcion? instrumentoSeleccionado.descripcion : ''}
                     onClose={()=>{
                             setEditarInstrumento(false);
                             setInstrumentoSeleccionado(null);
@@ -125,6 +135,21 @@ export function Instrumentos(){
                             setEditarInstrumento(false);
                             setInstrumentoSeleccionado(null);
                         }}
+                        sectores={sectores}
+                        enums={enums} 
+                    />
+                </Modal>
+            }
+            {
+                nuevaCategoria &&
+                <Modal
+                    titulo="Agregar categoría de instrumentos"
+                    descripcion= "Las categorías van a ser utilizadas para agrupar distintos elementos bajo un mismo uso"
+                    onClose={()=>setNuevaCategoria(false)}
+                >   
+                    <AgregarCategoria
+                        onClose={() => setNuevaCategoria(false)} 
+                        onSuccess={refetch}
                         enums={enums} 
                     />
                 </Modal>

@@ -185,6 +185,7 @@ export function InstrumentDetail(){
                                 }
                             }
                             idInstrumento={id}
+                            instrumento={instrumento}
                         />
                     </Modal>
                 }

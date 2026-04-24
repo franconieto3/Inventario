@@ -7,7 +7,7 @@ import { limpiarNombreArchivo } from "../../../services/formatearNombreArchivo";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function AgregarVerificacion({idInstrumento, onSuccess}){
+export function AgregarVerificacion({instrumento, onSuccess}){
 
     const [file, setFile] = useState(null);
     const [date, setDate] = useState(null)
@@ -64,11 +64,12 @@ export function AgregarVerificacion({idInstrumento, onSuccess}){
             
             const payload = {
                     path: path,
-                    fechaVigencia: date
+                    fechaVigencia: date,
+                    instrumento: instrumento
             };
 
             //3. Enviar los datos del plano al backend
-            const respuesta = await apiCall(`${API_URL}/api/instrumentos/guardar-verificacion/${idInstrumento}`, {
+            const respuesta = await apiCall(`${API_URL}/api/instrumentos/guardar-verificacion/${instrumento.id_instrumento}`, {
                 method: 'POST', 
                 body: JSON.stringify(payload)
             });

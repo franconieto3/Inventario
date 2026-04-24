@@ -10,7 +10,8 @@ export const crearInstrumento = async (data) => {
         modelo: data.modelo || null,
         nro_serie: data.nro_serie || null,
         sector: data.sector ? parseInt(data.sector, 10) : null,
-        mes_vencimiento: data.mes_vencimiento || null
+        mes_vencimiento: data.mes_vencimiento || null,
+        id_categoria: data.categoria || null
     };
 
     // 2. Aplicamos la lógica de negocio y limpiamos según el TIPO 
@@ -66,6 +67,56 @@ export const crearInstrumento = async (data) => {
     return nuevoInstrumento;
 };
 
+export const crearCategoria = async (data) =>{
+    // 1. Construimos el payload base asegurándonos de convertir strings vacíos a null
+    const payload = {
+        tipo: data.tipo,
+        descripcion: data.descripcion,
+        tipo_proveedor: data.tipo_proveedor,
+        frecuencia_meses: parseInt(data.frecuencia_meses, 10)
+    };
+
+    // 2. Aplicamos la lógica de negocio y limpiamos según el TIPO 
+    if (data.tipo === 'ESTANDAR') {
+        // El constraint chk_probador_requerimientos exige esto para ESTANDAR:
+        payload.usos_maximos = null; 
+
+    } else if (data.tipo === 'PROBADOR') {
+        payload.usos_maximos = parseInt(data.usos_maximos, 10);
+    }
+
+    // 3. Inserción en Supabase
+    const { data: nuevoInstrumento, error } = await supabase
+        .from('categoria_instrumento')
+        .insert([payload])
+        .select()
+        .single(); // Devuelve un solo objeto en lugar de un array
+
+    // 4. Manejo de Errores Específicos de PostgreSQL/Supabase
+    if (error) {
+        // Código 23514: Violación de Check Constraint
+        if (error.code === '23514') {
+            if (error.message.includes('chk_estandar_requerimientos')) {
+                throw new Error("Error de validación: Los instrumentos ESTANDAR requieren proveedor y frecuencia en meses.");
+            }
+            if (error.message.includes('chk_probador_requerimientos')) {
+                throw new Error("Error de validación: Los instrumentos PROBADOR requieren definir los usos máximos.");
+            }
+            throw new Error("Error: Los datos enviados no cumplen con las restricciones de la base de datos.");
+        }
+
+        // Código 22P02: Sintaxis de entrada inválida (ej. texto donde va un número o enum inválido)
+        if (error.code === '22P02') {
+            throw new Error("Error: El formato de los datos es incorrecto. Verifique los tipos de proveedor, instrumento y fechas.");
+        }
+
+        // Error por defecto de Supabase
+        throw new Error(error.message || "Ocurrió un error inesperado al guardar el instrumento en la base de datos.");
+    }
+
+    return nuevoInstrumento;    
+}
+
 // Obtener todos los sectores
 export const getSectores = async ()=>{
     const { data, error } = await supabase
@@ -75,7 +126,7 @@ export const getSectores = async ()=>{
 
     if (error) throw new Error(`Error al obtener sectores: ${error.message}`);
     return data;
-  }
+}
 
 
 export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, estado }) => {
@@ -113,6 +164,16 @@ export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, es
       items: data,
       total: count
     };
+  }
+
+  export const getCategorias = async ()=>{
+    const {data, error} = await supabase
+        .from('categoria_instrumento')
+        .select('*');
+
+    if (error) throw new Error(`Error al obtener instrumentos mediante RPC: ${error.message}`);
+
+    return data;
   }
 
   export const updateInstrumento = async (id, data) => {
@@ -190,15 +251,27 @@ export const deleteInstrumento = async (id)=>{
 }
 
 export const getInstrument = async (id)=>{
-  const {data, error} = await supabase
-    .from('instrumentos')
-    .select('*')
-    .eq('id_instrumento', id)
+
+    const {data, error} = await supabase.rpc('get_instrumentos_con_estado', {p_id_instrumento: id})
     .single();
 
-  if(error){
-      throw { statusCode: 500, message: "Ocurrió un error, no se encontró el instrumento solicitado" };
-  }
+    if(error){
+        console.log(error);
+        throw { statusCode: 500, message: "Ocurrió un error, no se encontró el instrumento solicitado" };
+    }
 
-  return data;
+    return data;
+}
+
+export const insertarVerificacion = async (payload)=>{
+    const {data, error} = await supabase
+    .from('verificaciones')
+    .insert(payload)
+
+    if(error){
+        console.log(err);
+        throw new Error({statusCode: 500, message: "Ocurrió un error. No se pudo guardar el archivo de verificación"})
+    }
+
+    return data;
 }

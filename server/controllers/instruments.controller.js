@@ -1,5 +1,5 @@
-import { signedUploadUrl } from "../services/document.service.js";
-import { crearInstrumento, deleteInstrumento, getInstrument, getInstrumentos, getSectores, updateInstrumento } from "../services/instruments.service.js";
+import { moverArchivoAPermanente, signedUploadUrl } from "../services/document.service.js";
+import { crearCategoria, crearInstrumento, deleteInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarVerificacion, updateInstrumento } from "../services/instruments.service.js";
 
 
 export const nuevoInstrumento = async (req, res) => {
@@ -23,6 +23,28 @@ export const nuevoInstrumento = async (req, res) => {
         });
     }
 };
+
+export const nuevaCategoria = async (req, res)=>{
+    try{
+        const data = req.body;
+
+        // Llamada al servicio
+        const nuevaCategoria = await crearCategoria(data);
+
+        // Respuesta exitosa
+        return res.status(201).json({
+            message: "Categoria creada con éxito",
+            data: nuevaCategoria
+        });
+
+    } catch (error) {
+        // Capturamos los errores lanzados desde el service y devolvemos un 400
+        console.error("Error en crearInstrumento controller:", error.message);
+        return res.status(400).json({ 
+            message: error.message || "Error interno del servidor al procesar la solicitud" 
+        });
+    }
+}
 
 export const sectores = async (req, res) => {
     try {
@@ -61,6 +83,16 @@ export const instrumentos = async (req, res) => {
       return res.status(500).json({ error: 'Error interno del servidor al cargar instrumentos' });
     }
   }
+
+export const categorias = async(req, res)=>{
+    try{
+        const data = await getCategorias();
+        return res.status(200).json(data)
+
+    }catch(err){
+        return res.status(500).json({ error: 'Error interno del servidor al cargar instrumentos' });
+    }
+}
 
 export const actualizarInstrumento = async (req, res) => {
     try {
@@ -120,10 +152,7 @@ export const agregarVerificacion = async (req, res)=>{
         return res.json({
             signedUrl: data.signedUrl,
             uploadToken: data.token,
-            path: path,
-            meta: {
-                destinationFolder: config.bucket_folder
-            }
+            path: path
         });
 
     }catch(err){
@@ -134,22 +163,35 @@ export const agregarVerificacion = async (req, res)=>{
 
 export const guardarVerificacion = async(req, res)=>{
     try{
+        const {id} = req.params;
         const {date, path} = req.body;
 
         //Path temporal
         const tempPath = path;
-        
-        //Obtención de la ubicación del bucket
 
         //Definicion del path final
+        const finalPath = `certificaciones/instrumentos/${id}/${path.split('/').pop()}`
 
         //Mover archivo
+        const data = await moverArchivoAPermanente(tempPath, finalPath);
+
+        const payload = {
+            id_instrumento: id,
+            fecha_verificacion: date,
+            path: finalPath    
+        };
 
         //Guardar datos en DB
+        const idVerificacion = await insertarVerificacion(payload);
 
         //Respuesta exitosa
+        return res.status(201).json({
+            message: "Documento y versión creados exitosamente",
+            id_verificacion: idVerificacion
+        })
         
     }catch(err){
-
+        console.log(err);
+        return res.status(err.statusCode || 500).json({ error: err.message || "Ocurrió un error guardando el archivo de verificación"});  
     }
 }
