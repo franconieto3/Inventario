@@ -20,19 +20,11 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
     ];
 
     const [formData, setFormData] = useState({
-        tipo: 'ESTANDAR',
-        descripcion: '',
         marca: '',
         modelo: '',
         nro_serie: '',
         sector: '',
         id_categoria:'',
-        // Campos ESTANDAR
-        tipo_proveedor: 'INTERNO',
-        frecuencia_meses: '',
-        // Campos PROBADOR
-        usos_maximos: '',
-        // General
         mes_vencimiento: ''
     });
 
@@ -49,8 +41,8 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
         // Preparamos el payload limpiando campos irrelevantes según el tipo
         // y parseando números para que coincidan con los tipos de PostgreSQL
         const payload = {
-            tipo: formData.tipo,
-            descripcion: formData.descripcion,
+            //tipo: formData.tipo,
+            //descripcion: formData.descripcion,
             marca: formData.marca || null,
             modelo: formData.modelo || null,
             nro_serie: formData.nro_serie || null,
@@ -58,14 +50,7 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
             categoria: formData.id_categoria ? parseInt(formData.id_categoria) : null,
             mes_vencimiento: formData.mes_vencimiento || null
         };
-
-        if (formData.tipo === 'ESTANDAR') {
-            payload.tipo_proveedor = formData.tipo_proveedor;
-            payload.frecuencia_meses = parseInt(formData.frecuencia_meses);
-        } else if (formData.tipo === 'PROBADOR') {
-            payload.usos_maximos = parseInt(formData.usos_maximos);
-        }
-
+        
         try {
             // Asumo el endpoint '/api/instrumentos', ajústalo a tu backend
             const response = await apiCall(`${API_URL}/api/instrumentos`, {
@@ -89,40 +74,9 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
             {error && <div className="ai-form-error">{error}</div>}
 
             <div className="ai-form-grid">
-                {/* TIPO DE INSTRUMENTO */}
-                <div className="ai-form-group">
-                    <label htmlFor="tipo" className="ai-form-label">Tipo de Elemento *</label>
-                    <select 
-                        name="tipo" 
-                        id="tipo"
-                        className="ai-form-input" 
-                        value={formData.tipo} 
-                        onChange={handleChange}
-                        required
-                    >
-                        {
-                            enums.tiposInstrumento.map((item, i)=>(<option key={i} value={item}>{item}</option>))
-                        }
-                    </select>
-                </div>
-
-                {/* DESCRIPCIÓN */}
-                <div className="ai-form-group ai-col-span-2">
-                    <label htmlFor="descripcion" className="ai-form-label">Descripción *</label>
-                    <input 
-                        type="text" 
-                        name="descripcion" 
-                        id="descripcion"
-                        className="ai-form-input" 
-                        value={formData.descripcion} 
-                        onChange={handleChange}
-                        placeholder="Ej: Calibre pie de rey 150mm"
-                        required 
-                    />
-                </div>
 
                 <div className="ai-form-group ai-col-span-2">
-                    <label htmlFor="categoria" className="ai-form-label">Descripción *</label>
+                    <label htmlFor="categoria" className="ai-form-label">Tipo de instrumento / probador *</label>
                     <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
                         <Buscador
                             opciones={categorias}
@@ -174,6 +128,7 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
                 </div>
 
                 {/* SECTOR - (A futuro se llenará con useInstrumentos) */}
+
                 <div className="ai-form-group">
                     <label htmlFor="sector" className="ai-form-label">Sector (ID temporal)</label>
                     <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
@@ -202,47 +157,6 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
                         </Button>
                     </div>
                 </div>
-
-
-                {/* ---------------- CAMPOS CONDICIONALES ---------------- */}
-                {formData.tipo === 'ESTANDAR' && (
-                    <>
-                        <div className="ai-form-group">
-                            <label htmlFor="tipo_proveedor" className="ai-form-label">Proveedor *</label>
-                            <select 
-                                name="tipo_proveedor" id="tipo_proveedor"
-                                className="ai-form-input" value={formData.tipo_proveedor} onChange={handleChange}
-                                required
-                            >
-                                {
-                                    enums.tiposProveedor.map((item, i)=>
-                                        (<option key={i} value={item}>{item}</option>)                   
-                                    )
-                                }
-                            </select>
-                        </div>
-                        <div className="ai-form-group">
-                            <label htmlFor="frecuencia_meses" className="ai-form-label">Frecuencia de calib. (Meses) *</label>
-                            <input 
-                                type="number" name="frecuencia_meses" id="frecuencia_meses" min="1"
-                                className="ai-form-input" value={formData.frecuencia_meses} onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </>
-                )}
-
-                {formData.tipo === 'PROBADOR' && (
-                    <div className="ai-form-group">
-                        <label htmlFor="usos_maximos" className="ai-form-label">Usos Máximos *</label>
-                        <input 
-                            type="number" name="usos_maximos" id="usos_maximos" min="1"
-                            className="ai-form-input" value={formData.usos_maximos} onChange={handleChange}
-                            required
-                        />
-                    </div>
-                )}
-                {/* -------------------------------------------------------- */}
 
                 {/* MES VENCIMIENTO */}
                 <div className="ai-form-group">

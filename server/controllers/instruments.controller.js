@@ -1,5 +1,5 @@
 import { moverArchivoAPermanente, signedUploadUrl } from "../services/document.service.js";
-import { crearCategoria, crearInstrumento, deleteInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarVerificacion, updateInstrumento } from "../services/instruments.service.js";
+import { crearCategoria, crearInstrumento, darDeBaja, deleteInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarVerificacion, updateInstrumento } from "../services/instruments.service.js";
 
 
 export const nuevoInstrumento = async (req, res) => {
@@ -193,5 +193,18 @@ export const guardarVerificacion = async(req, res)=>{
     }catch(err){
         console.log(err);
         return res.status(err.statusCode || 500).json({ error: err.message || "Ocurrió un error guardando el archivo de verificación"});  
+    }
+}
+
+export const baja = async (req, res)=>{
+    try{
+        const {id} = req.params;
+
+        const data = await darDeBaja(id);    
+        
+        return res.status(200).json({message: "Instrumento dado de baja exitosamente"});
+        
+    }catch(err){
+        return res.status(err.statusCode || 500).json({error: err.message});
     }
 }

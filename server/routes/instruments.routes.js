@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarInstrumento, agregarVerificacion, borrarInstrumento, categorias, guardarVerificacion, instrumento, instrumentos, nuevaCategoria, nuevoInstrumento, sectores } from "../controllers/instruments.controller.js";
+import { actualizarInstrumento, agregarVerificacion, baja, borrarInstrumento, categorias, guardarVerificacion, instrumento, instrumentos, nuevaCategoria, nuevoInstrumento, sectores } from "../controllers/instruments.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { crearInstrumentoSchema, editarInstrumentoSchema } from "../schemas/instruments.schemas.js";
 
@@ -25,6 +25,11 @@ router.post('/categoria',
 router.get('/listado', 
     verificarToken,
     instrumentos
+)
+
+router.put('/baja/:id',
+    verificarToken,
+    baja
 )
 
 router.get('/categorias',

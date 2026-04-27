@@ -87,8 +87,6 @@ export const useInstruments = (initialParams) => {
     fetchInstrumentos
   ]);
 
-  useEffect(()=>console.log(categorias), [categorias])
-
   return {
     instrumentos,
     sectores,
@@ -97,6 +95,9 @@ export const useInstruments = (initialParams) => {
     totalRecords,
     loading,
     error,
-    refetch: () => fetchInstrumentos(initialParams)
+    refetch: () => {
+      fetchInstrumentos(initialParams);
+      fetchCategorias();
+    }
   };
 };

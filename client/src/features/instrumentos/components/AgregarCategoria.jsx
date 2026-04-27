@@ -46,13 +46,13 @@ export function AgregarCategoria({ onClose, onSuccess, sectores, enums }){
         }
 
         try {
-            // Asumo el endpoint '/api/instrumentos', ajústalo a tu backend
+            
             const response = await apiCall(`${API_URL}/api/instrumentos/categoria`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
 
-            // Si la petición es exitosa, cerramos el modal y notificamos al padre
+            
             if (onSuccess) onSuccess(response);
             if (onClose) onClose();
 

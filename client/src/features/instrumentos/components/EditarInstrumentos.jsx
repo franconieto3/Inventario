@@ -12,13 +12,10 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sec
 
     // Inicializamos el estado formateando la fecha si existe
     const [formData, setFormData] = useState({
-        //descripcion: '',
         marca: '',
         modelo: '',
         nro_serie: '',
-       // tipo_proveedor: 'INTERNO',
-        //frecuencia_meses: '',
-        //usos_maximos: '',
+        sector: '',
         mes_vencimiento: ''
     });
 
@@ -26,14 +23,10 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sec
     useEffect(() => {
         if (instrumento) {
             setFormData({
-                //descripcion: instrumento.descripcion || '',
                 marca: instrumento.marca || '',
                 modelo: instrumento.modelo || '',
                 nro_serie: instrumento.nro_serie || '',
-               // tipo_proveedor: instrumento.tipo_proveedor || 'INTERNO',
-               // frecuencia_meses: instrumento.frecuencia_meses || '',
-               // usos_maximos: instrumento.usos_maximos || '',
-                // Aseguramos que la fecha tenga el formato YYYY-MM-DD para el input type="date"
+                sector: instrumento.sector || '',
                 mes_vencimiento: instrumento.mes_vencimiento 
                     ? instrumento.mes_vencimiento.split('T')[0] 
                     : ''
@@ -53,21 +46,13 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sec
 
         // Preparamos el payload base
         const payload = {
-            //descripcion: formData.descripcion,
             marca: formData.marca || null,
             modelo: formData.modelo || null,
             nro_serie: formData.nro_serie || null,
-            mes_vencimiento: formData.mes_vencimiento || null
+            mes_vencimiento: formData.mes_vencimiento || null,
+            sector: formData.sector || null
         };
-/*
-        // Agregamos campos condicionales según el tipo de instrumento original
-        if (instrumento.tipo === 'ESTANDAR') {
-            payload.tipo_proveedor = formData.tipo_proveedor;
-            payload.frecuencia_meses = formData.frecuencia_meses ? parseInt(formData.frecuencia_meses) : null;
-        } else if (instrumento.tipo === 'PROBADOR') {
-            payload.usos_maximos = formData.usos_maximos ? parseInt(formData.usos_maximos) : null;
-        }
-*/
+        
         try {
             // Se utiliza PATCH o PUT pasando el ID del instrumento
             const response = await apiCall(`${API_URL}/api/instrumentos/${instrumento.id_instrumento}`, {
@@ -92,51 +77,37 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sec
             {error && <div className="ai-form-error">{error}</div>}
 
             <div className="ai-form-grid">
-                {/* DESCRIPCIÓN */}
-                {/*
-                <div className="ai-form-group ai-col-span-2">
-                    <label htmlFor="descripcion" className="ai-form-label">Descripción *</label>
-                    <input 
-                        type="text" 
-                        name="descripcion" 
-                        id="descripcion"
-                        className="ai-form-input" 
-                        value={formData.descripcion} 
-                        onChange={handleChange}
-                        required 
-                    />
-                </div>
-                */}
-                {/*
+
                 <div className="ai-form-group ai-col-span-2">
                     <label htmlFor="descripcion" className="ai-form-label">Sector</label>
-                    <Buscador 
-                        opciones={sectores}
-                        key={resetBuscador}
-                        placeholder="Sector..."
-                        keys={['id_sector', 'descripcion']}
-                        onChange={(e)=>handleChange({target: {name:'sector', value: e}})}
-                        idField="id_sector"
-                        displayField="descripcion"
-                        showId={false}
-                        //valorInicial={instrumento.sector}
-                    />
-                    <Button 
-                        type='button'
-                        variant="secondary" 
-                        onClick={
-                            ()=>{
-                                handleChange({target: {name: 'sector',value: ''}});
-                                setResetBuscador(resetBuscador + 1)
-                        }
-                        }
-                        style={{maxWidth:'50px', marginBottom:'11px'}}
-                    >
-                        <i className="material-icons" style={{color:'red'}}>delete</i>
-                    </Button>
-                    
+                    <div style={{display:'flex', gap: '10px', alignItems:'center'}}>
+                        <Buscador 
+                            opciones={sectores}
+                            key={resetBuscador}
+                            placeholder="Sector..."
+                            keys={['id_sector', 'descripcion']}
+                            onChange={(e)=>handleChange({target: {name:'sector', value: e}})}
+                            idField="id_sector"
+                            displayField="descripcion"
+                            showId={false}
+                            valorInicial={instrumento.sector}
+                        />
+                        <Button 
+                            type='button'
+                            variant="secondary" 
+                            onClick={
+                                ()=>{
+                                    handleChange({target: {name: 'sector',value: ''}});
+                                    setResetBuscador(resetBuscador + 1)
+                            }
+                            }
+                            style={{maxWidth:'50px', marginBottom:'11px'}}
+                        >
+                            <i className="material-icons" style={{color:'red'}}>delete</i>
+                        </Button>
+                    </div>
                 </div>
-                */}
+
                 {/* MARCA, MODELO, NRO SERIE */}
                 <div className="ai-form-group">
                     <label htmlFor="marca" className="ai-form-label">Marca</label>
@@ -159,45 +130,6 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sec
                         className="ai-form-input" value={formData.nro_serie} onChange={handleChange}
                     />
                 </div>
-
-                {/* ---------------- CAMPOS CONDICIONALES ---------------- */}
-                {/*instrumento.tipo === 'ESTANDAR' && (
-                    <>
-                        <div className="ai-form-group">
-                            <label htmlFor="tipo_proveedor" className="ai-form-label">Proveedor *</label>
-                            <select 
-                                name="tipo_proveedor" id="tipo_proveedor"
-                                className="ai-form-input" value={formData.tipo_proveedor} onChange={handleChange}
-                                required
-                            >
-                                
-                                {enums?.tiposProveedor?.map((item, i) => (
-                                    <option key={i} value={item}>{item}</option>                   
-                                ))}
-                            </select>
-                        </div>
-                        <div className="ai-form-group">
-                            <label htmlFor="frecuencia_meses" className="ai-form-label">Frecuencia de calib. (Meses) *</label>
-                            <input 
-                                type="number" name="frecuencia_meses" id="frecuencia_meses" min="1"
-                                className="ai-form-input" value={formData.frecuencia_meses} onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </>
-                )}
-
-                {instrumento.tipo === 'PROBADOR' && (
-                    <div className="ai-form-group">
-                        <label htmlFor="usos_maximos" className="ai-form-label">Usos Máximos *</label>
-                        <input 
-                            type="number" name="usos_maximos" id="usos_maximos" min="1"
-                            className="ai-form-input" value={formData.usos_maximos} onChange={handleChange}
-                            required
-                        />
-                    </div>
-                )*/}
-                {/* -------------------------------------------------------- */}
 
                 {/* MES VENCIMIENTO */}
                 <div className="ai-form-group">

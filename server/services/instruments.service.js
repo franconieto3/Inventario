@@ -4,8 +4,8 @@ import { supabase } from "../config/supabase.js";
 export const crearInstrumento = async (data) => {
     // 1. Construimos el payload base asegurándonos de convertir strings vacíos a null
     const payload = {
-        tipo: data.tipo,
-        descripcion: data.descripcion,
+        //tipo: data.tipo,
+        //descripcion: data.descripcion,
         marca: data.marca || null,
         modelo: data.modelo || null,
         nro_serie: data.nro_serie || null,
@@ -13,23 +13,6 @@ export const crearInstrumento = async (data) => {
         mes_vencimiento: data.mes_vencimiento || null,
         id_categoria: data.categoria || null
     };
-
-    // 2. Aplicamos la lógica de negocio y limpiamos según el TIPO 
-    // para cumplir estrictamente con los CHECK constraints de la base de datos.
-    if (data.tipo === 'ESTANDAR') {
-        payload.tipo_proveedor = data.tipo_proveedor;
-        payload.frecuencia_meses = parseInt(data.frecuencia_meses, 10);
-        
-        // El constraint chk_probador_requerimientos exige esto para ESTANDAR:
-        payload.usos_maximos = null; 
-        payload.usos_actuales = 0; 
-    } else if (data.tipo === 'PROBADOR') {
-        payload.usos_maximos = parseInt(data.usos_maximos, 10);
-        
-        // Limpiamos los campos de ESTANDAR por seguridad
-        payload.tipo_proveedor = null;
-        payload.frecuencia_meses = null;
-    }
 
     // 3. Inserción en Supabase
     const { data: nuevoInstrumento, error } = await supabase
@@ -42,17 +25,6 @@ export const crearInstrumento = async (data) => {
     if (error) {
         if (error.code === '23503') {
             throw new Error(`Error: El sector asignado no existe en la base de datos.`);
-        }
-        
-        // Código 23514: Violación de Check Constraint
-        if (error.code === '23514') {
-            if (error.message.includes('chk_estandar_requerimientos')) {
-                throw new Error("Error de validación: Los instrumentos ESTANDAR requieren proveedor y frecuencia en meses.");
-            }
-            if (error.message.includes('chk_probador_requerimientos')) {
-                throw new Error("Error de validación: Los instrumentos PROBADOR requieren definir los usos máximos.");
-            }
-            throw new Error("Error: Los datos enviados no cumplen con las restricciones de la base de datos.");
         }
 
         // Código 22P02: Sintaxis de entrada inválida (ej. texto donde va un número o enum inválido)
@@ -179,17 +151,12 @@ export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, es
   export const updateInstrumento = async (id, data) => {
 
     const payload = {
-        descripcion: data.descripcion,
         marca: data.marca !== undefined ? data.marca : null,
         modelo: data.modelo !== undefined ? data.modelo : null,
         nro_serie: data.nro_serie !== undefined ? data.nro_serie : null,
         mes_vencimiento: data.mes_vencimiento !== undefined ? data.mes_vencimiento : null,
+        sector: data.sector !==undefined ? data.sector : null
     };
-
-    // 2. Agregamos los campos condicionales solo si el frontend los envió
-    if (data.tipo_proveedor !== undefined) payload.tipo_proveedor = data.tipo_proveedor;
-    if (data.frecuencia_meses !== undefined) payload.frecuencia_meses = data.frecuencia_meses;
-    if (data.usos_maximos !== undefined) payload.usos_maximos = data.usos_maximos;
 
     // 3. Actualización en Supabase
     const { data: instrumentoActualizado, error } = await supabase
@@ -201,16 +168,6 @@ export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, es
 
     // 4. Manejo de Errores
     if (error) {
-        // Violación de Check Constraint
-        if (error.code === '23514') {
-            if (error.message.includes('chk_estandar_requerimientos')) {
-                throw new Error("Error de validación: Los instrumentos ESTANDAR requieren proveedor y frecuencia en meses.");
-            }
-            if (error.message.includes('chk_probador_requerimientos')) {
-                throw new Error("Error de validación: Los instrumentos PROBADOR requieren definir los usos máximos.");
-            }
-            throw new Error("Error: Los datos enviados no cumplen con las restricciones de la base de datos.");
-        }
 
         // Sintaxis de entrada inválida
         if (error.code === '22P02') {
@@ -272,6 +229,19 @@ export const insertarVerificacion = async (payload)=>{
         console.log(err);
         throw new Error({statusCode: 500, message: "Ocurrió un error. No se pudo guardar el archivo de verificación"})
     }
+
+    return data;
+}
+
+export const darDeBaja = async (idInstrumento)=>{
+    const {data, error} = await supabase
+    .from('instrumentos')
+    .update({ 
+        activo: false
+    })
+    .eq('id_instrumento', idInstrumento);
+
+    if(error) throw new Error({statusCode: 500, message: 'Ocurrió un error. No se pudo dar de baja el instrumento seleccionado'});
 
     return data;
 }

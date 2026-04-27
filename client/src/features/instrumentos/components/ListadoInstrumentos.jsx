@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Table from "../../../components/ui/Table";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import { useNavigate } from "react-router-dom";
+import { bajaInstrumento } from "../services/bajaInstrumento";
 
 export function ListadoInstrumentos({
     data,
@@ -75,7 +76,6 @@ export function ListadoInstrumentos({
             key: "estado",
             header: "Estado",
             render: (_, row) => {
-                const estado = row.estado;
                 
                 // Estilo base minimalista (tipo 'pill' o 'badge')
                 let badgeStyle = {
@@ -89,28 +89,41 @@ export function ListadoInstrumentos({
                     letterSpacing: '0.5px'
                 };
 
-                // Asignamos colores según el valor
-                switch (estado) {
-                    case 'Verificado':
-                        badgeStyle = { ...badgeStyle, backgroundColor: '#e6f4ea', color: '#1e8e3e', borderColor: '#ceead6' };
-                        break;
-                    case 'Por caducar':
-                        badgeStyle = { ...badgeStyle, backgroundColor: '#fff3e0', color: '#e65100', borderColor: '#ffe0b2' };
-                        break;
-                    case 'Caducado':
-                        badgeStyle = { ...badgeStyle, backgroundColor: '#fce8e6', color: '#d93025', borderColor: '#fad2cf' };
-                        break;
-                    default:
-                        // Para 'null', indefinidos o casos sin lógica aplicable
-                        badgeStyle = { ...badgeStyle, backgroundColor: '#f1f3f4', color: '#5f6368', borderColor: '#e8eaed' };
-                        break;
-                }
+                if(row.activo){
 
-                return (
-                    <span style={badgeStyle}>
-                        {estado ? estado : 'Sin definir'}
-                    </span>
-                );
+                    const estado = row.estado;
+
+                    // Asignamos colores según el valor
+                    switch (estado) {
+                        case 'Verificado':
+                            badgeStyle = { ...badgeStyle, backgroundColor: '#e6f4ea', color: '#1e8e3e', borderColor: '#ceead6' };
+                            break;
+                        case 'Por caducar':
+                            badgeStyle = { ...badgeStyle, backgroundColor: '#fff3e0', color: '#e65100', borderColor: '#ffe0b2' };
+                            break;
+                        case 'Caducado':
+                            badgeStyle = { ...badgeStyle, backgroundColor: '#fce8e6', color: '#d93025', borderColor: '#fad2cf' };
+                            break;
+                        default:
+                            // Para 'null', indefinidos o casos sin lógica aplicable
+                            badgeStyle = { ...badgeStyle, backgroundColor: '#f1f3f4', color: '#5f6368', borderColor: '#e8eaed' };
+                            break;
+                    }
+
+                    return (
+                        <span style={badgeStyle}>
+                            {estado ? estado : 'Sin definir'}
+                        </span>
+                    );
+                }else{
+                    badgeStyle = { ...badgeStyle, backgroundColor: '#fce8e6', color: '#d93025', borderColor: '#fad2cf' };
+
+                    return (
+                        <span style={badgeStyle}>
+                            Dado de baja
+                        </span>
+                    );
+                }
             }
         },
         {
@@ -132,7 +145,26 @@ export function ListadoInstrumentos({
                             icon: 'delete',
                             color: 'red',
                             onClick: () => onDelete(row)
-                        }
+                        },
+                        row.activo?
+                        {
+                            label: 'Dar de baja',
+                            icon: 'cancel',
+                            color: 'red',
+                            onClick: async () => {
+                                // Cierra el menú al hacer clic
+                                setOpenDropdownId(null); 
+                                
+                                // Ejecuta la baja
+                                const exito = await bajaInstrumento(row.id_instrumento);
+                                
+                                // Si tuvo éxito, forzamos un refetch en el componente padre
+                                if (exito) {
+                                    onParamsChange({ ...params }); 
+                                }
+                            }
+                        }:
+                        {onClick: ()=> null}
                     ]}
                 />
             )

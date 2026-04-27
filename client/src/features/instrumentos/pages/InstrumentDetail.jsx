@@ -10,6 +10,7 @@ import { Modal } from "../../../components/ui/Modal";
 import { useInstruments } from "../hooks/useInstruments";
 import { AgregarArchivo } from "../components/AgregarArchivo";
 import { AgregarVerificacion } from "../components/AgregarVerificacion";
+import { bajaInstrumento } from "../services/bajaInstrumento";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -67,6 +68,8 @@ export function InstrumentDetail(){
         fetchInstrument()
     },[fetchInstrument, refreshTrigger])
 
+    useEffect(()=>console.log(instrumento), [instrumento])
+
     
     return (
         <>
@@ -112,12 +115,20 @@ export function InstrumentDetail(){
                                             icon: 'check',
                                             onClick: ()=> setMostrarAgregarVerificacion(true)
                                         },
+                                        instrumento.activo?
                                         {
                                             label: 'Dar de baja',
                                             icon: 'cancel',
                                             color: 'red',
-                                            onClick: ()=>console.log('Dando de baja...')
-                                        }
+                                            onClick: async () => {
+                                                // Esperamos a que termine el servicio
+                                                const exito = await bajaInstrumento(id); 
+                                                // Si retornó true, sumamos 1 al trigger para que el useEffect vuelva a hacer el fetch
+                                                if (exito) {
+                                                    setRefreshTrigger(prev => prev + 1); 
+                                                }
+                                            }
+                                        }:{onClick: ()=> null}
                                     ]}
                                 />
                             </div>
@@ -145,6 +156,9 @@ export function InstrumentDetail(){
                                     <DetailItem label="Usos Máximos Permitidos" value={instrumento.usos_maximos} />
                                 </>
                             )}
+
+                            <DetailItem label="Estado" value={instrumento.activo? instrumento.estado || 'Sin definir': 'Dado de baja'} />
+
                         </div>
                     </div>
                 )}
