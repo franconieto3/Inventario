@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso, eliminarVerificacionInstrumentos} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
@@ -90,5 +90,10 @@ router.put('/solicitud-acceso/edicion/:id',
     verificarToken,
     actualizarSolicitudAcceso
 );
+
+router.delete('/verificacion/:id',
+    verificarToken,
+    eliminarVerificacionInstrumentos
+)
 
 export default router;

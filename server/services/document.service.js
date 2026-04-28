@@ -386,3 +386,46 @@ export const updateSolicitudAcceso = async (id, data, idAprobador = null)=>{
         data: updatedRow[0]
     };
 }
+
+//Eliminación de archivos en almacenamiento
+
+export const deleteSupabaseFile = async (bucketName, filePath) => {
+  try {
+    // 2. Llamar al método remove del Storage
+    const { data, error } = await supabaseAdmin
+      .storage
+      .from(bucketName)
+      .remove([filePath]);
+
+    // 3. Manejo de errores de Supabase
+    if (error) {
+      console.error(`Error de Supabase al eliminar ${filePath}:`, error.message);
+      return false;
+    }
+
+    console.log('Archivo eliminado exitosamente:', data);
+    return true;
+
+  } catch (err) {
+    // Manejo de errores de ejecución
+    console.error('Error inesperado durante la eliminación:', err);
+    return false;
+  }
+}
+
+export const quitarVerificacion = async (idVerificacion) => {
+    const { data, error } = await supabase
+        .from('verificaciones')
+        .delete()
+        .eq('id', idVerificacion)
+        .select();
+
+    if (error) {
+        console.error("Error de Supabase al eliminar en BD:", error);
+        
+        throw new Error(`Ocurrió un error al quitar la verificación: ${error.message}`);
+    }
+
+    // 3. Manejamos el caso de que el ID no exista
+    return data && data.length > 0 ? data[0] : null;
+}

@@ -11,6 +11,7 @@ import { useInstruments } from "../hooks/useInstruments";
 import { AgregarArchivo } from "../components/AgregarArchivo";
 import { AgregarVerificacion } from "../components/AgregarVerificacion";
 import { bajaInstrumento } from "../services/bajaInstrumento";
+import { HistorialVerificaciones } from "../components/HistorialVerificaciones";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -67,8 +68,6 @@ export function InstrumentDetail(){
     useEffect(()=>{
         fetchInstrument()
     },[fetchInstrument, refreshTrigger])
-
-    useEffect(()=>console.log(instrumento), [instrumento])
 
     
     return (
@@ -162,6 +161,7 @@ export function InstrumentDetail(){
                         </div>
                     </div>
                 )}
+                
                 {mostrarEdicion && instrumento &&
                     <Modal
                         titulo="Modificar instrumento"
@@ -176,6 +176,13 @@ export function InstrumentDetail(){
                         />
                     </Modal>
                 }
+                {!loading && !error && instrumento && (
+                    <HistorialVerificaciones 
+                        idInstrumento={id} 
+                        refreshTrigger={refreshTrigger} 
+                        onDelete={() => setRefreshTrigger(refreshTrigger + 1)}
+                    />
+                )}
                 {mostrarAgregarArchivos &&
                     <Modal
                         titulo="Adjuntar archivos"

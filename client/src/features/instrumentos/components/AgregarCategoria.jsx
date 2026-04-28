@@ -36,15 +36,12 @@ export function AgregarCategoria({ onClose, onSuccess, sectores, enums }){
         const payload = {
             tipo: formData.tipo,
             descripcion: formData.descripcion,
+            tipo_proveedor: formData.tipo_proveedor,
+            frecuencia_meses: parseInt(formData.frecuencia_meses)
         };
 
-        if (formData.tipo === 'ESTANDAR') {
-            payload.tipo_proveedor = formData.tipo_proveedor;
-            payload.frecuencia_meses = parseInt(formData.frecuencia_meses);
-        } else if (formData.tipo === 'PROBADOR') {
-            payload.usos_maximos = parseInt(formData.usos_maximos);
-        }
-
+        if (formData.tipo === 'PROBADOR') payload.usos_maximos = parseInt(formData.usos_maximos);
+        
         try {
             
             const response = await apiCall(`${API_URL}/api/instrumentos/categoria`, {

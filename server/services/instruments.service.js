@@ -4,8 +4,6 @@ import { supabase } from "../config/supabase.js";
 export const crearInstrumento = async (data) => {
     // 1. Construimos el payload base asegurándonos de convertir strings vacíos a null
     const payload = {
-        //tipo: data.tipo,
-        //descripcion: data.descripcion,
         marca: data.marca || null,
         modelo: data.modelo || null,
         nro_serie: data.nro_serie || null,
@@ -56,6 +54,8 @@ export const crearCategoria = async (data) =>{
     } else if (data.tipo === 'PROBADOR') {
         payload.usos_maximos = parseInt(data.usos_maximos, 10);
     }
+
+    console.log('Payload: ', payload);
 
     // 3. Inserción en Supabase
     const { data: nuevoInstrumento, error } = await supabase
@@ -220,18 +220,6 @@ export const getInstrument = async (id)=>{
     return data;
 }
 
-export const insertarVerificacion = async (payload)=>{
-    const {data, error} = await supabase
-    .from('verificaciones')
-    .insert(payload)
-
-    if(error){
-        console.log(err);
-        throw new Error({statusCode: 500, message: "Ocurrió un error. No se pudo guardar el archivo de verificación"})
-    }
-
-    return data;
-}
 
 export const darDeBaja = async (idInstrumento)=>{
     const {data, error} = await supabase
@@ -245,3 +233,37 @@ export const darDeBaja = async (idInstrumento)=>{
 
     return data;
 }
+
+//Verificaciones
+
+export const insertarVerificacion = async (payload)=>{
+    const {data, error} = await supabase
+    .from('verificaciones')
+    .insert(payload)
+
+    if(error){
+        console.log(err);
+        throw new Error({statusCode: 500, message: "Ocurrió un error. No se pudo guardar el archivo de verificación"})
+    }
+
+    return data;
+}
+
+export const obtenerVerificacionesPorInstrumento = async (idInstrumento) => {
+    // 1. Validación de entrada
+    if (!idInstrumento) throw new Error("El ID del instrumento es requerido.");
+
+    const { data, error } = await supabase
+        .from('verificaciones')
+        .select('*')
+        .eq('id_instrumento', idInstrumento)
+        .order('fecha_verificacion', { ascending: false });
+
+    // 3. Manejo de Errores de Red/Base de Datos
+    if (error) {
+        console.error("Error Supabase:", error.message);
+        throw new Error("Error al obtener las verificaciones del instrumento.");
+    }
+
+    return data || []; 
+};

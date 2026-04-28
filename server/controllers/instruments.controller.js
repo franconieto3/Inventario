@@ -1,5 +1,5 @@
 import { moverArchivoAPermanente, signedUploadUrl } from "../services/document.service.js";
-import { crearCategoria, crearInstrumento, darDeBaja, deleteInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarVerificacion, updateInstrumento } from "../services/instruments.service.js";
+import { crearCategoria, crearInstrumento, darDeBaja, deleteInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarVerificacion, obtenerVerificacionesPorInstrumento, updateInstrumento } from "../services/instruments.service.js";
 
 
 export const nuevoInstrumento = async (req, res) => {
@@ -28,6 +28,8 @@ export const nuevaCategoria = async (req, res)=>{
     try{
         const data = req.body;
 
+        console.log('Data: ', data);
+        
         // Llamada al servicio
         const nuevaCategoria = await crearCategoria(data);
 
@@ -139,6 +141,21 @@ export const instrumento = async (req, res)=>{
     }
 }
 
+export const baja = async (req, res)=>{
+    try{
+        const {id} = req.params;
+
+        const data = await darDeBaja(id);    
+        
+        return res.status(200).json({message: "Instrumento dado de baja exitosamente"});
+        
+    }catch(err){
+        return res.status(err.statusCode || 500).json({error: err.message});
+    }
+}
+
+//Verificaciones
+
 export const agregarVerificacion = async (req, res)=>{
     try{
         const {fileName, fileType, fileSize} = req.body;
@@ -196,15 +213,23 @@ export const guardarVerificacion = async(req, res)=>{
     }
 }
 
-export const baja = async (req, res)=>{
-    try{
-        const {id} = req.params;
+export const getVerificacionesPorInstrumento = async (req, res) => {
+    try {
+        const { idInstrumento } = req.params;
 
-        const data = await darDeBaja(id);    
+        const verificaciones = await obtenerVerificacionesPorInstrumento(idInstrumento);
+
+        return res.status(200).json({
+            success: true,
+            data: verificaciones
+        });
+
+    } catch (error) {
+        console.error("Error en getVerificacionesPorInstrumento Controller:", error);
         
-        return res.status(200).json({message: "Instrumento dado de baja exitosamente"});
-        
-    }catch(err){
-        return res.status(err.statusCode || 500).json({error: err.message});
+        return res.status(500).json({
+            success: false,
+            message: "Ocurrió un error en el servidor al intentar obtener las verificaciones."
+        });
     }
-}
+};
