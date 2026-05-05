@@ -1,5 +1,5 @@
 import { moverArchivoAPermanente, signedUploadUrl } from "../services/document.service.js";
-import { crearCategoria, crearInstrumento, darDeBaja, deleteInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarVerificacion, obtenerVerificacionesPorInstrumento, updateInstrumento } from "../services/instruments.service.js";
+import { crearCategoria, crearInstrumento, darDeBaja, deleteCategoria, deleteInstrumento, editarCategoria, getCategorias, getInstrument, getInstrumentos, getSectores, insertarRegistroArchivo, obtenerArchivosPorInstrumento, obtenerVerificacionesPorInstrumento, updateInstrumento } from "../services/instruments.service.js";
 
 
 export const nuevoInstrumento = async (req, res) => {
@@ -47,6 +47,48 @@ export const nuevaCategoria = async (req, res)=>{
         });
     }
 }
+
+export const edicionCategoria = async (req, res) => {
+    try {
+        const { id } = req.params; // Obtenemos el ID desde los parámetros de la URL
+        const data = req.body;     // Obtenemos el payload del frontend
+
+        // Llamada al servicio
+        const categoriaActualizada = await editarCategoria(id, data);
+
+        // Respuesta exitosa
+        return res.status(200).json({
+            message: "Categoría actualizada con éxito",
+            data: categoriaActualizada
+        });
+
+    } catch (error) {
+        console.error("Error en edicionCategoria controller:", error.message);
+        
+        // Devolvemos el error al frontend para que lo muestre en la interfaz
+        return res.status(400).json({ 
+            message: error.message || "Error interno del servidor al actualizar la categoría" 
+        });
+    }
+}
+
+export const borrarCategoria = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Llamada al servicio
+        await deleteCategoria(id);
+
+        // Respuesta exitosa
+        return res.status(200).json({ message: "Categoría eliminada exitosamente" });
+
+    } catch (err) {
+        console.error("Error en borrarCategoria controller:", err);
+        return res.status(err.statusCode || 500).json({ 
+            message: err.message || "Ocurrió un error al intentar eliminar la categoría" 
+        });
+    }
+};
 
 export const sectores = async (req, res) => {
     try {
@@ -156,7 +198,7 @@ export const baja = async (req, res)=>{
 
 //Verificaciones
 
-export const agregarVerificacion = async (req, res)=>{
+export const archivoTemporal = async (req, res)=>{
     try{
         const {fileName, fileType, fileSize} = req.body;
 
@@ -199,7 +241,7 @@ export const guardarVerificacion = async(req, res)=>{
         };
 
         //Guardar datos en DB
-        const idVerificacion = await insertarVerificacion(payload);
+        const idVerificacion = await insertarRegistroArchivo(payload, 'verificaciones');
 
         //Respuesta exitosa
         return res.status(201).json({
@@ -230,6 +272,64 @@ export const getVerificacionesPorInstrumento = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Ocurrió un error en el servidor al intentar obtener las verificaciones."
+        });
+    }
+};
+
+//Archivos auxiliares
+
+export const guardarArchivoInstrumento = async(req, res)=>{
+    try{
+        const {id} = req.params;
+        const {path, tipoDocumento} = req.body;
+
+        //Path temporal
+        const tempPath = path;
+
+        //Definicion del path final
+        const finalPath = `instrumentos/${id}/${path.split('/').pop()}`
+
+        //Mover archivo
+        const data = await moverArchivoAPermanente(tempPath, finalPath);
+
+        const payload = {
+            id_instrumento: id,
+            path: finalPath,   
+            tipo_documento: tipoDocumento
+        };
+
+        //Guardar datos en DB
+        const idArchivo = await insertarRegistroArchivo(payload, 'instrumentos_archivos');
+
+        //Respuesta exitosa
+        return res.status(201).json({
+            message: "Archivo guardado exitosamente",
+            id_archivo: idArchivo
+        })
+        
+    }catch(err){
+        console.log(err);
+        return res.status(err.statusCode || 500).json({ error: err.message || "Ocurrió un error guardando el archivo"});  
+    }
+}
+
+export const getArchivosPorInstrumento = async (req, res) => {
+    try {
+        const { idInstrumento } = req.params;
+
+        const archivos = await obtenerArchivosPorInstrumento(idInstrumento);
+
+        return res.status(200).json({
+            success: true,
+            data: archivos
+        });
+
+    } catch (error) {
+        console.error("Error en getArchivosPorInstrumento Controller:", error);
+        
+        return res.status(500).json({
+            success: false,
+            message: "Ocurrió un error en el servidor al intentar obtener los archivos adjuntos."
         });
     }
 };

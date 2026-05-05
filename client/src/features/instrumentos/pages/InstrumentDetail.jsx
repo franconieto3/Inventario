@@ -12,6 +12,7 @@ import { AgregarArchivo } from "../components/AgregarArchivo";
 import { AgregarVerificacion } from "../components/AgregarVerificacion";
 import { bajaInstrumento } from "../services/bajaInstrumento";
 import { HistorialVerificaciones } from "../components/HistorialVerificaciones";
+import { ArchivosInstrumentos } from "../components/ArchivosInstrumentos";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -157,6 +158,7 @@ export function InstrumentDetail(){
                             )}
 
                             <DetailItem label="Estado" value={instrumento.activo? instrumento.estado || 'Sin definir': 'Dado de baja'} />
+                            <DetailItem label="Vencimiento" value={instrumento.activo? instrumento.mes_vencimiento || 'Sin definir': 'Dado de baja'} />
 
                         </div>
                     </div>
@@ -177,11 +179,18 @@ export function InstrumentDetail(){
                     </Modal>
                 }
                 {!loading && !error && instrumento && (
-                    <HistorialVerificaciones 
-                        idInstrumento={id} 
-                        refreshTrigger={refreshTrigger} 
-                        onDelete={() => setRefreshTrigger(refreshTrigger + 1)}
-                    />
+                    (<>
+                        <ArchivosInstrumentos
+                            idInstrumento={id} 
+                            refreshTrigger={refreshTrigger} 
+                            onDelete={() => setRefreshTrigger(refreshTrigger + 1)}
+                        />
+                        <HistorialVerificaciones 
+                            idInstrumento={id} 
+                            refreshTrigger={refreshTrigger} 
+                            onDelete={() => setRefreshTrigger(refreshTrigger + 1)}
+                        />
+                    </>)
                 )}
                 {mostrarAgregarArchivos &&
                     <Modal
@@ -189,7 +198,14 @@ export function InstrumentDetail(){
                         descripcion="Agregar imágenes, manuales, instructivos, etc"
                         onClose={()=>setMostrarAgregarArchivos(false)}
                     >
-                        <AgregarArchivo></AgregarArchivo>
+                        <AgregarArchivo
+                            instrumento={instrumento}
+                            tipos = {enums.tiposArchivo}
+                            onSuccess={()=>{
+                                setMostrarAgregarArchivos(false);
+                                setRefreshTrigger(refreshTrigger+1);
+                            }}
+                        ></AgregarArchivo>
                     </Modal>
                 }
                 {mostrarAgregarVerificacion &&

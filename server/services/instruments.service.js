@@ -89,6 +89,86 @@ export const crearCategoria = async (data) =>{
     return nuevoInstrumento;    
 }
 
+export const editarCategoria = async (id, data) => {
+    // 1. Construimos el payload base
+    const payload = {
+        tipo: data.tipo,
+        descripcion: data.descripcion,
+        tipo_proveedor: data.tipo_proveedor,
+        frecuencia_meses: parseInt(data.frecuencia_meses, 10)
+    };
+
+    // 2. Aplicamos la lógica de negocio según el TIPO
+    if (data.tipo === 'ESTANDAR') {
+        payload.usos_maximos = null; // Limpiamos el campo si el tipo cambió a ESTANDAR
+    } else if (data.tipo === 'PROBADOR') {
+        payload.usos_maximos = parseInt(data.usos_maximos, 10);
+    }
+
+    // 3. Actualización en Supabase usando el id_categoria
+    const { data: categoriaActualizada, error } = await supabase
+        .from('categoria_instrumento')
+        .update(payload)
+        .eq('id_categoria', id)
+        .select()
+        .single();
+
+    // 4. Manejo de Errores
+    if (error) {
+        // Violación de restricción UNIQUE (descripcion)
+        if (error.code === '23505') {
+            throw new Error("Ya existe una categoría con esa descripción.");
+        }
+        
+        // Violación de Check Constraint
+        if (error.code === '23514') {
+            if (error.message.includes('chk_estandar_requerimientos')) {
+                throw new Error("Error de validación: Los instrumentos ESTANDAR requieren proveedor y frecuencia en meses.");
+            }
+            if (error.message.includes('chk_probador_requerimientos')) {
+                throw new Error("Error de validación: Los instrumentos PROBADOR requieren definir los usos máximos.");
+            }
+            throw new Error("Error: Los datos enviados no cumplen con las restricciones de la base de datos.");
+        }
+
+        // Sintaxis de entrada inválida
+        if (error.code === '22P02') {
+            throw new Error("Error: El formato de los datos es incorrecto. Verifique los tipos enviados.");
+        }
+
+        throw new Error(error.message || "Ocurrió un error inesperado al actualizar la categoría.");
+    }
+
+    if (!categoriaActualizada) {
+        throw new Error("La categoría no existe o no se pudo actualizar.");
+    }
+
+    return categoriaActualizada;
+}
+
+export const deleteCategoria = async (id) => {
+    const { data, error } = await supabase
+        .from('categoria_instrumento')
+        .delete()
+        .eq('id_categoria', id)
+        .select(); 
+    
+    if (error) {
+        // Manejo de Foreign Key constraint (la categoría está siendo usada por un instrumento)
+        if (error.code === '23503') {
+            throw { statusCode: 409, message: "No se puede eliminar: la categoría ya tiene instrumentos asociados." };
+        }
+        throw { statusCode: 500, message: error.message || "Ocurrió un error en la base de datos al eliminar la categoría." }; 
+    }
+
+    // Verificar si realmente se borró algo (por si el ID no existía)
+    if (!data || data.length === 0) {
+        throw { statusCode: 404, message: "Categoría no encontrada o ya fue eliminada previamente." };
+    }
+
+    return data;
+};
+
 // Obtener todos los sectores
 export const getSectores = async ()=>{
     const { data, error } = await supabase
@@ -236,14 +316,14 @@ export const darDeBaja = async (idInstrumento)=>{
 
 //Verificaciones
 
-export const insertarVerificacion = async (payload)=>{
+export const insertarRegistroArchivo = async (payload, tabla)=>{
     const {data, error} = await supabase
-    .from('verificaciones')
+    .from(tabla)
     .insert(payload)
 
     if(error){
         console.log(err);
-        throw new Error({statusCode: 500, message: "Ocurrió un error. No se pudo guardar el archivo de verificación"})
+        throw new Error({statusCode: 500, message: "Ocurrió un error. No se pudo guardar el archivo correctamente"})
     }
 
     return data;
@@ -263,6 +343,26 @@ export const obtenerVerificacionesPorInstrumento = async (idInstrumento) => {
     if (error) {
         console.error("Error Supabase:", error.message);
         throw new Error("Error al obtener las verificaciones del instrumento.");
+    }
+
+    return data || []; 
+};
+
+//Archivos auxiliares
+
+export const obtenerArchivosPorInstrumento = async (idInstrumento) => {
+    // 1. Validación de entrada
+    if (!idInstrumento) throw new Error("El ID del instrumento es requerido.");
+
+    const { data, error } = await supabase
+        .from('instrumentos_archivos')
+        .select('*')
+        .eq('id_instrumento', idInstrumento);
+
+    // 3. Manejo de Errores de Red/Base de Datos
+    if (error) {
+        console.error("Error Supabase:", error.message);
+        throw new Error("Error al obtener los archivos del instrumento.");
     }
 
     return data || []; 

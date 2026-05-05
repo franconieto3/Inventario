@@ -8,6 +8,7 @@ import { ListadoInstrumentos } from "../components/ListadoInstrumentos";
 import { EditarInstrumentos } from "../components/EditarInstrumentos";
 import { apiCall } from "../../../services/api";
 import { AgregarCategoria } from "../components/AgregarCategoria";
+import { ListadoCategorias } from "../components/ListadoCategorias";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -99,6 +100,13 @@ export function Instrumentos(){
                         onDelete={handleDelete}
                     />
                 )}
+
+ 
+                <ListadoCategorias 
+                    data={categorias}
+                    enums={enums}
+                    onEditSuccess={refetch}
+                />
 
             </div>
             {crearInstrumento &&

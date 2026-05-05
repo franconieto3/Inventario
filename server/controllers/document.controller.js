@@ -1,6 +1,6 @@
 import { error } from "node:console";
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar} from "../services/document.service.js";
 import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
@@ -408,6 +408,38 @@ export const eliminarVerificacionInstrumentos = async(req, res)=>{
             return res.status(200).json({ 
                 message: "Registro eliminado, pero hubo un problema al borrar el archivo físico.", 
                 data: verificacion 
+            });
+        }
+
+    }catch(err){
+        return res.status(err.statusCode || 500).json({ error: err.message });
+    }
+} 
+
+export const eliminarArchivoInstrumentos = async(req, res)=>{
+    try{
+        const {id} = req.params;
+        const {path} = req.query;
+
+        // Intentamos obtener los metadatos del archivo para ver si existe
+        await obtenerMetadatos(path);
+
+        //Actualizar DB
+        const registro = await quitarArchivoAuxiliar(id);
+
+        if (!registro) {
+             return res.status(404).json({ error: "No se encontró el registro en la base de datos para eliminar." });
+        }
+
+        //Eliminar archivo
+        const eliminado = await deleteSupabaseFile('gestion_documental_privada', path)
+        
+        if (eliminado){
+            return res.status(200).json({message:"Archivo eliminado exitosamente", data: registro});
+        }else{
+            return res.status(200).json({ 
+                message: "Registro eliminado, pero hubo un problema al borrar el archivo físico.", 
+                data: registro
             });
         }
 

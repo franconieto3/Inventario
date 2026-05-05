@@ -108,9 +108,9 @@ export const signedUrl = async (path)=>{
 
     if (error) {
         console.error("Error firmando URL:", error);
-        const error = new Error("No se pudo obtener el documento");
-        error.statusCode = 500;
-        throw error;
+        const err = new Error("No se pudo obtener el documento");
+        err.statusCode = 500;
+        throw err;
     }
 
     return data;
@@ -413,6 +413,8 @@ export const deleteSupabaseFile = async (bucketName, filePath) => {
   }
 }
 
+//Instrumentos
+
 export const quitarVerificacion = async (idVerificacion) => {
     const { data, error } = await supabase
         .from('verificaciones')
@@ -428,4 +430,22 @@ export const quitarVerificacion = async (idVerificacion) => {
 
     // 3. Manejamos el caso de que el ID no exista
     return data && data.length > 0 ? data[0] : null;
+}
+
+export const quitarArchivoAuxiliar = async (idArchivo) => {
+
+    const { data, error } = await supabase
+        .from('instrumentos_archivos')
+        .delete()
+        .eq('id', idArchivo)
+        .select();
+
+    if (error) {
+        console.error("Error de Supabase al eliminar en BD:", error);
+        
+        throw new Error(`Ocurrió un error al quitar el archivo: ${error.message}`);
+    }
+
+    return data && data.length > 0 ? data[0] : null;
+
 }
