@@ -55,7 +55,6 @@ export const crearCategoria = async (data) =>{
         payload.usos_maximos = parseInt(data.usos_maximos, 10);
     }
 
-    console.log('Payload: ', payload);
 
     // 3. Inserción en Supabase
     const { data: nuevoInstrumento, error } = await supabase
@@ -235,7 +234,8 @@ export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, es
         modelo: data.modelo !== undefined ? data.modelo : null,
         nro_serie: data.nro_serie !== undefined ? data.nro_serie : null,
         mes_vencimiento: data.mes_vencimiento !== undefined ? data.mes_vencimiento : null,
-        sector: data.sector !==undefined ? data.sector : null
+        sector: data.sector !==undefined ? data.sector : null,
+        updated_at: new Date().toISOString()
     };
 
     // 3. Actualización en Supabase
@@ -305,7 +305,8 @@ export const darDeBaja = async (idInstrumento)=>{
     const {data, error} = await supabase
     .from('instrumentos')
     .update({ 
-        activo: false
+        activo: false,
+        updated_at: new Date().toISOString()
     })
     .eq('id_instrumento', idInstrumento);
 

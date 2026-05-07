@@ -60,6 +60,18 @@ export function AgregarCategoria({ onClose, onSuccess, sectores, enums }){
         }
     };
 
+    useEffect(()=>{
+        if(formData.tipo_proveedor === 'EXTERNO'){
+            setFormData(prev => ({ ...prev, frecuencia_meses: '12' }));
+        }
+        else if(formData.tipo_proveedor === 'INTERNO'){
+            setFormData(prev => ({ ...prev, frecuencia_meses: '6' }));
+        }
+        else{
+            setFormData(prev => ({ ...prev, frecuencia_meses: '' }));
+        }
+    }, [formData.tipo_proveedor])
+
     return (
         <form onSubmit={handleSubmit} className="ai-form-container">
             {error && <div className="ai-form-error">{error}</div>}

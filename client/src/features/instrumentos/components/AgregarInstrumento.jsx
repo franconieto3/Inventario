@@ -35,14 +35,14 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError(null);
 
-        // Preparamos el payload limpiando campos irrelevantes según el tipo
-        // y parseando números para que coincidan con los tipos de PostgreSQL
+        if(!formData.id_categoria){
+            setError("Debe seleccionar una categoría de instrumento");
+            return;
+        }
+
         const payload = {
-            //tipo: formData.tipo,
-            //descripcion: formData.descripcion,
             marca: formData.marca || null,
             modelo: formData.modelo || null,
             nro_serie: formData.nro_serie || null,
@@ -52,6 +52,8 @@ export function AgregarInstrumento({ onClose, onSuccess, sectores, enums, catego
         };
         
         try {
+            setLoading(true);
+
             // Asumo el endpoint '/api/instrumentos', ajústalo a tu backend
             const response = await apiCall(`${API_URL}/api/instrumentos`, {
                 method: 'POST',

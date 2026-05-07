@@ -27,8 +27,6 @@ export const nuevoInstrumento = async (req, res) => {
 export const nuevaCategoria = async (req, res)=>{
     try{
         const data = req.body;
-
-        console.log('Data: ', data);
         
         // Llamada al servicio
         const nuevaCategoria = await crearCategoria(data);

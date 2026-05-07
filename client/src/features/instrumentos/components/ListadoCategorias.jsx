@@ -38,10 +38,11 @@ export function ListadoCategorias({data, enums, onEditSuccess}){
                 const res = await apiCall(`${API_URL}/api/instrumentos/categoria/${categoria.id_categoria}`,{method:'DELETE'}) 
                 alert("Categoria eliminada exitosamente");
                 
-                if(onSuccess) onSuccess();
+                if(onEditSuccess) onEditSuccess();
 
             }catch(err){
                 alert('Ocurrió un error', err.message);
+                console.log(err);
             }
         }
         return null;

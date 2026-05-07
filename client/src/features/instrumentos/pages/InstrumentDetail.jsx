@@ -175,6 +175,7 @@ export function InstrumentDetail(){
                             onClose={()=>setMostrarEdicion(false)}
                             onSuccess={()=>setRefreshTrigger(refreshTrigger+1)}
                             enums={enums}
+                            sectores={enums?.sectores || []}
                         />
                     </Modal>
                 }

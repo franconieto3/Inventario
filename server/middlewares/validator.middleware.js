@@ -7,6 +7,8 @@ export const validateSchema = (schema, source = 'body') => (req, res, next) => {
   } catch (err) {
       if (err instanceof z.ZodError) {
         const errores = err.issues || err.errors || [];
+
+        console.log(errores);
         
         return res.status(400).json({ 
             error: "Datos inválidos", 

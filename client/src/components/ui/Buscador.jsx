@@ -3,7 +3,7 @@ import Fuse from 'fuse.js';
 import "./Buscador.css"
 
 const Buscador = ({ 
-  opciones, 
+  opciones = [], 
   placeholder, 
   keys, 
   onChange, 
