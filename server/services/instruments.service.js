@@ -1,5 +1,11 @@
 import { supabase } from "../config/supabase.js";
 
+export const obtenerPrimerDiaDelMes = (inputDate)=>{
+
+  const fecha = new Date(inputDate);
+  return new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+
+}
 
 export const crearInstrumento = async (data) => {
     // 1. Construimos el payload base asegurándonos de convertir strings vacíos a null
@@ -193,7 +199,13 @@ export const getInstrumentos = async ({ page = 1, limit = 10, tipo, sectorId, es
     // Filtros
     if (tipo) query = query.eq('tipo', tipo);
     if (sectorId) query = query.eq('sector', sectorId);
-    if (estado) query = query.eq('estado', estado); // Filtramos por el estado calculado
+    if (estado) {
+        if (estado === 'Sin definir') {
+            query = query.is('estado', null); // Busca los valores NULL
+        } else {
+            query = query.eq('estado', estado);
+        }
+    }
 
     // Ordenamiento
     if (tipo === 'ESTANDAR') {
@@ -367,4 +379,45 @@ export const obtenerArchivosPorInstrumento = async (idInstrumento) => {
     }
 
     return data || []; 
+};
+
+export const crearRelacionPiezaInstrumento = async (piezas, categoriasInstrumentos) => {
+    const payloadInsert = [];
+
+    piezas.forEach(pieza => {
+        const idPieza = typeof pieza === 'object' ? pieza.id_pieza : pieza;
+
+        categoriasInstrumentos.forEach(idCategoria => {
+            payloadInsert.push({ 
+                id_pieza: idPieza, 
+                id_categoria_instrumento: idCategoria 
+            });
+        });
+    });
+
+    const { data, error } = await supabase
+        .from('pieza_instrumento')
+        .upsert(payloadInsert, { onConflict: 'id_pieza,id_categoria_instrumento', ignoreDuplicates: true })
+        .select();
+
+    if (error) {
+        throw new Error(`Error en inserción masiva: ${error.message}`);
+    }
+
+    return data;
+};
+
+export const eliminarRelacionPiezaInstrumento = async (idPieza, idCategoriaInstrumento) => {
+    const { data, error } = await supabase
+        .from('pieza_instrumento')
+        .delete()
+        .eq('id_pieza', idPieza)
+        .eq('id_categoria_instrumento', idCategoriaInstrumento)
+        .select(); 
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    return data;
 };

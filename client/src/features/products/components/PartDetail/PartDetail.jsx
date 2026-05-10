@@ -9,6 +9,7 @@ import { PartMaterials } from './components/PartMaterials';
 import { PartProcessRoutes } from './components/PartProcessRoutes';
 
 import "./PartDetail.css"
+import { PartInstruments } from './components/PartInstruments';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -23,6 +24,8 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
             fetchPart();
         }
     }, [mostrar, idPieza, fetchPart]);
+
+    useEffect(() => console.log(pieza), [pieza]);
 
     return (
         <>
@@ -66,12 +69,10 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 <PartProcessRoutes
                                     pieza={pieza}
                                 />
-                                <div className='detalle-documentos'>
-                                    <p style={{'display':'flex', 'alignItems':'center','gap':'5px'}}>
-                                        <i className='material-icons'>straighten</i>    
-                                        Elementos de control: 
-                                    </p>
-                                </div>
+                                <PartInstruments
+                                    pieza={pieza}
+                                    onRefresh={fetchPart}
+                                />
                                 
                             </div>
                         )}

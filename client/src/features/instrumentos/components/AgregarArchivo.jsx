@@ -91,7 +91,7 @@ export function AgregarArchivo({instrumento, tipos, onSuccess}){
             {tipoSeleccionado &&
                 <SubirArchivo
                     onUpload={(file)=> file.length > 0 ? setFile(file[0]) : setFile(null)} 
-                    acceptedFileTypes={["image/png", "image/jpeg"]}
+                    acceptedFileTypes={["image/png", "image/jpeg", "application/pdf"]}
                     onRemove={()=>setFile(null)}
                 />
             }

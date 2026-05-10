@@ -152,3 +152,30 @@ export const guardarArchivoAuxiliarSchema = z.object({
     .min(1, "El tipo de documento no puede estar vacío")
     
 });
+
+export const crearPiezaInstrumentoSchema = z.object({
+    piezas: z.array(
+        z.union([
+            z.coerce.number().int().positive(),
+            z.object({
+                id_pieza: z.coerce.number().int().positive()
+            }).passthrough()
+        ])
+    ).min(1, "Debe seleccionar al menos una pieza"),
+    
+    elementos: z.array(
+        z.coerce.number().int().positive()
+    ).min(1, "Debe seleccionar al menos un elemento de control (categoría)")
+});
+
+export const eliminarPiezaInstrumentoSchema = z.object({
+    id_pieza: z.coerce.number({
+        required_error: "El id_pieza es obligatorio en la URL",
+        invalid_type_error: "El id_pieza debe ser un número",
+    }).int().positive(),
+    
+    id_categoria_instrumento: z.coerce.number({
+        required_error: "El id_categoria_instrumento es obligatorio en la URL",
+        invalid_type_error: "El id_categoria_instrumento debe ser un número",
+    }).int().positive(),
+});

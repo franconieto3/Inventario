@@ -111,7 +111,8 @@ export const obtenerInfoPieza = async (idPieza) => {
         piezaRes,
         documentosRes, 
         materialesRes,
-        procesosRes
+        procesosRes,
+        instrumentosRes
     ] = await Promise.all([
         //Obtener información básica de la pieza
         supabase
@@ -123,7 +124,8 @@ export const obtenerInfoPieza = async (idPieza) => {
         //Ultimas versiones de los documentos
         supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza}),
         supabase.rpc('obtener_materiales_pieza',{p_id_pieza: idPieza}),
-        supabase.rpc('obtener_procesos_pieza', {p_id_pieza: idPieza})
+        supabase.rpc('obtener_procesos_pieza', {p_id_pieza: idPieza}),
+        supabase.rpc('obtener_instrumentos_pieza', {p_id_pieza: idPieza})
     ]);
 
     // Manejo de errores de la consulta de producto
@@ -160,7 +162,15 @@ export const obtenerInfoPieza = async (idPieza) => {
         procesos = procesosRes;
     }
 
-    return [piezaRes, documentos, materiales, procesos];
+    let instrumentos = [];
+    if(instrumentosRes.error){
+        console.error("Error al obtener instrumentos:", instrumentosRes.error);
+    }else{
+        instrumentos = instrumentosRes;
+    }
+
+
+    return [piezaRes, documentos, materiales, procesos, instrumentos];
     
 }
 

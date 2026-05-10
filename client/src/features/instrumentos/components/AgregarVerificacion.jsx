@@ -64,7 +64,7 @@ export function AgregarVerificacion({instrumento, onSuccess}){
             
             const payload = {
                     path: path,
-                    fechaVigencia: date,
+                    date: date,
                     instrumento: instrumento
             };
 

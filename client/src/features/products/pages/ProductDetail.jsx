@@ -17,6 +17,7 @@ import Can from '../../../components/Can';
 import { NuevaRutaProcesos } from '../../procesos/components/NuevaRutaProcesos';
 import Button from '../../../components/ui/Button';
 import { Spinner } from '../../../components/ui/Spinner';
+import { AsociarInstrumentoPieza } from '../../instrumentos/components/AsociarInstrumentoPieza';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -34,6 +35,7 @@ export default function ProductDetail() {
   const [registrosPM, setRegistrosPM] = useState(null);
 
   const [mostrarCrearRuta, setMostrarCrearRuta] = useState(false);
+  const [mostrarAsociarElementos, setMostrarAsociarElementos] = useState(false)
 
   const fetchProduct = useCallback(async () => {
     try{
@@ -131,6 +133,11 @@ export default function ProductDetail() {
             Agregar ruta de procesos
         </button>
 
+        <button className='add-span' onClick={()=>{setMostrarAsociarElementos(true)}}>
+            <i className='material-icons' id="add-icon">add</i>
+            Agregar elementos de control
+        </button>
+
         {mostrarCrearRuta &&
          <NuevaRutaProcesos 
           producto={producto.nombre}
@@ -138,6 +145,14 @@ export default function ProductDetail() {
           onClose={()=>setMostrarCrearRuta(false)}
           onSuccess={()=>fetchProduct()}
           />
+         }
+
+         {mostrarAsociarElementos &&
+            <AsociarInstrumentoPieza
+              producto={producto}
+              onClose={()=>setMostrarAsociarElementos(false)}
+              onSuccess={()=>fetchProduct()}
+            />
          }
 
         {mostrarEdicion &&

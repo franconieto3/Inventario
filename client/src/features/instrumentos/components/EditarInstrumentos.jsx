@@ -46,6 +46,7 @@ export function EditarInstrumentos({ instrumento, onClose, onSuccess, enums, sec
 
         // Preparamos el payload base
         const payload = {
+            categoria: instrumento.id_categoria,
             marca: formData.marca || null,
             modelo: formData.modelo || null,
             nro_serie: formData.nro_serie || null,

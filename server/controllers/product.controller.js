@@ -135,13 +135,14 @@ export const pieza = async (req, res) =>{
     try{
         const {id} = req.params;
         
-        const [piezaRes, documentos, materiales, procesos] = await productService.obtenerInfoPieza(id); 
+        const [piezaRes, documentos, materiales, procesos, instrumentos] = await productService.obtenerInfoPieza(id); 
 
         const respuestaFinal = {
             ...piezaRes.data,
             documentos: documentos.data || [],
             materiales: materiales.data || [],
-            procesos: procesos.data || []
+            procesos: procesos.data || [],
+            instrumentos: instrumentos.data || []
         };
 
         if(respuestaFinal.es_ensamble){

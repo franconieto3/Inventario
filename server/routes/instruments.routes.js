@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarInstrumento, archivoTemporal, baja, borrarCategoria, borrarInstrumento, categorias, edicionCategoria, getArchivosPorInstrumento, getVerificacionesPorInstrumento, guardarArchivoInstrumento, guardarVerificacion, instrumento, instrumentos, nuevaCategoria, nuevoInstrumento, sectores } from "../controllers/instruments.controller.js";
+import { actualizarInstrumento, agregarPiezaInstrumento, archivoTemporal, baja, borrarCategoria, borrarInstrumento, categorias, edicionCategoria, eliminarPiezaInstrumento, getArchivosPorInstrumento, getVerificacionesPorInstrumento, guardarArchivoInstrumento, guardarVerificacion, instrumento, instrumentos, nuevaCategoria, nuevoInstrumento, sectores } from "../controllers/instruments.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { archivoTemporalSchema, categoriaSchema, instrumentoSchema, guardarArchivoAuxiliarSchema, guardarVerificacionSchema} from "../schemas/instruments.schemas.js";
+import { archivoTemporalSchema, categoriaSchema, instrumentoSchema, guardarArchivoAuxiliarSchema, guardarVerificacionSchema, crearPiezaInstrumentoSchema, eliminarPiezaInstrumentoSchema} from "../schemas/instruments.schemas.js";
 
 const router = Router();
 
@@ -107,5 +107,20 @@ router.get('/:idInstrumento/archivos',
     verificarToken,
     getArchivosPorInstrumento
 );
+
+//Asociación con piezas
+
+router.post(
+    '/pieza-instrumento', 
+    validateSchema(crearPiezaInstrumentoSchema), 
+    agregarPiezaInstrumento
+);
+
+router.delete(
+    '/pieza-instrumento/:id_pieza/:id_categoria_instrumento',
+    validateSchema(eliminarPiezaInstrumentoSchema, 'params'),
+    eliminarPiezaInstrumento
+);
+
 
 export default router;

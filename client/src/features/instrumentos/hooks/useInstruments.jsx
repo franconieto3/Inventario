@@ -9,7 +9,7 @@ import { apiCall } from '../../../services/api';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export const useInstruments = (initialParams) => {
+export const useInstruments = (initialParams = {}) => {
   const [instrumentos, setInstrumentos] = useState([]);
   const [sectores, setSectores] = useState([]);
   const [categorias, setCategorias] = useState([]);

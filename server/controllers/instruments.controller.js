@@ -1,10 +1,13 @@
 import { moverArchivoAPermanente, signedUploadUrl } from "../services/document.service.js";
-import { crearCategoria, crearInstrumento, darDeBaja, deleteCategoria, deleteInstrumento, editarCategoria, getCategorias, getInstrument, getInstrumentos, getSectores, insertarRegistroArchivo, obtenerArchivosPorInstrumento, obtenerVerificacionesPorInstrumento, updateInstrumento } from "../services/instruments.service.js";
+import { crearCategoria, crearInstrumento, crearRelacionPiezaInstrumento, darDeBaja, deleteCategoria, deleteInstrumento, editarCategoria, eliminarRelacionPiezaInstrumento, getCategorias, getInstrument, getInstrumentos, getSectores, insertarRegistroArchivo, obtenerArchivosPorInstrumento, obtenerPrimerDiaDelMes, obtenerVerificacionesPorInstrumento, updateInstrumento } from "../services/instruments.service.js";
 
 
 export const nuevoInstrumento = async (req, res) => {
     try {
         const data = req.body;
+
+        const fechaNormalizada = obtenerPrimerDiaDelMes(data.mes_vencimiento);
+        data.mes_vencimiento = fechaNormalizada;
 
         // Llamada al servicio
         const nuevoInstrumento = await crearInstrumento(data);
@@ -141,6 +144,9 @@ export const actualizarInstrumento = async (req, res) => {
         const { id } = req.params; // ID que viene en la URL
         const data = req.body;     // Datos validados por Zod
 
+        const fecha_normalizada = obtenerPrimerDiaDelMes(data.mes_vencimiento);
+        data.mes_vencimiento = fecha_normalizada;
+
         // Llamada al servicio
         const instrumentoActualizado = await updateInstrumento(id, data);
 
@@ -234,7 +240,7 @@ export const guardarVerificacion = async(req, res)=>{
 
         const payload = {
             id_instrumento: id,
-            fecha_verificacion: date,
+            fecha_verificacion: obtenerPrimerDiaDelMes(date),
             path: finalPath    
         };
 
@@ -328,6 +334,59 @@ export const getArchivosPorInstrumento = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Ocurrió un error en el servidor al intentar obtener los archivos adjuntos."
+        });
+    }
+};
+
+//Asociación con piezas
+
+export const agregarPiezaInstrumento = async (req, res) => {
+    try {
+        const { piezas, elementos} = req.body;
+        
+        const nuevasRelaciones = await crearRelacionPiezaInstrumento(piezas, elementos);
+        
+        return res.status(201).json({
+            success: true,
+            message: 'Relaciones pieza-instrumento creada exitosamente',
+            data: nuevasRelaciones
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: 'Error al crear la relación en la base de datos',
+            error: error.message
+        });
+    }
+};
+
+export const eliminarPiezaInstrumento = async (req, res) => {
+    try {
+        const { id_pieza, id_categoria_instrumento } = req.params;
+
+        const dataEliminada = await eliminarRelacionPiezaInstrumento(id_pieza, id_categoria_instrumento);
+
+        // Si el array está vacío, la relación no existía
+        if (dataEliminada.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No se encontró la relación pieza-instrumento para eliminar'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Relación pieza-instrumento eliminada correctamente',
+            data: dataEliminada[0]
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error al intentar eliminar la relación',
+            error: error.message
         });
     }
 };

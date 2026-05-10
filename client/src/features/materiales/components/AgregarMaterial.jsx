@@ -33,7 +33,13 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
     ,[])
         
     const handleSelectMaterial = (id_material, descripcion, item) => {
-        setMateriales((prev) => [...prev, { ...item, consumo: 0.0 }]);
+        setMateriales((prev) => {
+            const alreadyExists = prev.some(m => m.id_material === id_material);
+            if (alreadyExists) {
+                return prev; 
+            }
+            return [...prev, { ...item, consumo: 0.0 }]
+        });
         setReload((prev)=>prev+1)
     };
     
