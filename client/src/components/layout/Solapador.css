@@ -1,0 +1,55 @@
+/* Contenedor principal */
+.solapador-contenedor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+/* Área de los botones */
+.solapador-cabecera {
+  display: flex;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #fafafa;
+  overflow-x: auto; /* Permite scroll si hay muchas solapas */
+}
+
+/* Estilo de cada botón (solapa) */
+.solapador-boton {
+  padding: 14px 24px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  outline: none;
+  white-space: nowrap;
+}
+
+/* Interacción hover */
+.solapador-boton:hover:not(.activo) {
+  color: #111111;
+  background-color: #f2f2f2;
+}
+
+/* Estado activo */
+.solapador-boton.activo {
+  color: #111111;
+  border-bottom: 2px solid #111111;
+  background-color: #ffffff;
+}
+
+/* Área donde se muestra el contenido */
+.solapador-contenido {
+  padding: 32px;
+  color: #333333;
+  line-height: 1.6;
+  font-size: 15px;
+}

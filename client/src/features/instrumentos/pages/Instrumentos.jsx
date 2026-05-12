@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import NavBar from "../../../components/layout/NavBar";
+import Solapador from "../../../components/layout/Solapador";
 import Button from "../../../components/ui/Button";
 import { Modal } from "../../../components/ui/Modal";
 import { AgregarInstrumento } from "../components/AgregarInstrumento";
@@ -65,48 +66,52 @@ export function Instrumentos(){
                 <div className="ingenieria-tc">
                     <p className='ingenieria-titulos'>Elementos de control</p>
                 </div>
-                <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between', flexWrap: 'wrap'}}>
-                    <div>
-                        <h3 style={{fontWeight:'500'}}>Listado de elementos de control</h3>
-                        <p className="table-description">
-                            Seguimiento de todas los instrumentos de medición y control.
-                        </p>
-                    </div>
-                    <div style={{display:'flex', gap:'15px', alignItems:'center'}}
-                    >
-                        <Button variant="secondary" onClick={()=> setNuevaCategoria(true)}>
-                            Agregar categoría
-                        </Button>
-                        <Button variant="default" onClick={()=>setCrearInstrumento(true)} style={{marginTop:'15px', marginBottom:'15px'}}>
-                            Agregar elemento de control
-                        </Button>
-                    </div>
-                </div>
+                <Solapador>
+                    <div titulo="Inventario">
+                        <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between', flexWrap: 'wrap'}}>
+                            <div>
+                                <h3 style={{fontWeight:'500'}}>Listado de elementos de control</h3>
+                                <p className="table-description">
+                                    Seguimiento de todas los instrumentos de medición y control.
+                                </p>
+                            </div>
+                            <div style={{display:'flex', gap:'15px', alignItems:'center'}}
+                            >
+                                <Button variant="secondary" onClick={()=> setNuevaCategoria(true)}>
+                                    Agregar categoría
+                                </Button>
+                                <Button variant="default" onClick={()=>setCrearInstrumento(true)} style={{marginTop:'15px', marginBottom:'15px'}}>
+                                    Agregar elemento de control
+                                </Button>
+                            </div>
+                        </div>
 
-                {/* Manejo de estados de carga, error y renderizado del Listado */}
-                {loading ? (
-                    <p>Cargando instrumentos...</p>
-                ) : error ? (
-                    <p style={{ color: 'red' }}>Error al cargar los datos: {error}</p>
-                ) : (
-                    <ListadoInstrumentos 
-                        data={instrumentos}
-                        sectores={sectores}
-                        tiposInstrumento={enums.tiposInstrumento}
-                        params={params}
-                        onParamsChange={setParams}
-                        totalRecords={totalRecords}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-                )}
-
- 
-                <ListadoCategorias 
-                    data={categorias}
-                    enums={enums}
-                    onEditSuccess={refetch}
-                />
+                        {/* Manejo de estados de carga, error y renderizado del Listado */}
+                        {loading ? (
+                            <p>Cargando instrumentos...</p>
+                        ) : error ? (
+                            <p style={{ color: 'red' }}>Error al cargar los datos: {error}</p>
+                        ) : (
+                            <ListadoInstrumentos 
+                                data={instrumentos}
+                                sectores={sectores}
+                                tiposInstrumento={enums.tiposInstrumento}
+                                params={params}
+                                onParamsChange={setParams}
+                                totalRecords={totalRecords}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        )}
+                    </div>
+                    <div titulo="Categorías">
+                        <ListadoCategorias 
+                            data={categorias}
+                            enums={enums}
+                            onEditSuccess={refetch}
+                        />
+                    </div>
+                </Solapador>
 
             </div>
             {crearInstrumento &&

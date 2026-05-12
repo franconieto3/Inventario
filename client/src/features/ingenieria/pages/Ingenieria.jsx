@@ -9,6 +9,7 @@ import { useDocuments } from "../../products/hooks/useDocuments";
 import "./Ingenieria.css"
 import { useEffect } from "react";
 import { ListadoSolicitudesAcceso } from "../components/ListadoSolicitudesAcceso";
+import Solapador from "../../../components/layout/Solapador";
 
 export function Ingenieria(){
 
@@ -104,52 +105,62 @@ export function Ingenieria(){
         <>
             <NavBar />
             <div className="body-container">
+
               <div className="ingenieria-tc">
                 <p className='ingenieria-titulos'>Ingeniería</p>
               </div>
-              <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between'}}>
-                <div>
-                  <h3 style={{fontWeight:'500'}}>Solicitudes de cambios</h3>
-                  <p className="table-description">
-                    Seguimiento de todas las solicitudes de cambio en documentos relacionados a piezas.
-                  </p>
+              <Solapador>
+                <div titulo="Solicitudes de cambios">
+                  <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between'}}>
+                    <div>
+                      <h3 style={{fontWeight:'500'}}>Solicitudes de cambios</h3>
+                      <p className="table-description">
+                        Seguimiento de todas las solicitudes de cambio en documentos relacionados a piezas.
+                      </p>
+                    </div>
+                    
+                    <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
+                      <select onChange={(e)=>{setSelectedStatus(e.target.value)}}>
+                        <option value="0">Todos los estados</option>
+                        {estados.map(
+                          (estado)=>(
+                            <option key={estado.id_estado_solicitud} value={estado.id_estado_solicitud}>{estado.descripcion}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+
+                  </div>
+
+                  <Table data={solicitudes} columns={columnas}/>
+
+                  {totalPages > 1 && (
+                    <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
+                        <button 
+                            onClick={handlePrevPage} 
+                            disabled={page === 1 || loadingRequests}
+                            className="pagination-button" // Asegúrate de tener estilos o usa estilos inline
+                        >
+                            <i className="material-icons">chevron_left</i>
+                        </button>
+                        <span>{page} / {totalPages}</span>
+                        <button 
+                            onClick={handleNextPage} 
+                            disabled={page === totalPages || loadingRequests}
+                            className="pagination-button"
+                        >
+                            <i className="material-icons">chevron_right</i>
+                        </button>
+                    </div>
+                  )}
+                </div>
+
+                
+                <div titulo="Solicitudes de acceso">
+                  <ListadoSolicitudesAcceso/>
                 </div>
                 
-                <div style={{display:'flex', gap:'10px', alignItems:'center', flexWrap:'wrap', justifyContent:'start'}}>
-                  <select onChange={(e)=>{setSelectedStatus(e.target.value)}}>
-                    <option value="0">Todos los estados</option>
-                    {estados.map(
-                      (estado)=>(
-                        <option key={estado.id_estado_solicitud} value={estado.id_estado_solicitud}>{estado.descripcion}</option>
-                      )
-                    )}
-                  </select>
-                </div>
-
-              </div>
-              <Table data={solicitudes} columns={columnas}/>
-
-              {totalPages > 1 && (
-                <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
-                    <button 
-                        onClick={handlePrevPage} 
-                        disabled={page === 1 || loadingRequests}
-                        className="pagination-button" // Asegúrate de tener estilos o usa estilos inline
-                    >
-                        <i className="material-icons">chevron_left</i>
-                    </button>
-                    <span>{page} / {totalPages}</span>
-                    <button 
-                        onClick={handleNextPage} 
-                        disabled={page === totalPages || loadingRequests}
-                        className="pagination-button"
-                    >
-                        <i className="material-icons">chevron_right</i>
-                    </button>
-                </div>
-              )}
-
-              <ListadoSolicitudesAcceso/>
+              </Solapador>
 
             </div>
         </>
