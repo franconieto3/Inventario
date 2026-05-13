@@ -99,7 +99,7 @@ export function ListadoCategorias({data, enums, onEditSuccess}){
     
     return (
         <>
-            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginTop:'60px', marginBottom:'30px',justifyContent:'space-between', flexWrap: 'wrap'}}>
+            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%', marginBottom:'30px',justifyContent:'space-between', flexWrap: 'wrap'}}>
                 <div>
                     <h3 style={{fontWeight:'500'}}>Listado de categorías</h3>
                     <p className="table-description">

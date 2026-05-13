@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
-import { apiCall } from './api'; // Asegúrate de ajustar la ruta correcta a tu api.js
+import { apiCall } from '../../../services/api';
 
-const BASE_URL = 'http://localhost:4000/api/usuarios';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export const useUsers = () => {
     // --- ESTADOS DE DATOS ---
@@ -26,8 +26,7 @@ export const useUsers = () => {
     const fetchUsuarios = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await apiCall(`${BASE_URL}/listado`);
-            // El backend retorna { message: "...", data: { data: [...] } }
+            const response = await apiCall(`${API_URL}/api/usuarios/listado`);
             setUsuarios(response?.data?.data || []);
             setError(null);
         } catch (err) {
@@ -40,7 +39,7 @@ export const useUsers = () => {
     const fetchRoles = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await apiCall(`${BASE_URL}/roles/listado`);
+            const response = await apiCall(`${API_URL}/api/usuarios/roles/listado`);
             setRoles(response?.data?.data || []);
             setError(null);
         } catch (err) {
@@ -53,7 +52,7 @@ export const useUsers = () => {
     const fetchPermisos = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await apiCall(`${BASE_URL}/permisos/listado`);
+            const response = await apiCall(`${API_URL}/api/usuarios/permisos/listado`);
             setPermisos(response?.data?.data || []);
             setError(null);
         } catch (err) {
