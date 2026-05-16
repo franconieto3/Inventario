@@ -1,25 +1,52 @@
 import { supabase } from "../config/supabase.js";
 
-export const getUserList = async ()=>{
-    const {data, error} = await supabase.rpc('obtener_listado_usuarios',{});
 
-    if (error){
-        throw new Error({statusCode: 500, message: "Ocurrió un error obteniendo el listado de usuarios"});
+const throwServiceError = (statusCode, message, errorDetails = null) => {
+    throw { statusCode, message, details: errorDetails };
+};
+
+//Listado de usuarios:
+
+export const getUserList = async () => {
+
+    const { data, error } = await supabase
+        .from('usuarios')
+        .select(`
+            id_usuario,
+            dni,
+            name,
+            email,
+            telefono,
+            estado_usuario:estado_usuario (id_estado_usuario, descripcion),
+            sectores:sector (id_sector, descripcion),
+            roles:rol (id_rol, descripcion)
+        `);
+
+    if (error) {
+        throwServiceError(500, "Ocurrió un error obteniendo el listado de usuarios", error.message);
     }
 
-    return {data};
+    return { data };
 }
 
-export const getRolList = async ()=>{
-    const {data, error} = await supabase.from('rol').select('*').order('descripcion', { ascending: true });;
+export const getRolList = async () => {
+    // Join con la tabla M2M de permisos
+    const { data, error } = await supabase
+        .from('rol')
+        .select(`
+            *,
+            permisos:permiso (id_permiso, descripcion)
+        `)
+        .order('descripcion', { ascending: true });
 
-    if (error){
-        throw new Error({statusCode: 500, message: "Ocurrió un error obteniendo el listado de roles"});
+    if (error) {
+        throwServiceError(500, "Ocurrió un error obteniendo el listado de roles", error.message);
     }
 
-    return {data};
+    return { data };
 }
 
+// Listado de permisos: permanece igual
 export const getPermissionList = async ()=>{
     const {data, error} = await supabase.from('permiso').select('*').order('descripcion', { ascending: true });;
 
@@ -28,5 +55,143 @@ export const getPermissionList = async ()=>{
     }
 
     return {data};
+}
+
+//Creación de roles
+
+export const createRole = async (roleData) => {
+    // roleData debería tener al menos { descripcion: "..." }
+    const { data, error } = await supabase
+        .from('rol')
+        .insert([roleData])
+        .select();
+
+    if (error) {
+        if (error.code === '23505') throwServiceError(409, "El rol ya existe. La descripción está duplicada.", error.message);
+        throwServiceError(500, "Ocurrió un error creando el rol", error.message);
+    }
+
+    return { data: data[0] };
+}
+
+//Edición de roles
+
+
+export const updateRole = async (id_rol, roleData) => {
+    const { data, error } = await supabase
+        .from('rol')
+        .update(roleData)
+        .eq('id_rol', id_rol)
+        .select();
+
+    if (error) {
+        if (error.code === '23505') throwServiceError(409, "Ya existe otro rol con esa descripción.", error.message);
+        throwServiceError(500, "Ocurrió un error editando el rol", error.message);
+    }
+
+    if (!data || data.length === 0) {
+        throwServiceError(404, "El rol que intenta editar no existe.");
+    }
+
+    return { data: data[0] };
+}
+
+
+//Eliminación de roles
+
+export const deleteRole = async (id_rol) => {
+    const { data, error } = await supabase
+        .from('rol')
+        .delete()
+        .eq('id_rol', id_rol)
+        .select();
+
+    if (error) {
+        // Violación de Foreign Key (Ej: El rol sigue asignado a usuarios o permisos)
+        if (error.code === '23503') throwServiceError(400, "No se puede eliminar el rol porque está actualmente en uso por uno o más usuarios/permisos.", error.message);
+        throwServiceError(500, "Ocurrió un error eliminando el rol", error.message);
+    }
+
+    if (!data || data.length === 0) {
+        throwServiceError(404, "El rol que intenta eliminar no existe.");
+    }
+
+    return { data: data[0] };
+}
+
+
+//Asignar un nuevo sector a un usuario
+
+export const assignSectorToUser = async (id_usuario, id_sector) => {
+    const { data, error } = await supabase
+        .from('usuario_sector')
+        .insert([{ id_usuario, id_sector }])
+        .select();
+
+    if (error) {
+        if (error.code === '23505') throwServiceError(409, "El usuario ya tiene asignado este sector.", error.message);
+        if (error.code === '23503') throwServiceError(404, "El usuario o el sector indicado no existe.", error.message);
+        throwServiceError(500, "Ocurrió un error asignando el sector al usuario", error.message);
+    }
+
+    return { data: data[0] };
+}
+
+//Eliminar un sector de un usuario
+
+export const removeSectorFromUser = async (id_usuario, id_sector) => {
+    const { data, error } = await supabase
+        .from('usuario_sector')
+        .delete()
+        .match({ id_usuario, id_sector }) // Filtramos por la clave primaria compuesta
+        .select();
+
+    if (error) {
+        throwServiceError(500, "Ocurrió un error desasignando el sector del usuario", error.message);
+    }
+
+    // Si data vuelve vacío, significa que no se encontró esa relación para eliminar
+    if (!data || data.length === 0) {
+        throwServiceError(404, "La relación entre el usuario y el sector indicado no existe.");
+    }
+
+    return { data: data[0] };
+}
+
+//Asignar un nuevo rol a un usuario
+
+export const assignRoleToUser = async (id_usuario, id_rol) => {
+    const { data, error } = await supabase
+        .from('usuario_rol')
+        .insert([{ id_usuario, id_rol }])
+        .select();
+
+    if (error) {
+        if (error.code === '23505') throwServiceError(409, "El usuario ya tiene asignado este rol.", error.message);
+        if (error.code === '23503') throwServiceError(404, "El usuario o el rol indicado no existe.", error.message);
+        throwServiceError(500, "Ocurrió un error asignando el rol al usuario", error.message);
+    }
+
+    return { data: data[0] };
+}
+
+//Eliminar un rol de un usuario
+
+export const removeRoleFromUser = async (id_usuario, id_rol) => {
+    const { data, error } = await supabase
+        .from('usuario_rol')
+        .delete()
+        .match({ id_usuario, id_rol })
+        .select();
+
+    if (error) {
+        throwServiceError(500, "Ocurrió un error desasignando el rol del usuario", error.message);
+    }
+
+    if (!data || data.length === 0) {
+        throwServiceError(404, "La relación entre el usuario y el rol indicado no existe.");
+    }
+
+    return { data: data[0] };
 }
 

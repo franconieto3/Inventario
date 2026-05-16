@@ -26,7 +26,7 @@ export function ListadoUsuarios({usuarios, onOpen}){
             header: "Rol/es",
             render: (_)=> _ || "---"
         },{
-            key: "sector",
+            key: "sectores",
             header: "Sector/es",
             render: (_)=> _ || "---"
         },{
@@ -36,12 +36,12 @@ export function ListadoUsuarios({usuarios, onOpen}){
             <DropdownMenu
                 items={[
                     {
-                        label: "Administrar",
-                        icon: "edit",
+                        label: "Administrar usuario",
+                        icon: "manage_accounts",
                         onclick:()=>{}
                     },
                     {
-                        label: "Eliminar",
+                        label: "Eliminar usuario",
                         icon: "delete",
                         color: "red",
                         onclick:()=>{}
