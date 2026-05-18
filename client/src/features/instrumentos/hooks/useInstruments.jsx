@@ -28,7 +28,7 @@ export const useInstruments = (initialParams = {}) => {
 
   const fetchSectores = async () => {
     try {
-      const data = await apiCall(`${API_URL}/api/instrumentos/sectores`, {})
+      const data = await apiCall(`${API_URL}/api/sectores/listado`, {})
       setSectores(data);
     } catch (err) {
       console.error("Error al cargar los sectores:", err);

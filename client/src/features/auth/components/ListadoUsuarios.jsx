@@ -3,7 +3,7 @@ import Table from "../../../components/ui/Table";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Button from "../../../components/ui/Button";
 
-export function ListadoUsuarios({usuarios, onOpen, onEditRoles}){
+export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEditSectores, onDelete}){
 
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -61,7 +61,7 @@ export function ListadoUsuarios({usuarios, onOpen, onEditRoles}){
                     {
                         label: "Editar perfil",
                         icon: "manage_accounts",
-                        onClick:()=>{}
+                        onClick:()=>onEditUser(row)
                     },
                     {
                         label: "Administrar roles",
@@ -71,13 +71,13 @@ export function ListadoUsuarios({usuarios, onOpen, onEditRoles}){
                     {
                         label: "Administrar sectores",
                         icon: "arrow_forward",
-                        onClick:()=>{}
+                        onClick:()=>onEditSectores(row)
                     },
                     {
                         label: "Dar de baja",
                         icon: "delete",
                         color: "red",
-                        onClick:()=>{}
+                        onClick:()=>onDelete(row)
                     }
                 ]}
                 isOpen={openDropdownId === row.id_usuario}

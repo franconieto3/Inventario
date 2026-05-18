@@ -148,44 +148,6 @@ export const deleteRole = async (id_rol) => {
 }
 
 
-//Asignar un nuevo sector a un usuario
-
-export const assignSectorToUser = async (id_usuario, id_sector) => {
-    const { data, error } = await supabase
-        .from('usuario_sector')
-        .insert([{ id_usuario, id_sector }])
-        .select();
-
-    if (error) {
-        if (error.code === '23505') throwServiceError(409, "El usuario ya tiene asignado este sector.", error.message);
-        if (error.code === '23503') throwServiceError(404, "El usuario o el sector indicado no existe.", error.message);
-        throwServiceError(500, "Ocurrió un error asignando el sector al usuario", error.message);
-    }
-
-    return { data: data[0] };
-}
-
-//Eliminar un sector de un usuario
-
-export const removeSectorFromUser = async (id_usuario, id_sector) => {
-    const { data, error } = await supabase
-        .from('usuario_sector')
-        .delete()
-        .match({ id_usuario, id_sector }) // Filtramos por la clave primaria compuesta
-        .select();
-
-    if (error) {
-        throwServiceError(500, "Ocurrió un error desasignando el sector del usuario", error.message);
-    }
-
-    // Si data vuelve vacío, significa que no se encontró esa relación para eliminar
-    if (!data || data.length === 0) {
-        throwServiceError(404, "La relación entre el usuario y el sector indicado no existe.");
-    }
-
-    return { data: data[0] };
-}
-
 /*Relacionar roles a un usuario */
 
 export const miMaximoNivel = (solicitante)=>{
@@ -207,4 +169,21 @@ export const updateUserRoles = async (id_usuario, rolesAgregar = [], rolesQuitar
     }
 
     return { message: "Roles actualizados con éxito." };
+}
+
+//Relacionar sectores a un usuario
+
+export const updateUserSectors = async (id_usuario, sectoresAgregar = [], sectoresQuitar = [])=>{
+    const {data, error} = await supabase.rpc('actualizar_sectores_usuario', {
+        p_id_usuario: id_usuario,
+        p_sectores_agregar: sectoresAgregar,
+        p_sectores_quitar: sectoresQuitar
+    });
+
+    if (error) {
+        // En caso de que se dispare el bloque EXCEPTION del RPC o falle la red
+        throwServiceError(500, "Ocurrió un error al actualizar los sectores del usuario", error.message);
+    }
+
+    return { message: "Sectores actualizados con éxito." };
 }

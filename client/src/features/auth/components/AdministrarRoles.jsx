@@ -8,8 +8,8 @@ import { apiCall } from "../../../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function AdministrarRoles({ roles, usuario, onSuccess, onClose }) {
-    const { user} = UserAuth();
+export function AdministrarRoles({ roles, usuario, user, onSuccess, onClose }) {
+    //const { user} = UserAuth();
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");

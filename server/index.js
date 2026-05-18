@@ -8,6 +8,7 @@ import materialRoutes from "./routes/material.routes.js";
 import processRoutes from "./routes/process.routes.js";
 import instrumentRoutes from "./routes/instruments.routes.js";
 import userRoutes from "./routes/user.routes.js"
+import sectorRoutes from "./routes/sectors.routes.js"
 
 // Middlewares
 const app = express();
@@ -26,7 +27,7 @@ app.use('/api/materiales', materialRoutes);
 app.use('/api/procesos', processRoutes);
 app.use('/api/instrumentos', instrumentRoutes);
 app.use('/api/usuarios', userRoutes);
-
+app.use('/api/sectores', sectorRoutes);
 
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
