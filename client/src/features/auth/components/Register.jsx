@@ -10,13 +10,21 @@ import { useUsers } from '../hooks/useUsers';
 import { ListadoUsuarios } from './ListadoUsuarios';
 import { ListadoRoles } from './ListadoRoles';
 import Solapador from '../../../components/layout/Solapador';
+import { AdministrarRoles } from './AdministrarRoles';
+import { AdministrarSectores } from './AdministrarSectores';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export default function Register() {
 
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
+  const [mostrarEditarUsuario, setMostrarEditarUsuario] = useState(false);
+  const [mostrarAdministrarRoles, setMostrarAdministrarRoles] = useState(false);
+  const [mostrarAdministrarSectores, setMostrarAdministrarSectores] = useState(false);
+
   const {usuarios, roles, permisos, fetchUsuarios, fetchRoles, fetchPermisos, fetchAll} = useUsers();
 
   useEffect(()=>{
@@ -27,10 +35,17 @@ export default function Register() {
   return (
     <>
       <NavBar/>
+
       <div className='body-container'>
       <Solapador>
         <div titulo="Usuarios">
-          <ListadoUsuarios usuarios={usuarios} onOpen={()=>setMostrarRegistro(true)}/>
+          <ListadoUsuarios 
+            usuarios={usuarios} 
+            onEditRoles={(id_usuario)=>{
+              setUsuarioSeleccionado(id_usuario);
+              setMostrarAdministrarRoles(true);
+            }}
+            Open={()=>setMostrarRegistro(true)}/>
         </div>
         <div titulo="Roles">
           <ListadoRoles roles={roles} onOpen={()=>{}} />
@@ -47,6 +62,35 @@ export default function Register() {
               onClose={()=>setMostrarRegistro(false)}
               onSuccess={()=>setMostrarRegistro(false)}
             />
+          </Modal>
+        }
+        {mostrarEditarUsuario &&
+          <Modal
+            titulo="Editar usuario"
+            descripcion=""
+            onClose={()=>setMostrarEditarUsuario(false)}
+          >
+
+          </Modal>
+        }
+        {
+          mostrarAdministrarRoles && usuarioSeleccionado &&
+          <Modal
+            titulo="Administrar roles"
+            descripcion={usuarioSeleccionado.name}
+            onClose={()=>setMostrarAdministrarRoles(false)}
+          >
+            <AdministrarRoles roles={roles} usuario={usuarioSeleccionado} onSuccess={null} onClose={()=>setMostrarAdministrarRoles(false)}></AdministrarRoles>
+          </Modal>
+        }
+        {
+          mostrarAdministrarSectores &&
+          <Modal
+            titulo="Administrar sectores"
+            descripcion=""
+            onClose={()=>setMostrarAdministrarSectores(false)}
+          >
+            <AdministrarSectores sectores={null} usuario={usuarioSeleccionado} onSuccess={null} onClose={()=>setMostrarAdministrarSectores(false)}></AdministrarSectores>
           </Modal>
         }
       </div> 

@@ -1,10 +1,10 @@
 import React from "react";
 import "./Table.css";
 
-export default function Table({ data = [], columns = [] }) {
+export default function Table({ data = [], columns = [], padding ='100px' }) {
   return (
     <div className="table-container">
-      <div className="table-wrapper">
+      <div className="table-wrapper" style={{paddingBottom: padding}}>
         <table className="custom-table">
             
           {/*Encabezado*/}

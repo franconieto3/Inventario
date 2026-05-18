@@ -3,8 +3,7 @@ import Table from "../../../components/ui/Table";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Button from "../../../components/ui/Button";
 
-export function ListadoUsuarios({usuarios, onOpen}){
-
+export function ListadoUsuarios({usuarios, onOpen, onEditRoles}){
 
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -19,16 +18,40 @@ export function ListadoUsuarios({usuarios, onOpen}){
             key: "email",
             header: "Email"
         },{
-            key: "estado_descripcion",
-            header: "Estado"
+            key: "",
+            header: "Estado",
+            render: (_, row)=>(<span>{row.estado_usuario.descripcion}</span>)
         },{
             key: "roles",
             header: "Rol/es",
-            render: (_)=> _ || "---"
+            render: (_, row)=> row.roles.length > 0?                 
+                (<ul>
+                    {
+                        row.roles.map(
+                            (rol)=>(
+                            <li 
+                                key={rol.id_rol}
+                                style={{listStyle:'none'}}
+                            >
+                                {rol.descripcion}
+                            </li>
+                            )
+                        )
+                    }
+                </ul>) : 
+                (<span>"---"</span>)
         },{
             key: "sectores",
             header: "Sector/es",
-            render: (_)=> _ || "---"
+            render: (_, row)=> row.sectores.length > 0?                 
+            (<ul>
+                {
+                    row.sectores.map(
+                        (sector)=>(<li key={sector.id_sector} style={{listStyle:'none'}}>{sector.descripcion}</li>)
+                    )
+                }
+            </ul>) : 
+            (<span>"---"</span>)
         },{
             key: "",
             header: "Acciones",
@@ -36,15 +59,25 @@ export function ListadoUsuarios({usuarios, onOpen}){
             <DropdownMenu
                 items={[
                     {
-                        label: "Administrar usuario",
+                        label: "Editar perfil",
                         icon: "manage_accounts",
-                        onclick:()=>{}
+                        onClick:()=>{}
                     },
                     {
-                        label: "Eliminar usuario",
+                        label: "Administrar roles",
+                        icon: "label",
+                        onClick:()=>onEditRoles(row)
+                    },
+                    {
+                        label: "Administrar sectores",
+                        icon: "arrow_forward",
+                        onClick:()=>{}
+                    },
+                    {
+                        label: "Dar de baja",
                         icon: "delete",
                         color: "red",
-                        onclick:()=>{}
+                        onClick:()=>{}
                     }
                 ]}
                 isOpen={openDropdownId === row.id_usuario}
@@ -69,7 +102,7 @@ export function ListadoUsuarios({usuarios, onOpen}){
                 </div>
             </div>
 
-            <Table data={usuarios} columns={columns}></Table>
+            <Table data={usuarios} columns={columns} padding="180px"></Table>
         </>
     );
 }

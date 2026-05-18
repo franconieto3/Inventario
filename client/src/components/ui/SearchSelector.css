@@ -1,0 +1,85 @@
+.search-selector-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.search-selector-error {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #ef4444; /* red-500 */
+    font-weight: 500;
+}
+
+.search-selector-list-container {
+    border: 1px solid #e2e8f0; /* slate-200 */
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-height: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #ffffff;
+}
+
+.search-selector-empty-state {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.search-selector-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.search-selector-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    background-color: #f8fafc; /* slate-50 */
+    gap: 20px;
+}
+
+.search-selector-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155; /* slate-700 */
+}
+
+.search-selector-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-selector-delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.search-selector-delete-btn:hover {
+    color: #ef4444;
+    background-color: #fee2e2;
+}
+
+.search-selector-delete-btn i {
+    font-size: 1.25rem;
+}
