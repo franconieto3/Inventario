@@ -89,12 +89,13 @@ export const getUserStatusList = async ()=>{
 
 //Creación de roles
 
-export const createRole = async (roleData) => {
+export const createRole = async (nombre, nivel, permisos) => {
     // roleData debería tener al menos { descripcion: "..." }
-    const { data, error } = await supabase
-        .from('rol')
-        .insert([roleData])
-        .select();
+    const { data, error } = await supabase.rpc('crear_rol', {
+        p_nombre: nombre,
+        p_nivel: nivel,
+        p_permisos: permisos
+    })
 
     if (error) {
         if (error.code === '23505') throwServiceError(409, "El rol ya existe. La descripción está duplicada.", error.message);
@@ -106,12 +107,14 @@ export const createRole = async (roleData) => {
 
 //Edición de roles
 
-export const updateRole = async (id_rol, roleData) => {
-    const { data, error } = await supabase
-        .from('rol')
-        .update(roleData)
-        .eq('id_rol', id_rol)
-        .select();
+export const updateRole = async (id_rol, nombre, nivel, permisosAgregados, permisosQuitados) => {
+    const { data, error } = await supabase.rpc(actualizar_rol, {
+        p_id_rol: id_rol,
+        p_nombre: nombre,
+        p_nivel: nivel,
+        p_permisos_agregados: permisosAgregados,
+        p_permisos_quitados: permisosQuitados
+    })
 
     if (error) {
         if (error.code === '23505') throwServiceError(409, "Ya existe otro rol con esa descripción.", error.message);

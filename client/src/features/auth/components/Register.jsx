@@ -16,6 +16,8 @@ import { useSectores } from '../../sectores/hooks/useSectores';
 import { UserAuth } from '../context/AuthContext';
 import { maximoNivelRoles } from '../services/MaximoNivel';
 import { EditarUsuario } from './EditarUsuario';
+import { CrearRol } from './CrearRol';
+import { EditarRol } from './EditarRol';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -23,11 +25,14 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export default function Register() {
 
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+  const [rolSeleccionado, setRolSeleccionado] = useState(null);
 
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
   const [mostrarEditarUsuario, setMostrarEditarUsuario] = useState(false);
   const [mostrarAdministrarRoles, setMostrarAdministrarRoles] = useState(false);
   const [mostrarAdministrarSectores, setMostrarAdministrarSectores] = useState(false);
+  const [nuevoRol, setNuevoRol] = useState(false);
+  const [editarRol, setEditarRol] = useState(false);
 
   const {usuarios, roles, permisos, fetchUsuarios, fetchRoles, fetchPermisos, fetchAll} = useUsers();
   const {sectores} = useSectores();
@@ -92,13 +97,22 @@ export default function Register() {
               setUsuarioSeleccionado(usuario);
               setMostrarAdministrarSectores(true);
             }}
-            Open={()=>setMostrarRegistro(true)}
+            onOpen={()=>setMostrarRegistro(true)}
             onDelete={(usuario)=>handleDelete(usuario)}
             />
             
         </div>
         <div titulo="Roles">
-          <ListadoRoles roles={roles} onOpen={()=>{}} />
+          <ListadoRoles 
+            roles={roles} 
+            onOpen={()=>setNuevoRol(true)} 
+            onEdit={(rol)=>{
+              console.log('Rol seleccionado: ',rol);
+              setRolSeleccionado(rol); 
+              setEditarRol(true)
+            }}
+            onDelete={fetchRoles}
+          />
         </div>
       </Solapador>
   
@@ -130,8 +144,7 @@ export default function Register() {
             />
           </Modal>
         }
-        {
-          mostrarAdministrarRoles && usuarioSeleccionado &&
+        {mostrarAdministrarRoles && usuarioSeleccionado &&
           <Modal
             titulo="Administrar roles"
             descripcion={usuarioSeleccionado.name}
@@ -148,8 +161,7 @@ export default function Register() {
               onClose={()=>{setMostrarAdministrarRoles(false); setUsuarioSeleccionado(null)}}></AdministrarRoles>
           </Modal>
         }
-        {
-          mostrarAdministrarSectores &&
+        {mostrarAdministrarSectores &&
           <Modal
             titulo="Administrar sectores"
             descripcion=""
@@ -169,6 +181,24 @@ export default function Register() {
                 }
               }
               />
+          </Modal>
+        }
+        {nuevoRol &&
+          <Modal
+            titulo="Crear nuevo rol"
+            descripcion="Especificar nombre y permisos del rol a crear"
+            onClose={()=>setNuevoRol(false)}
+          >
+            <CrearRol permisos={permisos} onClose={()=>setNuevoRol(false)} onSuccess={fetchRoles}/>
+          </Modal>
+        }
+        {editarRol && rolSeleccionado &&
+          <Modal
+            titulo="Editar rol"
+            descripcion={rolSeleccionado.descripcion}
+            onClose={()=>setEditarRol(false)}
+          >
+            <EditarRol rol={rolSeleccionado} permisos={permisos} onClose={()=>setEditarRol(false)} onSuccess={()=>{setRolSeleccionado(false); fetchRoles()}}/>
           </Modal>
         }
       </div> 

@@ -2,35 +2,65 @@ import { useState } from "react";
 import Button from "../../../components/ui/Button";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Table from "../../../components/ui/Table";
+import { Modal } from '../../../components/ui/Modal';
 
-export function ListadoRoles({roles, onOpen}){
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
+export function ListadoRoles({roles, onOpen, onEdit, onDelete}){
     
     const [openDropdownId, setOpenDropdownId] = useState(null);
+    const [mostrarPermisos, setMostrarPermisos] = useState(false);
+    const [rolSeleccionado, setRolSeleccionado] = useState(null);
+
+    const handleDelete = async(rol)=>{
+        
+        try{
+            const res = await apiCall(`${API_URL}/api/usuarios/rol/${rol.id_rol}`,{method: 'DELETE'})
+            if(onDelete) onDelete();
+
+        }catch(err){
+            console.log(err.message);
+            alert(err.message);
+        }
+    }
 
     const columns = [
         {
             key: "descripcion",
-            header: "Descripción"
+            header: "Descripción",
+            render: (_, row)=>(
+                <span 
+                    onClick={()=>{
+                        setRolSeleccionado(row);
+                        setMostrarPermisos(true);
+                    }} 
+                    style={{cursor: 'pointer'}}>
+                        {_}
+                </span>
+            )
+        },{
+            key: "nivel",
+            header: "Nivel"
         },{
             key: "",
             header: "",
             render: (_, row)=>(
                 <div style={{display:'flex',justifyContent:'end'}}>
                     <DropdownMenu 
-                        isOpen={openDropdownId === row.id_permiso} 
-                        onToggle={openDropdownId === row.id_permiso ? null : row.id_permiso} 
+                        isOpen={openDropdownId === row.id_rol} 
+                        onToggle={() => setOpenDropdownId(openDropdownId === row.id_rol ? null : row.id_rol)}
                         items={
                             [
                                 {
                                 label: "Editar",
                                 icon: "edit",
-                                onclick:()=>{}
+                                onClick:()=>onEdit(row)
                                 },
                                 {
                                 label: "Eliminar",
                                 icon: "delete",
                                 color: "red",
-                                onclick:()=>{}
+                                onClick:()=>handleDelete(row)
                                 }
                             ]
                         }
@@ -56,6 +86,19 @@ export function ListadoRoles({roles, onOpen}){
                 </div>
             </div>
             <Table data={roles} columns={columns}></Table>
+            {mostrarPermisos &&
+                <Modal
+                    titulo="Permisos asociados"
+                    descripcion={rolSeleccionado.descripcion}
+                    onClose={()=>setMostrarPermisos(false)}
+                >
+                    <ul>
+                        {rolSeleccionado.permisos.map(
+                            (r)=><li style={{listStyle:'none', padding:'5px'}}>{r.descripcion}</li>
+                        )}
+                    </ul>
+                </Modal>
+            }
         </>
     );
 }

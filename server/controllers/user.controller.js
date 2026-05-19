@@ -1,4 +1,4 @@
-import { deactivateUser, getPermissionList, getRolList, getUserList, miMaximoNivel, updateUser, updateUserRoles, updateUserSectors } from "../services/user.service.js"
+import { createRole, deactivateUser, deleteRole, getPermissionList, getRolList, getUserList, miMaximoNivel, updateRole, updateUser, updateUserRoles, updateUserSectors } from "../services/user.service.js"
 
 export const usuarios = async (req, res)=>{
     try{
@@ -133,6 +133,49 @@ export const administrarSectores = async (req, res)=>{
     }catch(err){
         console.err();
         return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error al actualizar los sectores del usuario"});
+    }
+}
+
+export const crearRol = async (req, res) =>{
+    try{
+        const {nombre, nivel, permisos} = req.body;
+
+        const data = await createRole(nombre, nivel, permisos);
+
+        return res.status(200).json({
+            message: 'Rol creado exitosamente'
+        })
+    }catch(err){
+        return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error al crear el rol"});
+    }
+}
+
+export const editarRol = async (req, res) =>{
+    try{
+        const {id} = req.params;
+        const {nombre, nivel, permisosAgregados, permisosQuitados} = req.body;
+
+        const data = await updateRole(nombre, nivel, permisosAgregados, permisosQuitados);
+
+        return res.status(200).json({
+            message: 'Rol editado exitosamente'
+        })
+    }catch(err){
+        return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error al actualizar el rol"});
+    }
+}
+
+export const eliminarRol = async (req, res) =>{
+    try{
+        const {id} = req.params;
+        const data = await deleteRole(id);
+
+        return res.status(200).json({
+            message: 'Rol eliminado exitosamente'
+        })
+
+    }catch(err){
+        return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error al eliminar el rol seleccionado"});
     }
 }
 
