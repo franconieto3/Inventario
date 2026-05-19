@@ -187,3 +187,21 @@ export const updateUserSectors = async (id_usuario, sectoresAgregar = [], sector
 
     return { message: "Sectores actualizados con éxito." };
 }
+
+//Editar información de usuario
+
+export const updateUser = async (id_usuario, userData) => {
+    const { data, error } = await supabase
+        .from('usuarios')
+        .update(userData)
+        .eq('id_usuario', id_usuario)
+        .select();
+
+    if (error) {
+        console.log(error);
+        throwServiceError(500, "Ocurrió un error editando el usuario", error.message);
+    }
+
+    return { data: data[0] };
+
+}

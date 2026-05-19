@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { administrarRoles, administrarSectores, baja, permisos, roles, usuarios } from "../controllers/user.controller.js";
+import { administrarRoles, administrarSectores, baja, editarUsuario, permisos, roles, usuarios } from "../controllers/user.controller.js";
 
 const router = Router();
 
@@ -8,6 +8,11 @@ router.get('/listado',
     verificarToken,
     usuarios
 );
+
+router.put('/:id/edit',
+    verificarToken,
+    editarUsuario
+)
 
 router.put('baja/:id',
     verificarToken,

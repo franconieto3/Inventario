@@ -117,10 +117,11 @@ export default function Register() {
         {mostrarEditarUsuario &&
           <Modal
             titulo="Editar usuario"
-            descripcion=""
+            descripcion={usuarioSeleccionado.name}
             onClose={()=>setMostrarEditarUsuario(false)}
           >
             <EditarUsuario
+              usuario={usuarioSeleccionado}
               onClose={()=>{
                 setMostrarEditarUsuario(false)
                 setUsuarioSeleccionado(null);

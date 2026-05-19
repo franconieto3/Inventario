@@ -1,4 +1,4 @@
-import { deactivateUser, getPermissionList, getRolList, getUserList, miMaximoNivel, updateUserRoles, updateUserSectors } from "../services/user.service.js"
+import { deactivateUser, getPermissionList, getRolList, getUserList, miMaximoNivel, updateUser, updateUserRoles, updateUserSectors } from "../services/user.service.js"
 
 export const usuarios = async (req, res)=>{
     try{
@@ -10,6 +10,24 @@ export const usuarios = async (req, res)=>{
     }catch(err){
         console.err();
         return res.status(err.statusCode || 500).json({message: err.message || "No se encontraron resultados"});
+    }
+}
+
+export const editarUsuario = async (req, res)=>{
+    try{
+        const {id} = req.params;
+        const {nombre, email, telefono} = req.body;
+
+        const data = await updateUser(id, {nombre, email, telefono});
+
+        res.status(200).json({
+            message: "Usuario editado exitosamente",
+            data: data
+        })
+
+    }catch(err){
+        console.err();
+        return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error editando el usuario"});
     }
 }
 
