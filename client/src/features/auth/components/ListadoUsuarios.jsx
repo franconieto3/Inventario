@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import Table from "../../../components/ui/Table";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Button from "../../../components/ui/Button";
+import Can from "../../../components/Can";
 
-export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEditSectores, onDelete}){
+export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEditSectores, onDelete, page, setPage, totalPages, loading}){
 
     const [openDropdownId, setOpenDropdownId] = useState(null);
+
+    // --- LÓGICA DE PAGINACIÓN ---
+    const handlePrevPage = () => setPage(prev => Math.max(1, prev - 1));
+    const handleNextPage = () => setPage(prev => Math.min(totalPages, prev + 1));
 
     const columns = [
         {
@@ -61,23 +66,27 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                     {
                         label: "Editar perfil",
                         icon: "manage_accounts",
-                        onClick:()=>onEditUser(row)
+                        onClick:()=>onEditUser(row),
+                        permission:'administrar_usuarios'
                     },
                     {
                         label: "Administrar roles",
                         icon: "label",
-                        onClick:()=>onEditRoles(row)
+                        onClick:()=>onEditRoles(row),
+                        permission: 'administrar_roles_usuarios'
                     },
                     {
                         label: "Administrar sectores",
                         icon: "arrow_forward",
-                        onClick:()=>onEditSectores(row)
+                        onClick:()=>onEditSectores(row),
+                        permission: 'administrar_sectores_usuarios'
                     },
                     {
                         label: "Dar de baja",
                         icon: "delete",
                         color: "red",
-                        onClick:()=>onDelete(row)
+                        onClick:()=>onDelete(row),
+                        permission: 'baja_usuarios'
                     }
                 ]}
                 isOpen={openDropdownId === row.id_usuario}
@@ -96,13 +105,37 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                 </p>
                 </div>
                 <div style={{display:'flex', gap:'15px', alignItems:'center'}}>
-                <Button variant='default' onClick={onOpen}>
-                    Agregar nuevo usuario
-                </Button>
+                <Can permission="crear_usuarios">
+                    <Button variant='default' onClick={onOpen}>
+                        Agregar nuevo usuario
+                    </Button>
+                </Can>
                 </div>
             </div>
 
             <Table data={usuarios} columns={columns} padding="180px"></Table>
+
+            {/* --- CONTROLES DE PAGINACIÓN --- */}
+            {totalPages > 1 && (
+                <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
+                    <button 
+                        onClick={handlePrevPage} 
+                        disabled={page === 1 || loading}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_left</i>
+                    </button>
+                    <span>{page} / {totalPages}</span>
+                    <button 
+                        onClick={handleNextPage} 
+                        disabled={page === totalPages || loading}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_right</i>
+                    </button>
+                </div>
+            )}
+
         </>
     );
 }

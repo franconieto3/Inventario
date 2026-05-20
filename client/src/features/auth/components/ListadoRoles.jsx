@@ -3,14 +3,18 @@ import Button from "../../../components/ui/Button";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Table from "../../../components/ui/Table";
 import { Modal } from '../../../components/ui/Modal';
+import Can from "../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function ListadoRoles({roles, onOpen, onEdit, onDelete}){
+export function ListadoRoles({roles, onOpen, onEdit, onDelete, page, setPage, totalPages, loading}){
     
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [mostrarPermisos, setMostrarPermisos] = useState(false);
     const [rolSeleccionado, setRolSeleccionado] = useState(null);
+
+    const handlePrevPage = () => setPage(prev => Math.max(1, prev - 1));
+    const handleNextPage = () => setPage(prev => Math.min(totalPages, prev + 1));
 
     const handleDelete = async(rol)=>{
         
@@ -54,13 +58,15 @@ export function ListadoRoles({roles, onOpen, onEdit, onDelete}){
                                 {
                                 label: "Editar",
                                 icon: "edit",
-                                onClick:()=>onEdit(row)
+                                onClick:()=>onEdit(row),
+                                permission: 'editar_roles'
                                 },
                                 {
                                 label: "Eliminar",
                                 icon: "delete",
                                 color: "red",
-                                onClick:()=>handleDelete(row)
+                                onClick:()=>handleDelete(row),
+                                permission: 'eliminar_roles'
                                 }
                             ]
                         }
@@ -80,12 +86,35 @@ export function ListadoRoles({roles, onOpen, onEdit, onDelete}){
                 </p>
                 </div>
                 <div style={{display:'flex', gap:'15px', alignItems:'center'}}>
-                <Button variant='default' onClick={onOpen}>
-                    Agregar nuevo rol
-                </Button>
+                    <Can permission='crear_roles'>
+                        <Button variant='default' onClick={onOpen}>
+                            Agregar nuevo rol
+                        </Button>
+                    </Can>
                 </div>
             </div>
             <Table data={roles} columns={columns}></Table>
+
+            {totalPages > 1 && (
+                <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems:'center', gap: '10px', marginTop: '20px' }}>
+                    <button 
+                        onClick={handlePrevPage} 
+                        disabled={page === 1 || loading}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_left</i>
+                    </button>
+                    <span>{page} / {totalPages}</span>
+                    <button 
+                        onClick={handleNextPage} 
+                        disabled={page === totalPages || loading}
+                        className="pagination-button"
+                    >
+                        <i className="material-icons">chevron_right</i>
+                    </button>
+                </div>
+            )}
+
             {mostrarPermisos &&
                 <Modal
                     titulo="Permisos asociados"

@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../../../services/api';
 import NavBar from '../../../components/layout/NavBar';
-import Button from '../../../components/ui/Button';
 import { Modal } from '../../../components/ui/Modal';
 import { NewUser } from './NewUser';
 import { useUsers } from '../hooks/useUsers';
@@ -34,7 +33,7 @@ export default function Register() {
   const [nuevoRol, setNuevoRol] = useState(false);
   const [editarRol, setEditarRol] = useState(false);
 
-  const {usuarios, roles, permisos, fetchUsuarios, fetchRoles, fetchPermisos, fetchAll} = useUsers();
+  const {usuarios, roles, permisos,usuariosPage, usuariosTotalPages, rolesPage, rolesTotalPages, loading, setUsuariosPage,setRolesPage, fetchUsuarios, fetchRoles, fetchPermisos, fetchAll} = useUsers();
   const {sectores} = useSectores();
   const {user} = UserAuth();
 
@@ -99,6 +98,10 @@ export default function Register() {
             }}
             onOpen={()=>setMostrarRegistro(true)}
             onDelete={(usuario)=>handleDelete(usuario)}
+            page={usuariosPage}
+            setPage={setUsuariosPage}
+            totalPages={usuariosTotalPages}
+            loading={loading}
             />
             
         </div>
@@ -112,6 +115,10 @@ export default function Register() {
               setEditarRol(true)
             }}
             onDelete={fetchRoles}
+            page={rolesPage}
+            setPage={setRolesPage}
+            totalPages={rolesTotalPages}
+            loading={loading}
           />
         </div>
       </Solapador>

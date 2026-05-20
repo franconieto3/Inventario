@@ -15,10 +15,11 @@ export function EditarRol({rol, permisos, onClose, onSuccess}){
 
     const [permisosSeleccionados, setPermisosSeleccionados] = useState(rol.permisos);
 
+    
+
     const handleGuardarCambios = async ()=>{
         setError("");
-
-        // Extraemos IDs para facilitar la comparación
+        
         const idsIniciales = rol.permisos.map(p => p.id_permiso);
         const idsSeleccionados = permisosSeleccionados.map(p => p.id_permiso);
 
@@ -77,6 +78,7 @@ export function EditarRol({rol, permisos, onClose, onSuccess}){
                 </label>
                 {permisos.length > 0 ?
                     (<SearchSelector
+                            //Todos los permisos que no estén entre los ids iniciales
                             opciones={permisos}
                             placeholder="Buscar permisos..."
                             keys={['id_permiso', 'descripcion']}

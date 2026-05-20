@@ -108,7 +108,7 @@ export const createRole = async (nombre, nivel, permisos) => {
 //Edición de roles
 
 export const updateRole = async (id_rol, nombre, nivel, permisosAgregados, permisosQuitados) => {
-    const { data, error } = await supabase.rpc(actualizar_rol, {
+    const { data, error } = await supabase.rpc('actualizar_rol', {
         p_id_rol: id_rol,
         p_nombre: nombre,
         p_nivel: nivel,
@@ -117,6 +117,7 @@ export const updateRole = async (id_rol, nombre, nivel, permisosAgregados, permi
     })
 
     if (error) {
+        console.log('error: ', error);
         if (error.code === '23505') throwServiceError(409, "Ya existe otro rol con esa descripción.", error.message);
         throwServiceError(500, "Ocurrió un error editando el rol", error.message);
     }
@@ -126,6 +127,7 @@ export const updateRole = async (id_rol, nombre, nivel, permisosAgregados, permi
     }
 
     return { data: data[0] };
+
 }
 
 //Eliminación de roles

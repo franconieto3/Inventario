@@ -8,7 +8,7 @@ export const usuarios = async (req, res)=>{
             data: data
         })
     }catch(err){
-        console.err();
+        console.error();
         return res.status(err.statusCode || 500).json({message: err.message || "No se encontraron resultados"});
     }
 }
@@ -26,7 +26,7 @@ export const editarUsuario = async (req, res)=>{
         })
 
     }catch(err){
-        console.err();
+        console.error();
         return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error editando el usuario"});
     }
 }
@@ -65,7 +65,7 @@ export const roles = async (req, res) =>{
         })
 
     }catch(err){
-        console.err();
+        console.error();
         return res.status(err.statusCode || 500).json({message: err.message || "No se encontraron resultados"});
     }
 }
@@ -80,7 +80,7 @@ export const permisos = async (req, res) =>{
         })
 
     }catch(err){
-        console.err();
+        console.error();
         return res.status(err.statusCode || 500).json({message: err.message || "No se encontraron resultados"});
     }
 }
@@ -101,8 +101,11 @@ export const administrarRoles = async (req, res)=>{
         if (rolesAgregados.some((rol)=>rol.nivel > maximoSolicitante)) return res.status(400).json({message: 'Al menos uno de los roles agregados excede tu nivel de jerarquía'});
         if(rolesQuitados.some((rol)=>rol.nivel > maximoSolicitante)) return res.status(400).json({message: 'Al menos uno de los roles quitados excede tu nivel de jerarquía'});
 
+        const idsAgregados = rolesAgregados.map(rol => rol.id_rol);
+        const idsQuitados = rolesQuitados.map(rol => rol.id_rol);
+
         //Ejecutar la función de servicio
-        const data = await updateUserRoles(id_usuario, rolesAgregados, rolesQuitados);
+        const data = await updateUserRoles(id_usuario, idsAgregados, idsQuitados);
     
         return res.status(200).json({
             message: "Roles actualizados exitosamente",
@@ -110,7 +113,7 @@ export const administrarRoles = async (req, res)=>{
         });
 
     }catch(err){
-        console.err();
+        console.error();
         return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error al actualizar los roles del usuario"});
     }
 }
@@ -131,7 +134,7 @@ export const administrarSectores = async (req, res)=>{
         });
     
     }catch(err){
-        console.err();
+        console.error();
         return res.status(err.statusCode || 500).json({message: err.message || "Ocurrió un error al actualizar los sectores del usuario"});
     }
 }
@@ -155,7 +158,7 @@ export const editarRol = async (req, res) =>{
         const {id} = req.params;
         const {nombre, nivel, permisosAgregados, permisosQuitados} = req.body;
 
-        const data = await updateRole(nombre, nivel, permisosAgregados, permisosQuitados);
+        const data = await updateRole(id, nombre, nivel, permisosAgregados, permisosQuitados);
 
         return res.status(200).json({
             message: 'Rol editado exitosamente'

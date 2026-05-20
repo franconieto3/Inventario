@@ -61,7 +61,7 @@ export function AdministrarRoles({ roles, usuario, user, onSuccess, onClose }) {
         try {
             setLoading(true);
 
-            const res = apiCall(`${API_URL}/api/usuarios/${usuario.id_usuario}/roles`, {
+            const res = await apiCall(`${API_URL}/api/usuarios/${usuario.id_usuario}/roles`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             })
