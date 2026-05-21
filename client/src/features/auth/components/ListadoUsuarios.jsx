@@ -44,7 +44,7 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                         )
                     }
                 </ul>) : 
-                (<span>"---"</span>)
+                (<span>---</span>)
         },{
             key: "sectores",
             header: "Sector/es",
@@ -56,7 +56,7 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                     )
                 }
             </ul>) : 
-            (<span>"---"</span>)
+            (<span>---</span>)
         },{
             key: "",
             header: "Acciones",
@@ -73,13 +73,13 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                         label: "Administrar roles",
                         icon: "label",
                         onClick:()=>onEditRoles(row),
-                        permission: 'administrar_roles_usuarios'
+                        permission: 'administrar_roles_usuario'
                     },
                     {
                         label: "Administrar sectores",
                         icon: "arrow_forward",
                         onClick:()=>onEditSectores(row),
-                        permission: 'administrar_sectores_usuarios'
+                        permission: 'administrar_sectores_usuario'
                     },
                     {
                         label: "Dar de baja",

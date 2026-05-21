@@ -110,7 +110,6 @@ export default function Register() {
             roles={roles} 
             onOpen={()=>setNuevoRol(true)} 
             onEdit={(rol)=>{
-              console.log('Rol seleccionado: ',rol);
               setRolSeleccionado(rol); 
               setEditarRol(true)
             }}
@@ -131,7 +130,12 @@ export default function Register() {
           >
             <NewUser
               onClose={()=>setMostrarRegistro(false)}
-              onSuccess={()=>setMostrarRegistro(false)}
+              onSuccess={
+                ()=>{
+                  setMostrarRegistro(false);
+                  fetchUsuarios();
+                }
+              }
             />
           </Modal>
         }

@@ -11,7 +11,7 @@ export function CrearRol({permisos = [], onClose, onSuccess}){
     const [loading, setLoading] = useState(false);
 
     const [nombre, setNombre] = useState("");
-    const [nivel, setNivel] = useState("");
+    const [nivel, setNivel] = useState("100");
 
     const [permisosSeleccionados, setPermisosSeleccionados] = useState([]);
 

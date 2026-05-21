@@ -20,7 +20,8 @@ export const getUserList = async () => {
             estado_usuario:estado_usuario (id_estado_usuario, descripcion),
             sectores:sector (id_sector, descripcion),
             roles:rol (id_rol, descripcion, nivel)
-        `);
+        `)
+        .eq('id_estado_usuario', 1);
 
     if (error) {
         throwServiceError(500, "Ocurrió un error obteniendo el listado de usuarios", error.message);
@@ -196,6 +197,7 @@ export const updateUserSectors = async (id_usuario, sectoresAgregar = [], sector
 //Editar información de usuario
 
 export const updateUser = async (id_usuario, userData) => {
+
     const { data, error } = await supabase
         .from('usuarios')
         .update(userData)

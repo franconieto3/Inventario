@@ -43,6 +43,7 @@ export function EditarUsuario({usuario, onSuccess, onClose}){
             if (onClose) onClose();
 
         } catch (error) {
+            console.log(error);
             setError(error.message);
         } finally {
             setLoading(false);

@@ -16,9 +16,9 @@ export const usuarios = async (req, res)=>{
 export const editarUsuario = async (req, res)=>{
     try{
         const {id} = req.params;
-        const {nombre, email, telefono} = req.body;
+        const {name, email, telefono} = req.body;
 
-        const data = await updateUser(id, {nombre, email, telefono});
+        const data = await updateUser(Number(id), {name, email, telefono});
 
         res.status(200).json({
             message: "Usuario editado exitosamente",
@@ -38,14 +38,14 @@ export const baja = async (req, res)=>{
         const {usuario} = req.body;
 
         //Evitar darse de baja a uno mismo
-        if(solicitante.id_usuario === id) return res.status(400).json({message: 'No es posible darse de baja a uno mismo'})
+        if(Number(solicitante.id_usuario) === Number(id)) return res.status(400).json({message: 'No es posible darse de baja a uno mismo'})
 
         //Evitar dar de baja a usuarios con roles de mayor jerarquia
         if (miMaximoNivel(solicitante) > miMaximoNivel(usuario)){
             return res.status(400).json({message: 'No es posible dar de baja a este usuario'})    
         }
 
-        const data = await deactivateUser(id);
+        const data = await deactivateUser(Number(id));
 
         return res.status(200).json({
             message: "Usuario dado de baja exitosamente"
@@ -96,10 +96,11 @@ export const administrarRoles = async (req, res)=>{
 
         //Calcular la jerarquía máxima del usuario solicitante
         const maximoSolicitante = miMaximoNivel(solicitante);
+        
 
         //Verificar que tanto los roles agregados como quitados sean de menor jerarquía que el mejor rol del usuario solicitante
-        if (rolesAgregados.some((rol)=>rol.nivel > maximoSolicitante)) return res.status(400).json({message: 'Al menos uno de los roles agregados excede tu nivel de jerarquía'});
-        if(rolesQuitados.some((rol)=>rol.nivel > maximoSolicitante)) return res.status(400).json({message: 'Al menos uno de los roles quitados excede tu nivel de jerarquía'});
+        if (rolesAgregados.some((rol)=>rol.nivel < maximoSolicitante)) return res.status(400).json({message: 'Al menos uno de los roles agregados excede tu nivel de jerarquía'});
+        if(rolesQuitados.some((rol)=>rol.nivel < maximoSolicitante)) return res.status(400).json({message: 'Al menos uno de los roles quitados excede tu nivel de jerarquía'});
 
         const idsAgregados = rolesAgregados.map(rol => rol.id_rol);
         const idsQuitados = rolesQuitados.map(rol => rol.id_rol);
@@ -158,7 +159,7 @@ export const editarRol = async (req, res) =>{
         const {id} = req.params;
         const {nombre, nivel, permisosAgregados, permisosQuitados} = req.body;
 
-        const data = await updateRole(id, nombre, nivel, permisosAgregados, permisosQuitados);
+        const data = await updateRole(Number(id), nombre, nivel, permisosAgregados, permisosQuitados);
 
         return res.status(200).json({
             message: 'Rol editado exitosamente'
@@ -171,7 +172,7 @@ export const editarRol = async (req, res) =>{
 export const eliminarRol = async (req, res) =>{
     try{
         const {id} = req.params;
-        const data = await deleteRole(id);
+        const data = await deleteRole(Number(id));
 
         return res.status(200).json({
             message: 'Rol eliminado exitosamente'

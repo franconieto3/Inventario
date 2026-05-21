@@ -20,19 +20,19 @@ export function AdministrarSectores({sectores = [], usuario, user, onSuccess, on
         setError("");
 
         // Extraemos IDs para facilitar la comparación
-        const idsIniciales = usuario.sectores.map(r => r.id_sector);
-        const idsSeleccionados = rolesSeleccionados.map(r => r.id_sector);
+        const idsIniciales = usuario.sectores.map(s => s.id_sector);
+        const idsSeleccionados = sectoresSeleccionados.map(s => s.id_sector);
 
         // Agregados: Están en la selección nueva, pero no estaban inicialmente
-        const sectoresAgregados = sectoresSeleccionados.filter(r => !idsIniciales.includes(r.id_rol));
+        const sectoresAgregados = sectoresSeleccionados.filter(s => !idsIniciales.includes(s.id_sector));
         
         // Quitados: Estaban inicialmente, pero ya no están en la selección nueva
-        const sectoresQuitados = sectoresActualesGestionables.filter(r => !idsSeleccionados.includes(r.id_rol));
+        const sectoresQuitados = sectores.filter(s => !idsSeleccionados.includes(s.id_sector));
 
         const payload = {
             id_usuario: usuario.id_usuario,
-            sectoresAgregados: sectoresAgregados,
-            sectoresQuitados: sectoresQuitados
+            sectoresAgregados: sectoresAgregados.map(s => s.id_sector),
+            sectoresQuitados: sectoresQuitados.map(s => s.id_sector)
         };
 
         try{

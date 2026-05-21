@@ -23,7 +23,7 @@ router.put('/:id/edit',
     editarUsuario
 )
 
-router.put('baja/:id',
+router.put('/baja/:id',
     verificarToken,
     requirePermission('baja_usuarios'),
     validateSchema(idParamSchema,'params'),

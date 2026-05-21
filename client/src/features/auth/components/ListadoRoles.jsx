@@ -4,6 +4,7 @@ import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Table from "../../../components/ui/Table";
 import { Modal } from '../../../components/ui/Modal';
 import Can from "../../../components/Can";
+import { apiCall } from "../../../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -17,14 +18,15 @@ export function ListadoRoles({roles, onOpen, onEdit, onDelete, page, setPage, to
     const handleNextPage = () => setPage(prev => Math.min(totalPages, prev + 1));
 
     const handleDelete = async(rol)=>{
-        
-        try{
-            const res = await apiCall(`${API_URL}/api/usuarios/rol/${rol.id_rol}`,{method: 'DELETE'})
-            if(onDelete) onDelete();
+        if(window.confirm(`¿Deseas eliminar el rol ${rol.descripcion}?`)){
+            try{
+                const res = await apiCall(`${API_URL}/api/usuarios/rol/${rol.id_rol}`,{method: 'DELETE'})
+                if(onDelete) onDelete();
 
-        }catch(err){
-            console.log(err.message);
-            alert(err.message);
+            }catch(err){
+                console.log(err.message);
+                alert(err.message);
+            }
         }
     }
 
