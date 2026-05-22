@@ -25,8 +25,6 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
         }
     }, [mostrar, idPieza, fetchPart]);
 
-    useEffect(() => console.log(pieza), [pieza]);
-
     return (
         <>
             <div className='detail'>
@@ -68,6 +66,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                 />
                                 <PartProcessRoutes
                                     pieza={pieza}
+                                    onBopRemoval={fetchPart}
                                 />
                                 <PartInstruments
                                     pieza={pieza}

@@ -249,22 +249,6 @@ export const getRuta = async (idBop)=>{
     err.statusCode = 500;
     throw err;
   }
-  /*
-  const res = {
-    id_bop: data.id_bop,
-    nombre: data.nombre,
-    procesos: data.proceso_bop.map(
-      (p)=>{
-        return {
-          id_proceso: p.proceso.id_proceso,
-          id_proceso_ruta: p.id_proceso_ruta,
-          orden_secuencia: p.orden_secuencia,
-          requiere_inspeccion: p.requiere_inspeccion
-        }
-      }
-    )
-  }
-*/
   return data;
 }
 
@@ -424,3 +408,18 @@ export const eliminarRuta = async (idBop) => {
 
   return true;
 };
+
+export const removeRouteFromPart = async (id_pieza, id_bop) =>{
+  const {data, error} = await supabase
+    .from('pieza_bop')
+    .delete()
+    .eq('id_pieza', id_pieza)
+    .eq('id_bop', id_bop);
+
+  if(error){
+    throw new Error({statusCode: 500, message: error.message});
+  }
+
+  return data;
+
+}

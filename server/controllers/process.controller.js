@@ -1,4 +1,4 @@
-import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertProceso, insertRutaProceso, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
+import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertProceso, insertRutaProceso, removeRouteFromPart, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
 
 
 export const obtenerTiposProcesos = async (req, res) => {
@@ -179,4 +179,16 @@ export const eliminacionRuta = async (req, res)=>{
     console.error('Error al eliminar ruta de procesos:', error);
     return res.status(error.statusCode ? error.statusCode : 500).json({ error: error.message || 'Error al actualizar ruta de procesos:'});
   }
+}
+
+export const quitarRutaPieza = async (req, res)=>{
+  try{
+    const {idPieza, idBop} = req.query;
+    const data = await removeRouteFromPart(idPieza, idBop);
+    return res.status(200).json({message: "Eliminación exitosa", data: data});
+
+  }catch(err){
+    return res.status(statusCode || 500).json({error: err.message || "Ocurrió un error al intentar eliminar la ruta de procesos de la pieza"});
+  }
+
 }

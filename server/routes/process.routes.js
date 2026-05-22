@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listarProcesos, nuevaRutaProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo } from "../controllers/process.controller.js";
+import { actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listarProcesos, nuevaRutaProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { procesoSchema } from "../schemas/process.schemas.js";
 
@@ -62,5 +62,11 @@ router.delete('/ruta/delete/:id',
     verificarToken,
     eliminacionRuta
 )
+
+router.delete('/ruta/pieza',
+    verificarToken,
+    quitarRutaPieza
+)
+
 
 export default router;

@@ -53,6 +53,7 @@ export function PartMaterials({pieza,producto, onRefresh}){
                             <div>
                                 <span className="material-nombre">{m.descripcion}</span>
                                 <span className="material-cantidad">x{m.consumo_teorico} {m.unidad}.</span>
+                                <span className="material-cantidad" style={{backgroundColor:'#D9421C', color:'white'}}>x{m.merma_esperada} {m.unidad}.</span>
                             </div>
                             <DropdownMenu
                                 isOpen={activeMenuId === m.id_bom}

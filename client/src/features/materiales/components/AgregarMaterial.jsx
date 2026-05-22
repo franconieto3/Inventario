@@ -38,7 +38,7 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
             if (alreadyExists) {
                 return prev; 
             }
-            return [...prev, { ...item, consumo: 0.0 }]
+            return [...prev, { ...item, consumo: 0.0, merma: 0.0}]
         });
         setReload((prev)=>prev+1)
     };
@@ -55,6 +55,16 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
                 : m
         ));
     };
+
+    const handleScrapChange = (id_material, value) => {
+        const merma = parseInt(value, 10);
+        setMateriales((prev) => prev.map(m => 
+            m.id_material === id_material 
+                ? { ...m, merma: isNaN(merma) ? '' : merma } 
+                : m
+        ));
+    };
+
 
     const submitMateriales = async ()=>{
         
@@ -74,7 +84,8 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
             materiales: materiales.map(
                 (m)=>({
                     id_material: m.id_material,
-                    consumo: m.consumo
+                    consumo: m.consumo,
+                    merma_esperada: m.merma || 0.0
                 })
             )
         }
@@ -139,6 +150,19 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
                                             />
                                             <span>{m.unidad}</span>
                                         </div>
+
+                                        <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
+                                            <span>Merma esperada: </span>
+                                            <input 
+                                                type="number" 
+                                                min="1"
+                                                className="shadcn-input"
+                                                value={m.merma}
+                                                onChange={(e) => handleScrapChange(m.id_material, e.target.value)}
+                                            />
+                                            <span>{m.unidad}</span>
+                                        </div>
+
                                         <button 
                                             className="delete-btn" 
                                             onClick={() => handleRemoveMaterial(m.id_material)}

@@ -9,7 +9,7 @@ import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-export function PartProcessRoutes({pieza}){
+export function PartProcessRoutes({pieza, onBopRemoval}){
 
     const {tipos} = useProcessRoutes();
     const [mostrarRuta, setMostrarRuta] = useState(false);
@@ -18,6 +18,9 @@ export function PartProcessRoutes({pieza}){
 
     const [activeMenuId, setActiveMenuId] = useState(null);
     const toggleMenu = (id) => setActiveMenuId(activeMenuId === id ? null : id);
+
+    const [activeHistoryMenuId, setActiveHistoryMenuId] = useState(null);
+    const toggleHistoryMenu = (id) => setActiveHistoryMenuId(activeHistoryMenuId === id ? null : id);
 
     const [mostrarHistorial, setMostrarHistorial] = useState(false);
     const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
@@ -62,9 +65,22 @@ export function PartProcessRoutes({pieza}){
 
     /* Historial de rutas */
     const handleRouteHistory = (tipo)=>{
-        console.log(`Viendo rutas de ${tipo.descripcion}`)
         setMostrarHistorial(true);
         setTipoSeleccionado(tipo);
+    }
+
+    const handleRemoveRouteFromPart = async (idBop)=>{
+        if (window.confirm("¿Desea quitar esta ruta?")){
+            try{
+                const query = new URLSearchParams({idBop, idPieza: pieza.id_pieza});
+                const res = await apiCall(`${API_URL}/api/procesos/ruta/pieza?${query.toString()}`,{method: 'DELETE'});
+                
+                if (onBopRemoval) onBopRemoval();
+
+            }catch(err){
+                console.log(err.message);
+            }
+        }
     }
 
     return(
@@ -101,9 +117,16 @@ export function PartProcessRoutes({pieza}){
                                     <DropdownMenu
                                         isOpen={activeMenuId === ruta.id_bop}
                                         onToggle={() => toggleMenu(ruta.id_bop)}
-                                        items={[
-                                            { label: 'Ver historial', icon: 'history', onClick: () => handleRouteHistory(tipo) }
-                                        ]}
+                                        items={[{ 
+                                            label: 'Ver historial',
+                                            icon: 'history',
+                                            onClick: () => handleRouteHistory(tipo) 
+                                        },{
+                                            label: 'Desvincular ruta',
+                                            icon: 'delete',
+                                            color: 'red',
+                                            onClick: () => handleRemoveRouteFromPart(ruta.id_bop)
+                                        }]}
                                     />
                                 </div>
                             </li>
@@ -141,22 +164,38 @@ export function PartProcessRoutes({pieza}){
                                 <li
                                     key={`${ruta.id_bop}`} 
                                     className="componente-item"
-                                    onClick={() => {
-                                        setMostrarHistorial(false);
-                                        verRuta(ruta.id_bop)
-                                    }}
                                 >
-                                    <div>
-                                        <p 
-                                            style={{
-                                                fontSize:'1rem',
-                                                margin:'0',
-                                                fontWeight: '500'
-                                            }}
-                                        >
-                                            {ruta.nombre}
-                                        </p>
-                                        <p style={{'margin':'0'}}>Fecha de vigencia: {new Date(ruta.fecha_vigencia).toISOString().split("T")[0]}</p>
+                                    <div style={{display:'flex', justifyContent:'space-between', alignItems: 'center', width:'100%'}}>
+                                        <div style={{width:'100%'}}
+                                        onClick={() => {
+                                            setMostrarHistorial(false);
+                                            verRuta(ruta.id_bop)
+                                        }}>
+                                            <p 
+                                                style={{
+                                                    fontSize:'1rem',
+                                                    margin:'0',
+                                                    fontWeight: '500'
+                                                }}
+                                            >
+                                                {ruta.nombre}
+                                            </p>
+                                            <p style={{'margin':'0'}}>Fecha: {new Date(ruta.fecha_vigencia).toISOString().split("T")[0]}</p>
+                                        </div>
+                                        <DropdownMenu
+                                            isOpen={activeHistoryMenuId === ruta.id_bop}
+                                            onToggle={() => toggleHistoryMenu(ruta.id_bop)}
+                                            items={[
+                                                { 
+                                                    label: 'Desvincular ruta',
+                                                    icon: 'delete',
+                                                    color: 'red',
+                                                    onClick: () => {
+                                                        setMostrarHistorial(false);
+                                                        handleRemoveRouteFromPart(ruta.id_bop);
+                                                }}
+                                            ]}
+                                        />
                                     </div>
                                 </li>
                             ))
