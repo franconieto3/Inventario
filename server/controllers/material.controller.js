@@ -167,10 +167,10 @@ export const quitarMaterial= async(req, res)=>{
 
 export const edicionBom = async( req, res) =>{
   try{
-    const {id_bom, consumo_teorico} = req.body;
-    const data = await MaterialService.modificarBom(id_bom, consumo_teorico);
+    const {id_bom, consumo_teorico, merma_esperada} = req.body;
+    const data = await MaterialService.modificarBom(id_bom, consumo_teorico, merma_esperada);
     
-    return res.status(200).json({message: "Petición recibida correctamente"});
+    return res.status(200).json({message: "Lista de materiales actualizada correctamente"});
     
   }catch(err){
     console.error(err.message);

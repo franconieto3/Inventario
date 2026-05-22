@@ -5,14 +5,20 @@ import Button from "../../../components/ui/Button";
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function EditarBom({bom, onClose, onSuccess}){
-    const [consumo, setConsumo] = useState(bom.consumo_teorico || '');
+    const [consumo, setConsumo] = useState(bom.consumo_teorico || 0);
+    const [merma, setMerma] = useState(bom.merma_esperada || 0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const handleQuantityChange = (value) => {
             const cantidad = parseFloat(value);
-            setConsumo(isNaN(cantidad) ? '' : cantidad);
+            setConsumo(isNaN(cantidad) ? 0 : cantidad);
         };
+
+    const handleScrapChange = (value)=>{
+        const cantidad = parseFloat(value);
+        setMerma(isNaN(cantidad) ? 0 : cantidad)
+    }
 
     const handleSubmit = async () => {
         if (!consumo || consumo <= 0) {
@@ -22,7 +28,8 @@ export function EditarBom({bom, onClose, onSuccess}){
 
         const payload = {
             id_bom: bom.id_bom,
-            consumo_teorico: consumo
+            consumo_teorico: consumo,
+            merma_esperada: merma
         };
 
         try {
@@ -60,6 +67,7 @@ export function EditarBom({bom, onClose, onSuccess}){
                             <span className="material-name">{bom.descripcion}</span>
                             
                             <div className="material-actions">
+
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                     <span>Consumo teórico: </span>
                                     <input 
@@ -73,6 +81,19 @@ export function EditarBom({bom, onClose, onSuccess}){
                                     />
                                     <span>{bom.unidad}</span>
                                 </div>
+
+                                <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
+                                    <span>Merma esperada: </span>
+                                    <input 
+                                        type="number" 
+                                        min="1"
+                                        className="shadcn-input"
+                                        value={merma}
+                                        onChange={(e) => handleScrapChange(e.target.value)}
+                                    />
+                                    <span>{bom.unidad}</span>
+                                </div>
+
                             </div>
                         </li>
                     </ul>

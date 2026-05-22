@@ -129,10 +129,10 @@ export const quitarMaterialPieza = async (idBom)=>{
   return data;
 }
 
-export const modificarBom = async (id_bom, consumo_teorico) => {
+export const modificarBom = async (id_bom, consumo_teorico, merma_esperada) => {
   const { data, error } = await supabase
     .from('pieza_bom')
-    .update({ consumo_teorico: consumo_teorico })
+    .update({ consumo_teorico: consumo_teorico, merma_esperada: merma_esperada })
     .eq('id_bom', id_bom)
     .select();
 

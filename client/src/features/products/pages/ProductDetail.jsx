@@ -174,7 +174,7 @@ export default function ProductDetail() {
               key={p.id_pieza}
               nombrePieza={p.nombre} 
               idPieza={p.id_pieza}
-              codigoPieza={p.codigo}
+              codigoPieza={p.codigo_produccion}
               producto={producto}
               onRefreshParent={fetchProduct}
             />        

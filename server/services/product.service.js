@@ -1,5 +1,7 @@
 import { supabase } from "../config/supabase.js";
 
+//Rubros
+
 export const obtenerRubros = async ()=>{
 
     const { data, error } = await supabase
@@ -11,6 +13,8 @@ export const obtenerRubros = async ()=>{
     return data;
 }
 
+//Registros de producto médico
+
 export const obtenerRegistrosPm = async ()=>{
     const { data, error } = await supabase
         .from('registro_pm')
@@ -21,9 +25,9 @@ export const obtenerRegistrosPm = async ()=>{
     return data;
 }
 
+//Productos
+
 export const obtenerProductos = async ({ page, limit, rubro, registro_pm })=>{
-    
-    //const { data, error } = await supabase.rpc('obtener_productos',{});
     
     const from = (page - 1) * limit;
     const to = from + limit - 1;
@@ -172,17 +176,6 @@ export const obtenerInfoPieza = async (idPieza) => {
 
     return [piezaRes, documentos, materiales, procesos, instrumentos];
     
-}
-
-export const obtenerComponentes = async(idPiezaPadre)=>{
-    const {data, error} = await supabase.rpc('obtener_componentes',{p_id_pieza_padre: idPiezaPadre});
-    
-    if(error){
-        console.error("Error al obtener componentes", error);
-        return [];
-    }
-
-    return data;
 }
 
 export const verificarPieza = async (nombrePieza, codigo, idProducto, idPieza = null ) => {

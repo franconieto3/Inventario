@@ -154,11 +154,11 @@ export const pieza = async (req, res) =>{
             respuestaFinal.componentes = [];
         }
 
-        res.status(200).json(respuestaFinal);
+        return res.status(200).json(respuestaFinal);
 
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
+        return res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
     }
 
 }
