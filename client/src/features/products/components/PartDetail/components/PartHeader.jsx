@@ -37,7 +37,7 @@ export function PartHeader({ mostrar, setMostrar, idPieza, nombrePieza, codigoPi
                         onChange={() => setMostrar(!mostrar)} 
                         checked={mostrar} 
                     />
-                    <span>{producto.nombre} {nombrePieza} · Código: {codigoPieza? `${producto.id_rubro} - ${codigoPieza}`: ''}</span>
+                    <span>{producto.nombre} {nombrePieza} · Código: {codigoPieza? `${String(producto.id_rubro).padStart(2, "0")}-${codigoPieza}-XX`: ''}</span>
                 </div>
                 
                 <Can permission="administrar_productos">

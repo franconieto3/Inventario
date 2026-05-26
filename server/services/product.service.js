@@ -27,6 +27,11 @@ export const obtenerRegistrosPm = async ()=>{
 
 //Productos
 
+export const validarCodigoPieza = (str) => {
+  return /^\d{3}/.test(str);
+}
+
+
 export const obtenerProductos = async ({ page, limit, rubro, registro_pm })=>{
     
     const from = (page - 1) * limit;

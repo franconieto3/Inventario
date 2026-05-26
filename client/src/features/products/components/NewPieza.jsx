@@ -30,10 +30,8 @@ function NewPieza({ id, data = {}, onChange, onDelete, rubro, producto }) {
               <span className="prefix">{String(rubro).padStart(2, "0")} -</span>
               <input
                 className="input-number"
-                type="number"
+                type="text"
                 name="codigoPieza"
-                min="1" 
-                step="1" 
                 value={data.codigoPiezaRaw}
                 onChange={handleChange}
               />

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Buscador from "../../../components/ui/Buscador";
 import { apiCall } from "../../../services/api";
 import NewPieza from "./NewPieza";
+import validarPrimeros3Digitos from '../../../services/validarCodigo';
 
 import "./NewProduct.css";
 
@@ -52,6 +53,12 @@ export default function NewProduct(props) {
         setError("Hay al menos dos piezas con la misma denominación");
         return;
       }
+
+      if(piezas.some(p => !validarPrimeros3Digitos(p.codigoPiezaRaw))){
+        setError("Los primeros 3 dígitos del código deben ser numéricos");
+        return;
+      }
+
     }
     // 2. Preparar el Payload Único
       const payload = {
@@ -61,7 +68,7 @@ export default function NewProduct(props) {
           piezas: piezas.map(p => {
            return{
             nombre: p.nombrePieza,
-            codigo: Number(p.codigoPiezaRaw)
+            codigo: p.codigoPiezaRaw
            }
           })
       };

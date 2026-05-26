@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import { apiCall } from '../../../services/api';
+import validarPrimeros3Digitos from '../../../services/validarCodigo';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -21,16 +22,23 @@ export function AgregarPieza({producto, onUploadSuccess}){
         setLoading(true);
 
         try{
-            if(!nombrePieza) throw new Error("El nombre de la pieza es obligatorio")
-            
+            if(!nombrePieza) {
+                setError("El nombre de la pieza es obligatorio");
+                return;
+            }
+
+            if(!validarPrimeros3Digitos(codigo)){
+                setError("Los primeros 3 dígitos del código deben ser numéricos");
+                return;
+            }
+
             const payload = {
                 nombrePieza: nombrePieza,
-                codigo: codigo === "" ? null : Number(codigo), 
+                codigo: codigo, 
                 idProducto: producto.id_producto
             }
 
             const respuesta = await apiCall(`${API_URL}/api/productos/pieza/crear`, {method: 'POST', body: JSON.stringify(payload)});
-            //alert("Pieza creada exitosamente.");
 
             // Reset de formulario y cierre
             setCodigo("");
@@ -72,7 +80,7 @@ export function AgregarPieza({producto, onUploadSuccess}){
                                     <span className="prefix">{String(producto.id_rubro).padStart(2, "0")} - </span>
                                     <input
                                         className="input-number"
-                                        type="number"
+                                        type="text"
                                         name="codigoPieza"
                                         min="1" 
                                         step="1" 

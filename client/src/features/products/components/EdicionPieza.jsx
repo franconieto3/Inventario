@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { apiCall } from "../../../services/api";
+import validarPrimeros3Digitos from "../../../services/validarCodigo";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -26,9 +27,14 @@ export default function EdicionPieza({idPieza, pieza, producto, nombreInicial, c
             if(nombrePieza===""){
                 throw new Error("Es obligatorio especificar el nombre");
             }
+
+            if(!validarPrimeros3Digitos(codigo)){
+                throw new Error("Los primeros 3 dígitos del código deben ser numéricos");
+            }
+
             const payload ={
                 nombre: nombrePieza,
-                codigo: codigo === "" ? null : Number(codigo),
+                codigo: codigo,
                 idProducto: producto.id_producto
             }
             const respuesta = await apiCall(`${API_URL}/api/productos/pieza/edicion/${idPieza}`, {method: 'PUT', body: JSON.stringify(payload)});
@@ -67,7 +73,7 @@ export default function EdicionPieza({idPieza, pieza, producto, nombreInicial, c
                                         </span>
                                         <input
                                             className="input-number"
-                                            type="number"
+                                            type="text"
                                             name="codigoPieza"
                                             placeholder={codigoInicial}
                                             value={codigo}

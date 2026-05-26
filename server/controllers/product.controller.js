@@ -46,6 +46,10 @@ export const nuevoProducto = async (req, res) =>{
     try {
         const { nombre, id_registro_pm, id_rubro, piezas } = req.body;
 
+        if(piezas.some((p)=>p.codigo && !productService.validarCodigoPieza(p.codigo))){
+            return res.status(400).json({error: "Formato de código de pieza inválido"});
+        }
+
         const data = await productService.cargarProductos(nombre, id_registro_pm, id_rubro, piezas);
 
         // Si todo salió bien
@@ -94,13 +98,13 @@ export const edicionProducto = async(req,res)=>{
         
         //Validaciones
         if(nombre===""){
-            res.status(400).json({error:"Es obligatorio especificar el nombre de la pieza"});
+            res.status(400).json({error:"Es obligatorio especificar el nombre del producto"});
             return;
         }
 
         //Servicios
         const data = productService.editarProducto(id, nombre, idRegistroPm, idRubro);
-        res.status(201).json({message: "Pieza editada correctamente"});
+        res.status(201).json({message: "Producto editado correctamente"});
     
     }catch(err){
         console.error(err);
@@ -166,6 +170,10 @@ export const pieza = async (req, res) =>{
 export const agregarPieza = async (req, res)=>{
     try{
         const {nombrePieza, codigo, idProducto } = req.body;
+        
+        if(!productService.validarCodigoPieza(codigo)){
+            return res.status(400).json({message:'Formato de código de pieza inválido'})
+        }
 
         //Verificar que no estén repetidos los códigos o los nombres
         const piezaVerificada = await productService.verificarPieza(nombrePieza, codigo, idProducto);
@@ -187,16 +195,20 @@ export const edicionPieza = async (req, res)=>{
         const {id} = req.params;
         const {nombre, codigo, idProducto} = req.body;
 
+        if(!productService.validarCodigoPieza(codigo)){
+            return res.status(400).json({message:'Formato de código de pieza inválido'})
+        }
+
         //Verificación: dos piezas del mismo producto no pueden tener el mismo código o nombre
         const piezaVerificada = await productService.verificarPieza(nombre, codigo, idProducto , Number(id));
 
         //Servicios
-        const data = productService.editarPieza(id, nombre, codigo, null);
+        const data = await productService.editarPieza(id, nombre, codigo, null);
         res.status(201).json({message: "Pieza editada correctamente"});
     
     }catch(err){
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json({error:err.message});
+        res.status(err.statusCode || 500).json({error: err.message || "Ocurrió un error al editar la pieza"});
     }
 }
 

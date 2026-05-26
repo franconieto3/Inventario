@@ -13,7 +13,7 @@ export const productoSchema = z.object({
       // 1. Aquí RELAJAMOS la regla base. Permitimos string vacío u opcional.
       // Esto es necesario para que pase la validación inicial del tipo.
       nombre: z.string().optional(), 
-      codigo: z.any().optional()
+      codigo: z.string().optional()
     })
   )
   .min(1, "Datos incompletos") // Debe haber al menos 1 pieza
@@ -65,18 +65,12 @@ export const crearPiezaSchema = z.object({
   nombrePieza: z.string({ required_error: "El nombre es obligatorio" })
     .min(1, "El nombre no puede estar vacío"),
   idProducto: z.coerce.number({ invalid_type_error: "ID de producto inválido" }).int().positive(),
-  codigo: z.preprocess(
-    (val) => (val === "" ? null : val),
-    z.coerce.number().int().nullable().optional()
-  )
+  codigo: z.string().optional()
 });
 
 export const editarPiezaSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio"),
   
   // Reutilizamos la misma lógica para el código
-  codigo: z.preprocess(
-    (val) => (val === "" ? null : val),
-    z.coerce.number().int().nullable().optional()
-  )
+  codigo: z.string().optional()
 });
