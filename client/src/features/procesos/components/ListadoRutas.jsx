@@ -6,6 +6,7 @@ import { Modal } from "../../../components/ui/Modal";
 import { useEffect } from "react";
 import { DetalleRuta } from "./DetalleRuta";
 import Button from "../../../components/ui/Button";
+import Can from "../../../components/Can";
 
 export function ListadoRutas({
     rutas, 
@@ -61,13 +62,15 @@ export function ListadoRutas({
                                 {
                                     label: 'Editar ruta',
                                     icon:'edit',
-                                    onClick:()=>{onEdit(row)}
+                                    onClick:()=>{onEdit(row)},
+                                    permission: "editar_rutas_procesos"
                                 },
                                 {
                                     label: 'Eliminar ruta',
                                     icon: 'delete',
                                     color: 'red',
-                                    onClick: ()=>{onDelete(row)}
+                                    onClick: ()=>{onDelete(row)},
+                                    permission: "eliminar_rutas_procesos"
                                 }
                             ]
                         }   
@@ -99,12 +102,13 @@ export function ListadoRutas({
                             )
                         )}
                     </select>
-                    <div style={{marginBottom:'15px', marginTop:'15px'}}>
-                        <Button onClick={onNewRoute}>
-                            Nueva ruta de procesos
-                        </Button>
-                    </div>
-                    
+                    <Can permission="crear_rutas_procesos">
+                        <div style={{marginBottom:'15px', marginTop:'15px'}}>
+                            <Button onClick={onNewRoute}>
+                                Nueva ruta de procesos
+                            </Button>
+                        </div>
+                    </Can>
                 </div>
             </div>
 

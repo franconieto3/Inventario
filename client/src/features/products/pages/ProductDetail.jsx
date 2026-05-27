@@ -137,16 +137,16 @@ export default function ProductDetail() {
             <i className='material-icons' id="add-icon">add</i>
             Agregar elementos de control
         </button>
-
-        {mostrarCrearRuta &&
-         <NuevaRutaProcesos 
-          producto={producto.nombre}
-          piezas={producto.pieza}
-          onClose={()=>setMostrarCrearRuta(false)}
-          onSuccess={()=>fetchProduct()}
-          />
-         }
-
+        <Can permission="crear_rutas_procesos">
+          {mostrarCrearRuta &&
+          <NuevaRutaProcesos 
+            producto={producto.nombre}
+            piezas={producto.pieza}
+            onClose={()=>setMostrarCrearRuta(false)}
+            onSuccess={()=>fetchProduct()}
+            />
+          }
+        </Can>
          {mostrarAsociarElementos &&
             <AsociarInstrumentoPieza
               producto={producto}

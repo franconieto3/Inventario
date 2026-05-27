@@ -12,6 +12,7 @@ import { useProcessRoutes } from "../hooks/useProcessRoutes";
 import { EditarRuta } from "../components/EditarRuta";
 import { apiCall } from "../../../services/api";
 import Solapador from "../../../components/layout/Solapador";
+import Can from "../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -122,6 +123,7 @@ export function Procesos(){
                                 onNewRoute={()=>setMostrarNewRutaProceso(true)}
                             />
                     </div>
+
                 </Solapador>
             </div>
             {mostrarNewProceso &&

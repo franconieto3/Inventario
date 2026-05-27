@@ -62,7 +62,7 @@ export default function HomePage(){
                             <p className='card-description'>Ordenes de cambio de ingeniería, permisos de acceso a documentos, registro de calibraciones</p>
                         </div>
                     </Can>
-                    <Can permission={null}>
+                    <Can permission="acceso_materiales">
                         <div className="card" onClick={()=>navigate("/materiales")}>
                             <div className='icons-container'>
                                 <div className="first-icon">
@@ -77,7 +77,7 @@ export default function HomePage(){
                         </div>
                     </Can>
 
-                    <Can permission={null}>
+                    <Can permission="acceso_instrumentos">
                         <div className="card" onClick={()=>navigate("/instrumentos")}>
                             <div className='icons-container'>
                                 <div className="first-icon">
@@ -92,7 +92,7 @@ export default function HomePage(){
                         </div>
                     </Can>
 
-                    <Can permission={null}>
+                    <Can permission="acceso_procesos">
                         <div className="card" onClick={()=>navigate("/procesos")}>
                             <div className='icons-container'>
                                 <div className="first-icon">

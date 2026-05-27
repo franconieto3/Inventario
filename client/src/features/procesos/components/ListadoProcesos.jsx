@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Table from "../../../components/ui/Table";
 import Button from "../../../components/ui/Button";
+import Can from "../../../components/Can";
 
 export function ListadoProcesos({
     procesos,
@@ -40,13 +41,15 @@ export function ListadoProcesos({
                                 {
                                     label: 'Editar proceso',
                                     icon:'edit',
-                                    onClick:()=>{onEdit(row)}
+                                    onClick:()=>{onEdit(row)},
+                                    permission: "editar_proceso"
                                 },
                                 {
                                     label: 'Eliminar proceso',
                                     icon: 'delete',
                                     color: 'red',
-                                    onClick: ()=>{onDelete(row)}
+                                    onClick: ()=>{onDelete(row)},
+                                    permission: "eliminar_procesos"
                                 }
                             ]
                         }   
@@ -70,11 +73,13 @@ export function ListadoProcesos({
                         Visualización, edición y eliminación de procesos
                     </p>
                 </div>
-                <div style={{marginBottom:'15px', marginTop:'15px'}}>
-                    <Button onClick={onNewProcess}>
-                        Agregar proceso
-                    </Button>
-                </div>
+                <Can permission="crear_proceso">
+                    <div style={{marginBottom:'15px', marginTop:'15px'}}>
+                        <Button onClick={onNewProcess}>
+                            Agregar proceso
+                        </Button>
+                    </div>
+                </Can>
             </div>
             <Table data={procesos} columns={columnas}/>
 
