@@ -82,13 +82,15 @@ export function ListadoCategorias({data, enums, onEditSuccess}){
                         {                            
                             label: 'Editar categoría',
                             icon: 'edit',
-                            onClick: () => onEdit(row)
+                            onClick: () => onEdit(row),
+                            permission: 'editar_categorias_instrumentos'
                         },
                         {
                             label: 'Eliminar categoría',
                             icon: 'delete',
                             color: 'red',
-                            onClick: () => onDelete(row)
+                            onClick: () => onDelete(row),
+                            permission: 'eliminar_categorias_instrumentos'
                         }
                     ]}
                 >

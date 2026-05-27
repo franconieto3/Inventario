@@ -107,7 +107,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                     label: "Restablecer esta versión", 
                                     icon: "restore", 
                                     onClick: () => handleReestablecer(v), 
-                                    //permission:'administrar_documentos'
+                                    permission:'administrar_documentos'
                                 },
                                 { 
                                     separator: true 
@@ -117,7 +117,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                     icon: "delete", 
                                     color: "red",
                                     onClick: () => handleEliminar(v),
-                                    //permission:'administrar_documentos' 
+                                    permission:'administrar_documentos' 
                                 }
                             ];
 

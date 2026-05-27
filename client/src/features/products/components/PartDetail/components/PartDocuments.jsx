@@ -65,7 +65,8 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
                                         onClick: () => {
                                             setVersionSeleccionada(d.id_version);
                                             setMostrarSolicitud(true);
-                                        }
+                                        },
+                                        permission:'solicitar_modificacion'
                                     },
                                     {
                                         label: 'Historial de versiones',
@@ -73,7 +74,8 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
                                         onClick: () => {
                                             setTipoDocSeleccionado(d.id_tipo_documento);
                                             setMostrarHistorial(true);
-                                        }
+                                        },
+                                        permission: 'ver_historial_documentos'
                                     },
                                     {
                                         label: 'Eliminar versión',

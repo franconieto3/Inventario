@@ -10,6 +10,7 @@ import { EditarInstrumentos } from "../components/EditarInstrumentos";
 import { apiCall } from "../../../services/api";
 import { AgregarCategoria } from "../components/AgregarCategoria";
 import { ListadoCategorias } from "../components/ListadoCategorias";
+import Can from "../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -77,12 +78,16 @@ export function Instrumentos(){
                             </div>
                             <div style={{display:'flex', gap:'15px', alignItems:'center'}}
                             >
-                                <Button variant="secondary" onClick={()=> setNuevaCategoria(true)}>
-                                    Agregar categoría
-                                </Button>
-                                <Button variant="default" onClick={()=>setCrearInstrumento(true)} style={{marginTop:'15px', marginBottom:'15px'}}>
-                                    Agregar elemento de control
-                                </Button>
+                                <Can permission='crear_categorias_instrumentos'>
+                                    <Button variant="secondary" onClick={()=> setNuevaCategoria(true)}>
+                                        Agregar categoría
+                                    </Button>
+                                </Can>
+                                <Can permission='crear_instrumentos'>
+                                    <Button variant="default" onClick={()=>setCrearInstrumento(true)} style={{marginTop:'15px', marginBottom:'15px'}}>
+                                        Agregar elemento de control
+                                    </Button>
+                                </Can>
                             </div>
                         </div>
 

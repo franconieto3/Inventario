@@ -37,7 +37,8 @@ router.get('/:id/stream',
 
 //----
 router.get('/historial-versiones-pieza', 
-    verificarToken, 
+    verificarToken,
+    requirePermission('ver_historial_documentos'), 
     validateSchema(HistorialVersionesSchema, 'query'), 
     historialDocumentos);
 
@@ -78,16 +79,19 @@ router.get('/estados-solicitud',
 
 router.post('/solicitud-acceso/:id',
     verificarToken,
+    requirePermission('solicitar_acceso'),
     //Validar solicitud: revisar en la base de datos si existe alguna solicitud no expirada que esté aprobada o pendiente para el id_version e id_usuario. Si está pendiente devolver una excepción
     crearSolicitudAcceso
 )
 
 router.get('/solicitudes-acceso', 
     verificarToken,
+    requirePermission('ver_solicitudes_acceso'),
     getSolicitudesAcceso);
 
 router.put('/solicitud-acceso/edicion/:id',
     verificarToken,
+    requirePermission('modificar_solicitudes_acceso'),
     actualizarSolicitudAcceso
 );
 

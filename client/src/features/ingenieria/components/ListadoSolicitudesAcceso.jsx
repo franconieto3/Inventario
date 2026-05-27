@@ -19,7 +19,8 @@ const AccessRequestRowActions = ({ row, onEditClick }) => {
             icon: "edit",
             onClick: () => {
                 onEditClick(row);
-            }
+            },
+            permission: 'modificar_solicitudes_acceso'
         }
     ];
 

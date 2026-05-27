@@ -103,17 +103,20 @@ export function InstrumentDetail(){
                                         {
                                             label: 'Editar',
                                             icon: 'edit',
-                                            onClick: ()=>setMostrarEdicion(true)
+                                            onClick: ()=>setMostrarEdicion(true),
+                                            permission: 'editar_instrumentos'
                                         },
                                         {
                                             label: 'Agregar archivo',
                                             icon: 'upload',
-                                            onClick: ()=>setMostrarAgregarArchivos(true)
+                                            onClick: ()=>setMostrarAgregarArchivos(true),
+                                            permission: 'editar_instrumentos'
                                         },
                                         {
                                             label: 'Agregar verificación',
                                             icon: 'check',
-                                            onClick: ()=> setMostrarAgregarVerificacion(true)
+                                            onClick: ()=> setMostrarAgregarVerificacion(true),
+                                            permission: 'administrar_calibraciones'
                                         },
                                         instrumento.activo?
                                         {
@@ -127,7 +130,8 @@ export function InstrumentDetail(){
                                                 if (exito) {
                                                     setRefreshTrigger(prev => prev + 1); 
                                                 }
-                                            }
+                                            },
+                                            permission: 'eliminar_instrumentos'
                                         }:{onClick: ()=> null}
                                     ]}
                                 />

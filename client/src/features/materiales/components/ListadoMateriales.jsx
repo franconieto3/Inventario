@@ -57,13 +57,15 @@ export function ListadoMateriales({
                             {
                                 label: 'Editar material',
                                 icon:'edit',
-                                onClick:()=>{onEdit(row)}
+                                onClick:()=>{onEdit(row)},
+                                permission: 'editar_materiales'
                             },
                             {
                                 label: 'Eliminar material',
                                 icon: 'delete',
                                 color: 'red',
-                                onClick: ()=>{onDelete(row)}
+                                onClick: ()=>{onDelete(row)},
+                                permission: 'eliminar_materiales'
                             }
                         ]
                     }

@@ -5,6 +5,7 @@ import {Modal} from "../../../../../components/ui/Modal";
 import { AgregarMaterial } from "../../../../materiales/components/AgregarMaterial";
 import { apiCall } from "../../../../../services/api";
 import { EditarBom } from "../../../../materiales/components/EditarBom";
+import Can from "../../../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -59,8 +60,8 @@ export function PartMaterials({pieza,producto, onRefresh}){
                                 isOpen={activeMenuId === m.id_bom}
                                 onToggle={() => toggleMenu(m.id_bom)}
                                 items={[
-                                    { label: 'Modificar cantidad', icon: 'edit', onClick: () => handleEditMaterial(m) },
-                                    { label: 'Quitar material', icon: 'remove', color: 'red', onClick: () => handleRemoveMaterial(m.id_bom) }
+                                    { label: 'Modificar cantidad', icon: 'edit', onClick: () => handleEditMaterial(m), permission: 'administrar_materiales_pieza' },
+                                    { label: 'Quitar material', icon: 'remove', color: 'red', onClick: () => handleRemoveMaterial(m.id_bom), permission: 'administrar_materiales_pieza' }
                                 ]}
                             />
                         </li>
@@ -68,10 +69,11 @@ export function PartMaterials({pieza,producto, onRefresh}){
                 </ul>
             )}
 
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
-                <Button variant="secondary" onClick={() => setMostrarAgregar(true)}>Agregar materiales</Button>
-            </div>
-             
+            <Can permission='administrar_materiales_pieza'>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
+                    <Button variant="secondary" onClick={() => setMostrarAgregar(true)}>Agregar materiales</Button>
+                </div>
+            </Can>
             
             {mostrarAgregar && (
                 <Modal 

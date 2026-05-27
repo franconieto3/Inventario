@@ -138,13 +138,15 @@ export function ListadoInstrumentos({
                         {
                             label: 'Editar instrumento',
                             icon: 'edit',
-                            onClick: () => onEdit(row)
+                            onClick: () => onEdit(row),
+                            permission: 'editar_instrumentos'
                         },
                         {
                             label: 'Eliminar instrumento',
                             icon: 'delete',
                             color: 'red',
-                            onClick: () => onDelete(row)
+                            onClick: () => onDelete(row),
+                            permission: 'eliminar_instrumentos'
                         },
                         row.activo?
                         {
@@ -162,7 +164,8 @@ export function ListadoInstrumentos({
                                 if (exito) {
                                     onParamsChange({ ...params }); 
                                 }
-                            }
+                            },
+                            permission: 'eliminar_instrumentos'
                         }:
                         {onClick: ()=> null}
                     ]}

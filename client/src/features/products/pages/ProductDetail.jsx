@@ -123,20 +123,29 @@ export default function ProductDetail() {
         </div>
         <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
         <p>Rubro: {producto.rubro.descripcion}</p>
+
         <Can permission="administrar_productos">
           <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
         </Can>
-        <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
 
-        <button className='add-span' onClick={()=>{setMostrarCrearRuta(true)}}>
-            <i className='material-icons' id="add-icon">add</i>
-            Agregar ruta de procesos
-        </button>
+        <Can permission='administrar_documentos'>
+          <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+        </Can>
+        
+        <Can permission="crear_rutas_procesos">      
+          <button className='add-span' onClick={()=>{setMostrarCrearRuta(true)}}>
+              <i className='material-icons' id="add-icon">add</i>
+              Agregar ruta de procesos
+          </button>
+        </Can>    
 
-        <button className='add-span' onClick={()=>{setMostrarAsociarElementos(true)}}>
-            <i className='material-icons' id="add-icon">add</i>
-            Agregar elementos de control
-        </button>
+        <Can permission='administrar_instrumento_pieza'>
+          <button className='add-span' onClick={()=>{setMostrarAsociarElementos(true)}}>
+              <i className='material-icons' id="add-icon">add</i>
+              Agregar elementos de control
+          </button>
+        </Can>
+
         <Can permission="crear_rutas_procesos">
           {mostrarCrearRuta &&
           <NuevaRutaProcesos 
@@ -147,13 +156,14 @@ export default function ProductDetail() {
             />
           }
         </Can>
-         {mostrarAsociarElementos &&
-            <AsociarInstrumentoPieza
-              producto={producto}
-              onClose={()=>setMostrarAsociarElementos(false)}
-              onSuccess={()=>fetchProduct()}
-            />
-         }
+
+        {mostrarAsociarElementos &&
+          <AsociarInstrumentoPieza
+            producto={producto}
+            onClose={()=>setMostrarAsociarElementos(false)}
+            onSuccess={()=>fetchProduct()}
+          />
+        }
 
         {mostrarEdicion &&
           <EdicionProducto 

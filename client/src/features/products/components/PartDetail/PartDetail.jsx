@@ -10,6 +10,7 @@ import { PartProcessRoutes } from './components/PartProcessRoutes';
 
 import "./PartDetail.css"
 import { PartInstruments } from './components/PartInstruments';
+import Can from '../../../../components/Can';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -45,33 +46,39 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                         
                         {!loading && pieza && (
                             <div style={{'display':'flex', 'gap':'15px', 'flexWrap':'wrap'}}>
-
-                                {pieza.documentos && (
-                                    <PartDocuments 
-                                        documentos={pieza.documentos} 
-                                        idPieza={idPieza} 
-                                        onRefresh={fetchPart} 
-                                    />
-                                )}
-
+                                <Can permission='ver_documentos'>
+                                    {pieza.documentos && (
+                                        <PartDocuments 
+                                            documentos={pieza.documentos} 
+                                            idPieza={idPieza} 
+                                            onRefresh={fetchPart} 
+                                        />
+                                    )}
+                                </Can>
                                 <PartComponents
                                     pieza={pieza} 
                                     producto={producto} 
                                     onRefresh={fetchPart}
                                 />
-                                <PartMaterials
-                                    pieza={pieza}
-                                    producto={producto} 
-                                    onRefresh={fetchPart}
-                                />
-                                <PartProcessRoutes
-                                    pieza={pieza}
-                                    onBopRemoval={fetchPart}
-                                />
+                                <Can permission='ver_materiales_pieza'>
+                                    <PartMaterials
+                                        pieza={pieza}
+                                        producto={producto} 
+                                        onRefresh={fetchPart}
+                                    />
+                                </Can>
+                                <Can permission='ver_procesos_pieza'>
+                                    <PartProcessRoutes
+                                        pieza={pieza}
+                                        onBopRemoval={fetchPart}
+                                    />
+                                </Can>
+                                <Can permission='ver_instrumentos_pieza'>
                                 <PartInstruments
                                     pieza={pieza}
                                     onRefresh={fetchPart}
                                 />
+                                </Can>
                                 
                             </div>
                         )}

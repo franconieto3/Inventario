@@ -7,6 +7,7 @@ import { useMateriales } from "../hooks/useMateriales";
 import { Modal } from "../../../components/ui/Modal";
 import { EditarMaterial } from "../components/EditarMaterial";
 import { apiCall } from "../../../services/api";
+import Can from "../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -58,11 +59,13 @@ export function Materiales(){
                         <p className='products-text'>Materiales</p>
                     </div>
                 </div>
-                <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
-                    <Button onClick={()=>setMostrarNewMaterial(true)}>
-                        Agregar material
-                    </Button>
-                </div>  
+                <Can permission='crear_materiales'>
+                    <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
+                        <Button onClick={()=>setMostrarNewMaterial(true)}>
+                            Agregar material
+                        </Button>
+                    </div>  
+                </Can>
                 <ListadoMateriales 
                     rubros={rubros} 
                     materiales={materiales} 

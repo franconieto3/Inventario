@@ -13,15 +13,17 @@ router.get('/rubros',
     rubros);
 
 router.get('/registros-pm', 
-    verificarToken, 
+    verificarToken,
     registrosPM);
 
 router.get('/listado-piezas',
     verificarToken, 
+    requirePermission('ver_productos'),
     piezas);
 
 router.get('/',
     verificarToken, 
+    requirePermission('ver_productos'),
     productos);
 
 router.post('/new', 
@@ -32,6 +34,7 @@ router.post('/new',
 
 router.get('/:id',
     verificarToken, 
+    requirePermission('ver_productos'),
     producto);
 
 router.put('/edicion/:id', 
@@ -47,6 +50,7 @@ router.delete('/eliminacion/:id',
 
 router.get('/pieza/:id',
     verificarToken, 
+    requirePermission('ver_productos'),
     pieza);
 
 router.post('/pieza/crear', 

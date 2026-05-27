@@ -5,6 +5,7 @@ import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 import Button from "../../../../../components/ui/Button";
 import { AgregarComponentes } from "../../../../ensambles/components/AgregarComponentes";
 import { EditarComponente } from "../../../../ensambles/components/EditarComponentes";
+import Can from "../../../../../components/Can";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -55,18 +56,19 @@ export function PartComponents({ pieza, producto, onRefresh }) {
                                 isOpen={activeMenuId === c.id_pieza}
                                 onToggle={() => toggleMenu(c.id_pieza)}
                                 items={[
-                                    { label: 'Modificar cantidad', icon: 'edit', onClick: () => handleEditComponent(c) },
-                                    { label: 'Quitar componente', icon: 'remove', onClick: () => handleRemoveComponent(c.id_pieza) }
+                                    { label: 'Modificar cantidad', icon: 'edit', onClick: () => handleEditComponent(c), permission: 'administrar_componentes_pieza' },
+                                    { label: 'Quitar componente', icon: 'remove', onClick: () => handleRemoveComponent(c.id_pieza), permission: 'administrar_componentes_pieza' }
                                 ]}
                             />
                         </li>
                     ))}
                 </ul>
             )}
-
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                <Button variant="secondary" onClick={() => setMostrarAgregar(true)}>Agregar componentes</Button>
-            </div>
+            <Can permission='administrar_componentes_pieza'>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <Button variant="secondary" onClick={() => setMostrarAgregar(true)}>Agregar componentes</Button>
+                </div>
+            </Can>
 
             {/* Modales aislados de la vista principal */}
             {mostrarAgregar && (

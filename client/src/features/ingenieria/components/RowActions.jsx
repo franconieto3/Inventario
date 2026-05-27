@@ -35,14 +35,16 @@ export function ChangeRequestRowActions({ row, onUpdate }) {
     { 
       label: 'Realizado', 
       icon: 'check', 
-      onClick: () => actualizarSolicitud(2) 
+      onClick: () => actualizarSolicitud(2),
+      permission: 'modificar_solicitud_cambio'
     },
     { separator: true },
     { 
       label: 'Rechazar', 
       icon: 'close', 
       color: '#ef4444', 
-      onClick: () => actualizarSolicitud(3)  
+      onClick: () => actualizarSolicitud(3),
+      permission: 'modificar_solicitud_cambio'  
     }
   ]
 

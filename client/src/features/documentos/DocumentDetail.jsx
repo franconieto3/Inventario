@@ -135,13 +135,15 @@ export const DocumentDetail = () => {
           </div>
         ) : (
           // UI para cuando se puede pedir
-          <Button 
-            variant='default' 
-            onClick={solicitarAcceso}
-            disabled={loading}
-          >
-            {loading ? 'Procesando...' : 'Solicitar acceso'}
-          </Button>
+          <Can permission='solicitar_acceso'>
+            <Button 
+              variant='default' 
+              onClick={solicitarAcceso}
+              disabled={loading}
+            >
+              {loading ? 'Procesando...' : 'Solicitar acceso'}
+            </Button>
+          </Can>
         )}
       </div>
     </div>
@@ -205,12 +207,12 @@ export const DocumentDetail = () => {
           <Button variant="secondary" onClick={handleRotate} title="Rotar">
             <i className='material-icons' >rotate_90_degrees_ccw</i> 
           </Button>
-          <Can permission={null}>
+          <Can permission={'imprimir_documentos'}>
             <Button variant="secondary" onClick={handlePrint} title="Imprimir">
               <i className='material-icons'>print</i>
             </Button>
           </Can>
-          <Can permission={null}>
+          <Can permission={'descargar_documentos'}>
             <Button variant="default" onClick={handleDownload} title="Descargar">
               <i className='material-icons'>download</i>
               <span className='btn-text'>Descargar</span>

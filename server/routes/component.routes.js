@@ -10,23 +10,23 @@ const router = Router();
 //Creación
 router.post('/new', 
     verificarToken, 
+    requirePermission('administrar_componentes_pieza'),
     validateSchema(crearComposicionSchema),
-    requirePermission('administrar_productos'),
     asociarPiezas
 );
 
 // Edición
 router.put('/edit',
     verificarToken,
+    requirePermission('administrar_componentes_pieza'),
     validateSchema(editarComposicionSchema),
-    requirePermission('administrar_productos'),
     edicionComponente
 )
 
 //Eliminación
 router.delete('/remove',
     verificarToken,
-    requirePermission('administrar_productos'),
+    requirePermission('administrar_componentes_pieza'),
     eliminacionComponente
 );
 
