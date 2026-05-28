@@ -6,6 +6,8 @@ import NewPieza from "./NewPieza";
 import validarPrimeros3Digitos from '../../../services/validarCodigo';
 
 import "./NewProduct.css";
+import Button from "../../../components/ui/Button";
+import { Modal } from "../../../components/ui/Modal";
 
 const genId = () => `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -110,12 +112,23 @@ export default function NewProduct(props) {
 
   return (
     <>
-      <div className="overlay">
-        <div className="modal">
+      <Modal
+        titulo='Crear nuevo producto'
+        descripcion=''
+        onClose={props.onClose}
+      >
           <div>
-            <label>Nombre del producto:</label>
-            <input type="text" placeholder="Nombre del producto..." name="nombre" value={nombre} onChange={handleChange} />
-
+            <div style={{marginBottom: '15px'}}>
+              <label>Nombre del producto:</label>
+              <input 
+                type="text" 
+                placeholder="Nombre del producto..." 
+                name="nombre" 
+                value={nombre} 
+                onChange={handleChange} 
+                style={{padding:'10px', fontSize: '0.9rem', border:'1px solid #ccccccdc', borderRadius:'6px', width:'100%', marginTop:'5px'}}
+              />
+            </div>
             <label>
               Registro de producto médico:
             </label>
@@ -156,16 +169,19 @@ export default function NewProduct(props) {
               producto={nombre}
             />
           ))}
-          <button onClick={addPart}>Agregar pieza</button>
+          <Button variant='secondary' onClick={addPart}>Agregar pieza</Button>
 
           {error && (<p className="error-message" style={{ color: "red" }}> {error} </p>)}
 
-          <div className="buttons">
-            <button className="cancel" onClick={props.onClose}>Cancelar</button>
-            <button className="create" onClick={handleCreate} disabled={loading?true:false}>{loading?'Guardando...':'Crear'}</button>
-          </div>
-        </div>
-      </div>
+          <Button
+            variant="default"
+            onClick={handleCreate}
+            disabled={loading}
+          >
+            {loading?'Guardando...':'Crear'}
+          </Button>
+
+      </Modal>
     </>
   );
 }

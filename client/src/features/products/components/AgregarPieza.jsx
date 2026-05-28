@@ -1,6 +1,8 @@
 import {useState, useEffect} from 'react'
 import { apiCall } from '../../../services/api';
 import validarPrimeros3Digitos from '../../../services/validarCodigo';
+import Button from '../../../components/ui/Button';
+import { Modal } from '../../../components/ui/Modal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -65,51 +67,49 @@ export function AgregarPieza({producto, onUploadSuccess}){
         </button>
         
         {agregarPieza &&
-        <div className='overlay'>
-            <div className='modal' style={{'width':'350px'}}>
-                <div style={{'display':'flex', "gap":"8px"}}>
-                    <div>
-                        <i className='material-icons' id='close-button' onClick={()=>setAgregarPieza(false)}>close</i>
-                    </div>
-                    <div style={{'width':'100%'}}>
-                        <h3 style={{"fontSize":"1rem", "textAlign":'start','paddingTop':'10px', 'paddingBottom':'10px'}}>Agregar nueva pieza</h3>
-                        <form onSubmit={handleSubmit} >
-                            <div className="input-codigo">
-                                <div style={{'width':'50%', 'textAlign':'start'}}>Código de pieza: </div>
-                                <div className="input-wrapper">
-                                    <span className="prefix">{String(producto.id_rubro).padStart(2, "0")} - </span>
-                                    <input
-                                        className="input-number"
-                                        type="text"
-                                        name="codigoPieza"
-                                        min="1" 
-                                        step="1" 
-                                        value={codigo}
-                                        onChange={(e)=>setCodigo(e.target.value)}
-                                    />
-                                    <span className="suffix">- XX</span>
-                                </div>
-                            </div>
-                            <div className="input-descripcion" style={{'width':'100%', 'justifyContent':'space-between'}}>
-                                <span style={{'width':'50%', 'textAlign':'start'}}>{producto.nombre}</span>
-                                <input
-                                    placeholder='Descripción...'
-                                    className="input-text"
-                                    type="text"
-                                    name="nombrePieza"
-                                    value={nombrePieza}
-                                    onChange={(e)=>setNombrePieza(e.target.value)}
-                                />
-                            </div>
-                            <div style={{'textAlign':'start', 'paddingTop':'10px', 'paddingBottom':'10px'}}>
-                                <button style={{'backgroundColor':'#033545','color':'white','borderRadius':'8px'}} type="submit" disabled={loading?true:false}>{loading?'Cargando':'Guardar'}</button>
-                            </div>
-                            {error && <p style={{'color':'red'}}>{error}</p>}
-                        </form>
+        <Modal 
+            titulo="Agregar pieza"
+            descripcion="Especifique el código y nombre de la pieza"
+            onClose={()=>setAgregarPieza(false)}
+        >
+            <form onSubmit={handleSubmit} >
+                <div className="input-codigo">
+                    <div style={{'width':'50%', 'textAlign':'start'}}>Código de pieza: </div>
+                    <div className="input-wrapper">
+                        <span className="prefix">{String(producto.id_rubro).padStart(2, "0")} - </span>
+                        <input
+                            style={{padding:'8px', border:'1px solid #ccc', borderRadius:'4px'}}
+                            className="input-number"
+                            type="text"
+                            name="codigoPieza"
+                            min="1" 
+                            step="1" 
+                            value={codigo}
+                            onChange={(e)=>setCodigo(e.target.value)}
+                        />
+                        <span className="suffix">- XX</span>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div className="input-descripcion" style={{'width':'100%', 'justifyContent':'space-between'}}>
+                    <span style={{'width':'50%', 'textAlign':'start'}}>{producto.nombre}</span>
+                    <input
+                        style={{padding:'8px', border:'1px solid #ccc', borderRadius:'4px'}}
+                        placeholder='Descripción...'
+                        className="input-text"
+                        type="text"
+                        name="nombrePieza"
+                        value={nombrePieza}
+                        onChange={(e)=>setNombrePieza(e.target.value)}
+                    />
+                </div>
+                    
+                <Button variant='default' type="submit" disabled={loading} style={{width:'100%', marginTop: '20px'}}>
+                        {loading?'Cargando':'Guardar'} 
+                </Button>
+
+                {error && <p style={{'color':'red'}}>{error}</p>}
+            </form>
+        </Modal>
         }
         </>
     );

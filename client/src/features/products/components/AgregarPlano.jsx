@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 
 import SubirArchivo from "../../../components/ui/SubirArchivo";
 import { apiCall } from "../../../services/api";
+import Button from '../../../components/ui/Button';
+import { Modal } from '../../../components/ui/Modal';
 
 //import "../styles/ProductDetail.css"
 import "./AgregarDocumento.css"
 import { useDocuments } from "../hooks/useDocuments";
 import { limpiarNombreArchivo } from "../../../services/formatearNombreArchivo";
+import { ToggleSelector } from "../../../components/ui/ToggleSelector";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -17,11 +20,9 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     const [commit, setCommit] = useState("");
     const [resetKey, setResetKey] = useState(0);
     const [piezasPlano, setPiezasPlano] = useState([]);
-    //const [tiposDocumento, setTiposDocumento] = useState([]);
+
     const [idTipoDocumento, setIdTipoDocumento] = useState("");
-
     const {tiposDocumento} = useDocuments();
-
     const [file, setFile] = useState(null);
     
     //Estado de visualización
@@ -33,25 +34,12 @@ export default function AgregarPlano({producto, onUploadSuccess}){
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    // Lógica para obtener los tipos permitidos del documento seleccionado
-    // Buscamos el objeto completo en el array 'tiposDocumento' usando el ID seleccionado
     const tipoDocumentoSeleccionado = tiposDocumento.find(
         t => String(t.id_tipo_documento) === String(idTipoDocumento)
     );
     
-    // Extraemos el array, o usamos vacío si no hay selección
     const formatosPermitidos = tipoDocumentoSeleccionado?.tipos_permitidos || []; 
     
-    
-    const togglePieza = (id) => {
-        setPiezasPlano(prev => {
-        if (prev.includes(id)) {
-            return prev.filter(p => p !== id);
-        }
-        return [...prev, id];
-        });
-    };
-
     useEffect(()=>{
         if(file){
         setSeleccionarPiezas(true);
@@ -152,22 +140,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             setLoading(false);
         }
     }
-    
-    const handleSelectAll = (e)=>{
-        e.preventDefault();
-        
-        if (!producto?.pieza) return;
-
-        // Si ya están todos seleccionados, vaciamos. Si falta alguno, seleccionamos todos.
-        const todosSeleccionados = piezasPlano.length === producto.pieza.length;
-
-        if (todosSeleccionados) {
-        setPiezasPlano([]);
-        } else {
-        const todosLosIds = producto.pieza.map(p => p.id_pieza);
-        setPiezasPlano(todosLosIds);
-        }
-    }
 
     const limpiarFormulario = () => {
         setFile(null);
@@ -187,29 +159,20 @@ export default function AgregarPlano({producto, onUploadSuccess}){
         }
     },[agregarPlanos])
 
-
     return(
     <>
-        
         <button className='add-span' onClick={()=>{setAgregarPlanos(true)}}>
             <i className='material-icons' id="add-icon">add</i>
             Agregar documento
         </button>
         {agregarPlanos && 
-        <div className="overlay-documento">
-            <div className="modal-documento">
-                <div style={{"display":"flex","gap":"8px"}}>
-                    <div>
-                        <i className='material-icons' id='close-button' onClick={()=>setAgregarPlanos(false)}>close</i>
-                    </div>
+        <Modal
+            titulo="Agregar nuevo documento"
+            descripcion="Sube el archivo, completa el formulario y asigna las piezas asociadas al documento"
+            onClose={()=>setAgregarPlanos(false)}
+        >
                     <div className='upload-container' >
 
-                        <div className='upload-header'>
-                            <h3 style={{"fontSize":"1rem", "textAlign":'start'}}>Agregar documento</h3>
-                            <p className="card-description">
-                            Sube el archivo, completa el formulario y asigna las piezas asociadas al documento 
-                            </p>
-                        </div>
                         <select value={idTipoDocumento} onChange={(e) => setIdTipoDocumento(e.target.value)}>
                             <option value="" disabled>
                                 Seleccione el tipo de documento a subir
@@ -256,40 +219,39 @@ export default function AgregarPlano({producto, onUploadSuccess}){
 
                                     {mostrarFecha && 
                                     <div className="form-input">
-                                        <label>Fecha de vigencia (*): </label>
-                                        <input type="date" value={fecha} onChange={(e)=>setFecha(e.target.value)}/>
+                                        <label>Fecha de vigencia * </label>
+                                        <input 
+                                            type="date" 
+                                            value={fecha} 
+                                            onChange={(e)=>setFecha(e.target.value)}
+                                            style={{padding:'8px', border:'1px solid #ccc', borderRadius:'4px'}}
+                                        />
                                     </div>}
                                     <div className="form-input">
-                                        <label>Descripción de versión: </label>
-                                        <input type="text" value={commit} onChange={(e)=>setCommit(e.target.value)}/>
+                                        <label>Descripción de versión * </label>
+                                        <input 
+                                            type="text" 
+                                            value={commit} 
+                                            onChange={(e)=>setCommit(e.target.value)}
+                                            style={{padding:'10px', border:'1px solid #ccc', borderRadius:'4px', width:'100%', marginTop:'5px'}}
+                                        />
                                     </div>
                                 </form>
                             </div>
-                            <div style={{"marginTop":"10px"}}>Seleccione una o más piezas: </div>
-
-                            {<ul className="part-list" style={{"marginBottom":"10px", "marginTop":"10px","listStyleType": "none", "marginLeft":"0px"}}>
-                                <li>
-                                    <button onClick={handleSelectAll}>
-                                    {piezasPlano.length === producto.pieza.length? "Deseleccionar todo":"Seleccionar todo"}
-                                    </button>
-                                </li>
-                                {producto.pieza && producto.pieza.map(p => (
-                                    <li key={p.id_pieza} style={{"marginBottom":"5px",
-                                                                "fontSize": "0.875rem"}}>
-
-                                        <input type="checkbox" checked={piezasPlano.includes(p.id_pieza)} onChange={() => togglePieza(p.id_pieza)}/>
-
-                                        <span>{" "+producto.nombre + " " + p.nombre}</span>
-                                    </li>
-                                ))}
-                            </ul>}
-                            <button onClick={subirPlano} disabled={loading?true:false}>Guardar</button>
+                            <ToggleSelector
+                                titulo = "Asociar piezas"
+                                items={producto?.pieza || []}
+                                idField={'id_pieza'}
+                                displayField={(item)=>`${producto?.nombre || ''} ${item.nombre}`}
+                                selectedItems={piezasPlano}
+                                onChangeSelection={setPiezasPlano}
+                            />
+                            <Button variant='default' onClick={subirPlano} disabled={loading?true:false} style={{width:'100%'}}>Guardar</Button>
 
                             {error && <p style={{"color":"red"}}>{error}</p>}
                         </div>}
                     </div>
-                </div>
-            </div>
-        </div>}
+        </Modal>
+        }
     </>);
 }
