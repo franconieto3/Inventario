@@ -4,6 +4,7 @@ import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 import formatearCodigo from "../../../../../services/formatearCodigo";
 import EdicionPieza from "../../EdicionPieza";
 import Can from "../../../../../components/Can";
+import { Modal } from "../../../../../components/ui/Modal";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -54,18 +55,24 @@ export function PartHeader({ mostrar, setMostrar, idPieza, nombrePieza, codigoPi
 
             {/* Modal de edición aislado */}
             {mostrarEdicion && 
-                <EdicionPieza 
-                    idPieza={idPieza}
-                    producto={producto} 
-                    nombreInicial={nombrePieza} 
-                    codigoInicial={codigoPieza} 
-                    onClose={() => setMostrarEdicion(false)} 
-                    onUploadSuccess={() => {
-                        setMostrarEdicion(false); 
-                        onPartUpdated(); // Refresca los datos en usePartDetail
-                        if (onRefreshParent) onRefreshParent();
-                    }}
-                />
+                <Modal
+                    titulo="Editar pieza"
+                    descripcion={`${producto.nombre} ${nombrePieza}`}
+                    onClose={() => setMostrarEdicion(false)}
+                >
+                    <EdicionPieza 
+                        idPieza={idPieza}
+                        producto={producto} 
+                        nombreInicial={nombrePieza} 
+                        codigoInicial={codigoPieza} 
+                        onClose={() => setMostrarEdicion(false)} 
+                        onUploadSuccess={() => {
+                            setMostrarEdicion(false); 
+                            onPartUpdated(); // Refresca los datos en usePartDetail
+                            if (onRefreshParent) onRefreshParent();
+                        }}
+                    />
+                </Modal>
             }
         </>
     );

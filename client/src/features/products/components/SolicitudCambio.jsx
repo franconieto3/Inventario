@@ -3,6 +3,7 @@ import { UserAuth } from '../../auth/context/AuthContext';
 
 import './SolicitudCambio.css'
 import { apiCall } from '../../../services/api';
+import Button from '../../../components/ui/Button';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -43,48 +44,25 @@ export function SolicitudCambio({idVersion, onClose}){
 	
 	return(
 		<>
-			<div className="overlay">
-				<div className="modal">
-                    <div style={{'display':'flex', "gap":"8px"}}>
-                        <div style={{'display':'flex', "gap":"8px"}}>
-                            <i className='material-icons' id='close-button' onClick={onClose}>close</i>
-                        </div>
-                        <div style={{'width':'100%'}}>
-                            <h3 style={{
-                                "fontSize":"1rem", 
-                                "textAlign":'start',
-                                'paddingTop':'10px', 
-                                'paddingBottom':'10px'
-                                }}>
-                                Solicitar cambio de versión
-                            </h3>
-                            <form onSubmit={(e)=>handleSubmit(e)}>
-                                <div className='input-mensaje'>
-                                    <div style={{ 'width': '100%', 'textAlign': 'start','marginBottom':'10px' }}>Observaciones:</div>
-                                    <textarea 
-                                        style={{'width':'100%', 'height':'150px'}}
-                                        type="text"
-                                        placeholder="Describa el cambio a solicitar"
-                                        value={mensaje}
-                                        onChange={(e)=>setMensaje(e.target.value)}
-                                    />
-                                </div>
-                                <div style={{ 'textAlign': 'start', 'paddingTop': '10px', 'paddingBottom': '10px' }}>
-                                    <button 
-                                        style={{ 'backgroundColor': '#033545', 'color': 'white', 'borderRadius': '8px' }} 
-                                    type="submit" 
-                                    disabled={loading}
-                                    >
-                                        {loading ? 'Guardando...' : 'Guardar cambios'}
-                                    </button>
-                                </div>
-                                {error && <span style={{'color':'red'}}>{error}</span>}
-                            </form>
-                        </div>
+            <div className='modal-content' style={{'width':'100%'}}>
+                <form onSubmit={(e)=>handleSubmit(e)}>
+                    <div className='input-mensaje'>
+                        <div style={{ 'width': '100%', 'textAlign': 'start','marginBottom':'10px', fontSize:'1rem', fontWeight:'500'}}>Observaciones:</div>
+                        <textarea 
+                            style={{'width':'100%', 'height':'150px'}}
+                            type="text"
+                            placeholder="Describa el cambio a solicitar"
+                            value={mensaje}
+                            onChange={(e)=>setMensaje(e.target.value)}
+                        />
                     </div>
-                    
-				</div>
-			</div>
+                    <Button variant='default' type='submit' disabled={loading} style={{'width':'100%'}}> 
+                        {loading ? 'Guardando...' : 'Guardar cambios'}
+                    </Button>
+
+                    {error && <span style={{'color':'red'}}>{error}</span>}
+                </form>
+            </div>
 		</>	
 	);
 }

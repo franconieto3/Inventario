@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback} from "react";
 
 import { apiCall } from "../../../services/api";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
+import Button from "../../../components/ui/Button";
 
 import "./HistorialVersiones.css";
 import Can from "../../../components/Can";
@@ -90,10 +91,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
 
     return(
         <>
-            <div className="overlay">
-                <div className="modal">
                     <div className="historial-container">
-                        <h4>Historial de Versiones</h4>
                         {loading && (
                         <div style={{"display":"flex","justifyContent":"center","alignItems": "center","width":"100%", "marginTop":"30px"}}>  
                             <p>Cargando...</p>
@@ -125,7 +123,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                                 <div key={v.id_version} style={{ borderBottom: '1px solid #ccc','padding':'15px' , 'width':'100%', 'display':'flex','justifyContent': 'space-between', 'alignItems':'center', 'borderRadius':'10px','gap':'15px'}}>
                                     <div 
                                         style={{'display':'flex','justifyContent': 'space-between', 'alignItems':'center','gap':'15px','cursor': 'pointer'}}
-                                        onClick={()=>verDocumento(v.path)}
+                                        onClick={()=>verDocumento(v.id_version, v.path)}
                                     >
                                         <div>
                                             <i className="material-icons" >open_in_new</i>
@@ -150,12 +148,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
                         })
                         }
                         {error && <p>Ocurrió un error. No se recuperaron versiones anteriores.</p>}
-                    </div>
-                    <div>
-                        <button onClick={closeHistoryModal}>Cerrar</button>
-                    </div>
-                </div>
-            </div>
+                    </div>   
         </>
     );
 }

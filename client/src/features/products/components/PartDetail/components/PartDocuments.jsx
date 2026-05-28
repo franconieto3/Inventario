@@ -2,6 +2,7 @@ import { useState } from "react";
 import { apiCall } from "../../../../../services/api";
 import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 import { HistorialVersiones } from "../../HistorialVersiones";
+import {Modal} from "../../../../../components/ui/Modal";
 import { SolicitudCambio } from "../../SolicitudCambio";
 import { useNavigate } from "react-router-dom";
 
@@ -93,19 +94,30 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
 
             {/* Modales asilados */}
             {mostrarHistorial && (
+            <Modal
+                titulo="Historial de versiones"
+                descripcion="Revisar todas las versiones de este documento"
+                onClose={()=>{ setMostrarHistorial(false); setTipoDocSeleccionado(null); }}
+            >
                 <HistorialVersiones 
                     idPieza={idPieza} 
                     idTipoDocumento={tipoDocSeleccionado} 
-                    closeHistoryModal={() => { setMostrarHistorial(false); setTipoDocSeleccionado(null); }} 
+                    closeHistoryModal={()=>{ setMostrarHistorial(false); setTipoDocSeleccionado(null); }} 
                     verDocumento={handleVerPlano}
                 />
-            )}  
+            </Modal>)}  
 
             {mostrarSolicitud && (
-                <SolicitudCambio 
-                    idVersion={versionSeleccionada} 
+                <Modal
+                    titulo="Solicitud de modificación"
+                    descripcion="Describa los cambios a solicitar en el documento"
                     onClose={() => { setMostrarSolicitud(false); setVersionSeleccionada(null); }}
-                />
+                >
+                    <SolicitudCambio 
+                        idVersion={versionSeleccionada} 
+                        onClose={() => { setMostrarSolicitud(false); setVersionSeleccionada(null); }}
+                    />
+                </Modal>
             )}
         </div>
     );
