@@ -87,7 +87,7 @@ export const producto = async (req, res)=>{
 
     } catch (err) {
         console.error(err);
-        res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
+        return res.status(err.statusCode || 500).json({error: err.message});
     }
 }
 

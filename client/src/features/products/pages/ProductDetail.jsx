@@ -28,7 +28,9 @@ export default function ProductDetail() {
   const { id } = useParams();
 
   const [producto, setProducto] = useState(null);
+
   const [loadingData, setLoadingData] = useState(false);
+  const [loadingError, setLoadingError] = useState("");
   const [menuProductoOpen, setMenuProductoOpen] = useState(false);
   const [mostrarEdicion, setMostrarEdicion] = useState(false);
   const [rubros, setRubros] = useState(null);
@@ -39,10 +41,19 @@ export default function ProductDetail() {
 
   const fetchProduct = useCallback(async () => {
     try{
+      setLoadingData(true);
+      setLoadingError("");
+
       const data = await apiCall(`${API_URL}/api/productos/${id}`, {});
       setProducto(data);
+
     }catch(err){
-      console.error(err.message);
+      console.log("Error obteniendo producto: ", err.status);
+      setLoadingError(err.message);
+      setProducto(null);
+
+    }finally{
+      setLoadingData(false);
     }
   },[id]);
 
@@ -87,110 +98,119 @@ export default function ProductDetail() {
       fetchAuxData();
   }, []);
 
- 
-  if (!producto) return             
-    <div style={{ position: 'relative', minHeight: '200px' }}>
-        <Spinner size={32} color="#64748b" center />
-    </div>;
 
   return (
     <>
     <NavBar />
     <div className='body-container'>
 
-      <div className='detail-container'>
-        <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
-          <h1>{producto.nombre}</h1>
+      {loadingData && (
+          <div className="loading-state">{/*loading-state en InstrumentDetail.css */}
+              <p>Cargando detalles del instrumento...</p>
+          </div>
+      )}
+
+      {!loadingData && loadingError && (
+          <div className="error-state"> {/*error-state en InstrumentDetail.css */}
+              <p>Error al cargar: {loadingError}</p>
+          </div>
+      )}
+
+      {!loadingData && !loadingError && producto && (
+        <div className='detail-container'>
+          <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
+            <h1>{producto.nombre}</h1>
+            <Can permission="administrar_productos">
+              <DropdownMenu
+                  isOpen={menuProductoOpen}
+                  onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
+                  items={[
+                      {
+                          label: 'Editar producto',
+                          icon: 'edit',
+                          onClick: () => setMostrarEdicion(true)
+                      },
+                      {
+                          label: 'Eliminar producto',
+                          icon: 'delete',
+                          color: 'red', 
+                          onClick: () => handleEliminarProducto()
+                      }                      
+                  ]}
+              />
+            </Can>
+          </div>
+          <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
+          <p>Rubro: {producto.rubro.descripcion}</p>
+
           <Can permission="administrar_productos">
-            <DropdownMenu
-                isOpen={menuProductoOpen}
-                onToggle={() => setMenuProductoOpen(!menuProductoOpen)}
-                items={[
-                    {
-                        label: 'Editar producto',
-                        icon: 'edit',
-                        onClick: () => setMostrarEdicion(true)
-                    },
-                    {
-                        label: 'Eliminar producto',
-                        icon: 'delete',
-                        color: 'red', 
-                        onClick: () => handleEliminarProducto()
-                    }                      
-                ]}
-            />
+            <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
           </Can>
-        </div>
-        <p>Registro de producto médico: {producto.registro_pm.descripcion}</p>
-        <p>Rubro: {producto.rubro.descripcion}</p>
 
-        <Can permission="administrar_productos">
-          <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
-        </Can>
+          <Can permission='administrar_documentos'>
+            <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
+          </Can>
+          
+          <Can permission="crear_rutas_procesos">      
+            <button className='add-span' onClick={()=>{setMostrarCrearRuta(true)}}>
+                <i className='material-icons' id="add-icon">add</i>
+                Agregar ruta de procesos
+            </button>
+          </Can>    
 
-        <Can permission='administrar_documentos'>
-          <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
-        </Can>
-        
-        <Can permission="crear_rutas_procesos">      
-          <button className='add-span' onClick={()=>{setMostrarCrearRuta(true)}}>
-              <i className='material-icons' id="add-icon">add</i>
-              Agregar ruta de procesos
-          </button>
-        </Can>    
+          <Can permission='administrar_instrumento_pieza'>
+            <button className='add-span' onClick={()=>{setMostrarAsociarElementos(true)}}>
+                <i className='material-icons' id="add-icon">add</i>
+                Agregar elementos de control
+            </button>
+          </Can>
 
-        <Can permission='administrar_instrumento_pieza'>
-          <button className='add-span' onClick={()=>{setMostrarAsociarElementos(true)}}>
-              <i className='material-icons' id="add-icon">add</i>
-              Agregar elementos de control
-          </button>
-        </Can>
+          <Can permission="crear_rutas_procesos">
+            {mostrarCrearRuta &&
+            <NuevaRutaProcesos 
+              producto={producto.nombre}
+              piezas={producto.pieza}
+              onClose={()=>setMostrarCrearRuta(false)}
+              onSuccess={()=>fetchProduct()}
+              />
+            }
+          </Can>
 
-        <Can permission="crear_rutas_procesos">
-          {mostrarCrearRuta &&
-          <NuevaRutaProcesos 
-            producto={producto.nombre}
-            piezas={producto.pieza}
-            onClose={()=>setMostrarCrearRuta(false)}
-            onSuccess={()=>fetchProduct()}
+          {mostrarAsociarElementos &&
+            <AsociarInstrumentoPieza
+              producto={producto}
+              onClose={()=>setMostrarAsociarElementos(false)}
+              onSuccess={()=>fetchProduct()}
             />
           }
-        </Can>
 
-        {mostrarAsociarElementos &&
-          <AsociarInstrumentoPieza
-            producto={producto}
-            onClose={()=>setMostrarAsociarElementos(false)}
-            onSuccess={()=>fetchProduct()}
-          />
-        }
+          {mostrarEdicion &&
+            <EdicionProducto 
+                producto={producto} 
+                rubros={rubros} 
+                registrosPM={registrosPM} 
+                onUploadSuccess={()=>{
+                    setMostrarEdicion(false); 
+                    fetchProduct();
+                    }} 
+                onClose={()=>setMostrarEdicion(false)}
+            />
+          }
 
-        {mostrarEdicion &&
-          <EdicionProducto 
-              producto={producto} 
-              rubros={rubros} 
-              registrosPM={registrosPM} 
-              onUploadSuccess={()=>{
-                  setMostrarEdicion(false); 
-                  fetchProduct();
-                  }} 
-              onClose={()=>setMostrarEdicion(false)}
-          />
-        }
-
-        <div style={{'marginTop':'20px'}}>
-          {producto.pieza && producto.pieza.map(p => (
-            <PartDetail 
-              key={p.id_pieza}
-              nombrePieza={p.nombre} 
-              idPieza={p.id_pieza}
-              codigoPieza={p.codigo_produccion}
-              producto={producto}
-              onRefreshParent={fetchProduct}
-            />        
-          ))}
+          <div style={{'marginTop':'20px'}}>
+            {producto.pieza && producto.pieza.map(p => (
+              <PartDetail 
+                key={p.id_pieza}
+                nombrePieza={p.nombre} 
+                idPieza={p.id_pieza}
+                codigoPieza={p.codigo_produccion}
+                producto={producto}
+                onRefreshParent={fetchProduct}
+              />        
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
     </>
   );

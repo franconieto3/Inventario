@@ -123,7 +123,15 @@ export const getDocumentById = async (idDocumento)=>{
         .eq('id_version', idDocumento)
         .single();
 
-    if(error) throw new Error("No se pudo recuperar el documento seleccionado");
+    if (error) {
+        if (error.code === 'PGRST116') {
+            const err = new Error("No se encontró el documento");
+            err.statusCode = 404;
+            throw err;
+        }
+
+        throw new Error(`Error recuperando documento: ${error.message}`);
+    }
 
     return data;
 }   

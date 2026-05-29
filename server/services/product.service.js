@@ -102,7 +102,11 @@ export const obtenerProducto = async (id)=>{
 
     // Manejo de errores de la consulta de producto
     if (productoRes.error) {
-        if (productoRes.error.code === 'PGRST116') {throw new Error('PGRST116');}
+        if (productoRes.error.code === 'PGRST116') {
+            const err = new Error('No se encontró un producto con el ID solicitado');
+            err.statusCode = 406;
+            throw err;
+        }
         else{throw productoRes.error;} 
     }
 

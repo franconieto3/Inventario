@@ -145,7 +145,7 @@ export const streamDocument = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error al transmitir el documento', error: error.message });
+    res.status(error.statusCode || 500).json({ message: 'Error al transmitir el documento', error: error.message });
   }
 };
 

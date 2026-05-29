@@ -22,6 +22,7 @@ export const DocumentDetail = () => {
 
   //Estado de carga
   const [loading, setLoading] = useState(false);
+  const [documentoExiste, setDocumentoExiste] = useState(true);
 
   // Estados para react-pdf
   const [numPages, setNumPages] = useState(null);
@@ -59,6 +60,7 @@ export const DocumentDetail = () => {
 
         } else if (err.status === 404) {
             setError('El documento no existe');
+            setDocumentoExiste(false);
         } else {
             setError('Ocurrió un error cargando el documento. Intente más tarde');
         }
@@ -127,7 +129,7 @@ export const DocumentDetail = () => {
         {error}
       </div>
       <div style={{marginTop:'15px'}}>
-        {estadoSolicitud === 'PENDIENTE' ? (
+        {estadoSolicitud === 'PENDIENTE'? (
           // UI para cuando ya está pedida
           <div style={{ color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
             <i className='material-icons' style={{verticalAlign: 'middle', marginRight: '5px'}}>hourglass_empty</i>
@@ -140,6 +142,7 @@ export const DocumentDetail = () => {
               variant='default' 
               onClick={solicitarAcceso}
               disabled={loading}
+              style={documentoExiste ? {display:'block'}:{display:'none'}}
             >
               {loading ? 'Procesando...' : 'Solicitar acceso'}
             </Button>

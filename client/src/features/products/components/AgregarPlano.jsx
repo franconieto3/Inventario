@@ -90,7 +90,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
                   body: JSON.stringify({fileName:limpiarNombreArchivo(file.name), 
                   fileType: file.type, 
                   fileSize: file.size,
-                  //idTipoDocumento: 1
                   idTipoDocumento: idTipoDocumento
                 })
                 })
