@@ -45,6 +45,15 @@ export default function ProductDetail() {
       setLoadingError("");
 
       const data = await apiCall(`${API_URL}/api/productos/${id}`, {});
+
+      if (data && Array.isArray(data.pieza)) {
+        data.pieza.sort((a, b) => {
+          const codA = a.codigo_produccion || '';
+          const codB = b.codigo_produccion || '';
+          return codA.localeCompare(codB, undefined, { numeric: true });
+        });
+      }
+      
       setProducto(data);
 
     }catch(err){
@@ -98,7 +107,6 @@ export default function ProductDetail() {
       fetchAuxData();
   }, []);
 
-
   return (
     <>
     <NavBar />
@@ -117,6 +125,7 @@ export default function ProductDetail() {
       )}
 
       {!loadingData && !loadingError && producto && (
+
         <div className='detail-container'>
           <div style={{'display':'flex', 'justifyContent':'space-between', 'alignItems':'center'}}>
             <h1>{producto.nombre}</h1>

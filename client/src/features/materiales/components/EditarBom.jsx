@@ -63,39 +63,44 @@ export function EditarBom({bom, onClose, onSuccess}){
                 {/* Reutilizamos el contenedor y las clases de AgregarMaterial para mantener el diseño */}
                 <div className="material-list-container" style={{ minHeight: 'auto', maxHeight: 'none' }}>
                     <ul className="material-list">
+                        
                         <li className="material-item">
-                            <span className="material-name">{bom.descripcion}</span>
-                            
-                            <div className="material-actions">
+                            <div style={{display:'flex', alignItems:'center', gap:'25px',flexWrap:'wrap'}}>
+                                <span className="material-name" style={{textAlign:'left'}}>{bom.descripcion}</span>
+                                
+                                <div className="material-actions" style={{flexWrap:'wrap'}}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <span>Consumo teórico: </span>
+                                        <input 
+                                            type="number" 
+                                            min="0.01"
+                                            step="any"
+                                            className="shadcn-input"
+                                            value={consumo}
+                                            style={{maxWidth:'80px'}}
+                                            onChange={(e) => handleQuantityChange(e.target.value)}
+                                            autoFocus
+                                        />
+                                        <span>{bom.unidad}</span>
+                                    </div>
 
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <span>Consumo teórico: </span>
-                                    <input 
-                                        type="number" 
-                                        min="0.01"
-                                        step="any"
-                                        className="shadcn-input"
-                                        value={consumo}
-                                        onChange={(e) => handleQuantityChange(e.target.value)}
-                                        autoFocus
-                                    />
-                                    <span>{bom.unidad}</span>
+                                    <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                                        <span>Merma esperada: </span>
+                                        <input 
+                                            type="number" 
+                                            min="1"
+                                            className="shadcn-input"
+                                            value={merma}
+                                            style={{maxWidth:'80px'}}
+                                            onChange={(e) => handleScrapChange(e.target.value)}
+                                        />
+                                        <span>{bom.unidad}</span>
+                                    </div>
+
                                 </div>
-
-                                <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
-                                    <span>Merma esperada: </span>
-                                    <input 
-                                        type="number" 
-                                        min="1"
-                                        className="shadcn-input"
-                                        value={merma}
-                                        onChange={(e) => handleScrapChange(e.target.value)}
-                                    />
-                                    <span>{bom.unidad}</span>
-                                </div>
-
                             </div>
                         </li>
+
                     </ul>
                 </div>
             </div>

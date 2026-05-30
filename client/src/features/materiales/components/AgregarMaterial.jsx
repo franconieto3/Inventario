@@ -136,41 +136,46 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
                     ) : (
                         <ul className="material-list">
                             {materiales.map((m) => (
-                                <li key={m.id_material} className="material-item">
-                                    <span className="material-name">{m.descripcion}</span>
-                                    <div className="material-actions">
-                                        <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
-                                            <span>Consumo teórico: </span>
-                                            <input 
-                                                type="number" 
-                                                min="1"
-                                                className="shadcn-input"
-                                                value={m.consumo}
-                                                onChange={(e) => handleQuantityChange(m.id_material, e.target.value)}
-                                            />
-                                            <span>{m.unidad}</span>
-                                        </div>
+                                <li key={m.id_material} className="material-item" >
+                                    <div style={{display:'flex', alignItems:'center', gap:'25px',flexWrap:'wrap'}}>
 
-                                        <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
-                                            <span>Merma esperada: </span>
-                                            <input 
-                                                type="number" 
-                                                min="1"
-                                                className="shadcn-input"
-                                                value={m.merma}
-                                                onChange={(e) => handleScrapChange(m.id_material, e.target.value)}
-                                            />
-                                            <span>{m.unidad}</span>
-                                        </div>
+                                        <span className="material-name" style={{textAlign:'left'}}>{m.descripcion}</span>
 
-                                        <button 
-                                            className="delete-btn" 
-                                            onClick={() => handleRemoveMaterial(m.id_material)}
-                                            title="Eliminar material"
-                                        >
-                                            <i className="material-icons">delete</i>
-                                        </button>
+                                        <div className="material-actions" style={{flexWrap:'wrap'}}>
+                                            <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
+                                                <span>Consumo teórico: </span>
+                                                <input 
+                                                    type="number" 
+                                                    min="1"
+                                                    className="shadcn-input"
+                                                    value={m.consumo}
+                                                    style={{maxWidth:'80px'}}
+                                                    onChange={(e) => handleQuantityChange(m.id_material, e.target.value)}
+                                                />
+                                                <span>{m.unidad}</span>
+                                            </div>
+
+                                            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                                                <span>Merma esperada: </span>
+                                                <input 
+                                                    type="number" 
+                                                    min="1"
+                                                    className="shadcn-input"
+                                                    value={m.merma}
+                                                    style={{maxWidth:'80px'}}
+                                                    onChange={(e) => handleScrapChange(m.id_material, e.target.value)}
+                                                />
+                                                <span> {m.unidad}</span>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <button 
+                                        className="delete-btn" 
+                                        onClick={() => handleRemoveMaterial(m.id_material)}
+                                        title="Eliminar material"
+                                    >
+                                        <i className="material-icons">delete</i>
+                                    </button>
                                 </li>
                             ))}
                         </ul>
@@ -178,7 +183,7 @@ export function AgregarMaterial({pieza, onClose, onSuccess}){
                 </div>
             </div>
             <div className="modal-footer">
-                <Button variant="secondary" disabled={loading} onClick={submitMateriales}>
+                <Button variant="default" disabled={loading} onClick={submitMateriales}>
                     {loading ? "Guardando..." : "Guardar"}
                 </Button>
             </div>

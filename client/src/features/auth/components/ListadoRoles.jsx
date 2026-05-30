@@ -80,14 +80,14 @@ export function ListadoRoles({roles, onOpen, onEdit, onDelete, page, setPage, to
 
     return(
         <>
-            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between', flexWrap: 'wrap'}}>
+            <div style={{display:'flex', textAlign:'start',alignItems:'center', width:'100%',marginBottom:'20px',justifyContent:'space-between', flexWrap: 'wrap-reverse'}}>
                 <div>
-                <h3 style={{fontWeight:'500'}}>Listado de roles</h3>
-                <p className="table-description">
-                    Seguimiento de roles, con sus respectivos permisos.
-                </p>
+                    <h3 style={{fontWeight:'500'}}>Listado de roles</h3>
+                    <p className="table-description">
+                        Seguimiento de roles, con sus respectivos permisos.
+                    </p>
                 </div>
-                <div style={{display:'flex', gap:'15px', alignItems:'center'}}>
+                <div style={{display:'flex', gap:'15px', alignItems:'center', paddingBottom:'15px', paddingTop:'15px'}}>
                     <Can permission='crear_roles'>
                         <Button variant='default' onClick={onOpen}>
                             Agregar nuevo rol

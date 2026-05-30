@@ -25,12 +25,14 @@
     font-weight: 600;
     color: #09090b;
     letter-spacing: -0.025em;
+    text-align: left;
 }
 
 .icard-description {
     margin: 0.25rem 0 0 0;
     font-size: 0.875rem; /* 14px */
     color: #71717a;
+    text-align: left;
 }
 
 /* Etiqueta (Badge) para el tipo */

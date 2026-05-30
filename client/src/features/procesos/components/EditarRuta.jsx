@@ -172,29 +172,33 @@ export function EditarRuta({ rutaEdit, onSubmit, onReturn, onClose }) {
                             onDragEnd={handleDragEnd}
                             onDragOver={(e) => e.preventDefault()}
                         >
-                            <div className="ruta-item-info">
-                                <span className="material-icons drag-icon">drag_indicator</span>
-                                <span className="step-number">{index + 1}</span>
-                                <span className="step-name">{paso.nombre}</span>
-                            </div>
-                            <div className="ruta-item-acciones">
-                                <label className="checkbox-container">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={paso.requiere_inspeccion}
-                                        onChange={() => handleToggleInspeccion(paso.stepId)}
-                                    />
-                                    <span className="checkbox-label">Control de calidad</span>
-                                </label>
+                            <span className="material-icons drag-icon">drag_indicator</span>
 
-                                <button 
-                                    className="btn-eliminar"
-                                    onClick={() => handleEliminarPaso(paso.stepId)}
-                                    title="Quitar proceso"
-                                >
-                                    <span className="material-icons">delete</span>
-                                </button>
+                            <div style={{flexWrap:'wrap', display:'flex', gap:'5px', alignItems:'center', justifyContent:'space-between', width:'100%', marginLeft:'5px'}}>
+                                <div className="ruta-item-info">
+                                    <span className="step-number">{index + 1}</span>
+                                    <span className="step-name">{paso.nombre}</span>
+                                </div>
+
+                                <div className="ruta-item-acciones" style={{flexWrap: 'wrap'}}>
+                                    <label className="checkbox-container">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={paso.requiere_inspeccion}
+                                            onChange={() => handleToggleInspeccion(paso.stepId)}
+                                        />
+                                        <span className="checkbox-label">Control de calidad</span>
+                                    </label>
+                                </div>
                             </div>
+
+                            <button 
+                                className="btn-eliminar"
+                                onClick={() => handleEliminarPaso(paso.stepId)}
+                                title="Quitar proceso"
+                            >
+                                <span className="material-icons">delete</span>
+                            </button>
                         </div>
                     ))}
                 </div>
