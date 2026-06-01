@@ -26,13 +26,24 @@ export const apiCall = async (endpoint, options = {}) => {
     let data;
 
     // 2. NUEVO: Lógica para parsear la respuesta dependiendo de lo esperado o del Content-Type
-    if (options.responseType === 'blob' || (contentType && (contentType.includes("application/pdf") || contentType.includes("application/octet-stream")))) {
+    if (options.responseType === 'blob' || 
+        (contentType && (
+            contentType.includes("application/pdf") || 
+            contentType.includes("application/octet-stream")|| 
+            contentType.startsWith("image/")))) {
         // Si pedimos explícitamente un blob, o el servidor devuelve un archivo
         // Pero ojo: si hay un error (ej. 404), el servidor suele devolver JSON, no un archivo
         if (!response.ok && contentType && contentType.includes("application/json")) {
             data = await response.json();
         } else {
             data = await response.blob();
+            /* */
+            const disposition = response.headers.get("content-disposition");
+            if (disposition && disposition.includes("filename=")) {
+                const match = disposition.match(/filename="?([^"]+)"?/);
+                if (match) data.filename = match[1];
+            }
+            /* */
         }
     } else if (contentType && contentType.includes("application/json")) {
         data = await response.json();

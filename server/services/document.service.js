@@ -136,6 +136,17 @@ export const getDocumentById = async (idDocumento)=>{
     return data;
 }   
 
+export const obtenerExtension = (path) => {
+    const nombre = path.split('/').pop().split('\\').pop();
+    const ultimoPunto = nombre.lastIndexOf('.');
+
+    if (ultimoPunto <= 0 || ultimoPunto === nombre.length - 1) {
+        return ''; 
+    }
+
+    return nombre.slice(ultimoPunto + 1);
+}
+
 export const obtenerHistorialVersiones = async (idPieza, idTipoDocumento) =>{
     
     const {data, error} = await supabase.rpc(

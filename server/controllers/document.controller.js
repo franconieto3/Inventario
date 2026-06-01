@@ -1,6 +1,6 @@
 import { error } from "node:console";
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension} from "../services/document.service.js";
 import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
@@ -136,9 +136,11 @@ export const streamDocument = async (req, res) => {
     
     if (!response.ok) throw new Error('Error al descargar el archivo');
 
+    const ext = obtenerExtension(document.path);
+
     // Configurar cabeceras para forzar visualización (inline) y tipo de contenido
     res.setHeader('Content-Type', response.headers.get('content-type') || 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename="documento.pdf"');
+    res.setHeader('Content-Disposition', `inline; filename="documento.${ext}"`);
     
     // Canalizar el stream de Supabase hacia el cliente
     Readable.fromWeb(response.body).pipe(res);
@@ -298,8 +300,6 @@ export const crearSolicitudAcceso = async (req, res)=>{
 
 export const getSolicitudesAcceso = async (req, res) => {
     try {
-        // 1. Extraer parámetros de la query de la URL
-        // Ejemplo de URL esperada: /api/documentos/solicitudes-acceso?page=1&limit=20&estado=PENDIENTE
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 20;
         const estado = req.query.estado || null;

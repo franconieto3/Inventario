@@ -20,6 +20,9 @@ export const DocumentDetail = () => {
   const [blobUrl, setBlobUrl] = useState(null);
   const [error, setError] = useState(null);
 
+  const [fileType, setFileType] = useState('pdf'); 
+  const [fileName, setFileName] = useState(`documento-${id}.pdf`);
+
   //Estado de carga
   const [loading, setLoading] = useState(false);
   const [documentoExiste, setDocumentoExiste] = useState(true);
@@ -44,6 +47,22 @@ export const DocumentDetail = () => {
           method: 'GET', 
           responseType: 'blob'
         });
+
+        if (blob.type === 'application/pdf') {
+            setFileType('pdf');
+        } else if (blob.type.startsWith('image/')) {
+            setFileType('image');
+        } else {
+            setFileType('unsupported');
+        }
+
+        if (blob.filename) {
+            setFileName(blob.filename);
+        } else {
+            const ext = blob.type.startsWith('image/') ? 'png' : 'bin';
+            setFileName(`pieza-tecnica-${id}.${ext}`);
+        }
+
         const url = URL.createObjectURL(blob);
         setBlobUrl(url);
 
@@ -73,6 +92,35 @@ export const DocumentDetail = () => {
     };
   }, [id]);
 
+  useEffect(() => {
+    // Si no hay un documento cargado, no hay nada que vigilar
+    if (!blobUrl || error) return;
+
+    const POLLING_INTERVAL = 180000; // 3 minutos
+
+    const intervalId = setInterval(async () => {
+      try {
+        await apiCall(`${API_URL}/api/documentos/${id}/verificar-acceso`, {
+          method: 'GET'
+        });
+
+      } catch (err) {
+        if (err.status === 403 || err.status === 401) {
+          
+          URL.revokeObjectURL(blobUrl);
+          setBlobUrl(null); 
+          
+          setError('Tu permiso para visualizar este documento ha expirado o fue revocado por un administrador.');
+          
+          clearInterval(intervalId);
+        }
+      }
+    }, POLLING_INTERVAL);
+
+    return () => clearInterval(intervalId);
+    
+  }, [blobUrl, id, error]);
+
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
     setPageNumber(1);
@@ -93,7 +141,7 @@ export const DocumentDetail = () => {
     if (!blobUrl) return;
     const link = document.createElement('a');
     link.href = blobUrl;
-    link.download = `documento-tecnico-${id}.pdf`; 
+    link.download = link.download = fileName; 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -168,22 +216,24 @@ export const DocumentDetail = () => {
 
   return (
     <div className="viewer-layout">
-      <iframe 
-        ref={printIframeRef}
-        src={blobUrl}
-        style={{ display: 'none' }} 
-        title="Iframe de impresión"
-      />
+      {fileType === 'pdf' && (
+        <iframe 
+          ref={printIframeRef}
+          src={blobUrl}
+          style={{ display: 'none' }} 
+          title="Iframe de impresión"
+        />
+      )}
 
       <header className="viewer-toolbar">
         <div className="toolbar-section title-section">
-          <span className="badge">PDF</span>
-          <span className="doc-title">Doc #{id}</span>
+          <span className="badge">{fileType === 'pdf' ? 'PDF' : fileType === 'image' ? 'IMG' : 'CAD/DOC'}</span>
+          <span className="doc-title">{fileName}</span>
         </div>
         
         {/* Agrupamos paginación y zoom para mejor wrap en móviles */}
         <div className="toolbar-section controls-section">
-          {numPages > 1 && (
+          {fileType === 'pdf' && numPages > 1 && (
             <div className="button-group">
               <button className="toolbar-btn icon-only" disabled={pageNumber <= 1} onClick={previousPage}>
                 <i className='material-icons'>chevron_left</i>
@@ -196,22 +246,22 @@ export const DocumentDetail = () => {
           )}
 
           <div className="button-group">
-            <button className="toolbar-btn icon-only" onClick={zoomOut} title="Alejar">
+            <button className="toolbar-btn icon-only" onClick={zoomOut} disabled={fileType === 'unsupported'} title="Alejar">
               <i className='material-icons'>remove</i>
             </button>
             <span className="indicator-text">{Math.round(scale * 100)}%</span>
-            <button className="toolbar-btn icon-only" onClick={zoomIn} title="Acercar">
+            <button className="toolbar-btn icon-only" onClick={zoomIn} disabled={fileType === 'unsupported'} title="Acercar">
               <i className='material-icons'>add</i>
             </button>
           </div>
         </div>
 
         <div className="toolbar-section actions-section">
-          <Button variant="secondary" onClick={handleRotate} title="Rotar">
+          <Button variant="secondary" onClick={handleRotate} disabled={fileType === 'unsupported'} title="Rotar">
             <i className='material-icons' >rotate_90_degrees_ccw</i> 
           </Button>
           <Can permission={'imprimir_documentos'}>
-            <Button variant="secondary" onClick={handlePrint} title="Imprimir">
+            <Button variant="secondary" onClick={handlePrint} disabled={fileType !== 'pdf'} title="Imprimir">
               <i className='material-icons'>print</i>
             </Button>
           </Can>
@@ -225,24 +275,48 @@ export const DocumentDetail = () => {
       </header>
 
       <main className="viewer-main">
-        {/* Este contenedor es la clave para permitir el paneo */}
+
         <div className="pdf-scroll-container">
-          <Document 
-            file={blobUrl} 
-            onLoadSuccess={onDocumentLoadSuccess}
-            error={<div className="viewer-message error-msg">Error al cargar el PDF.</div>}
-            loading={<div className="viewer-message">Renderizando documento...</div>}
-            className="pdf-document"
-          >
-            <Page 
-              pageNumber={pageNumber} 
-              rotate={rotation} 
-              renderTextLayer={false} 
-              renderAnnotationLayer={false} 
-              className="pdf-page"
-              scale={scale} 
+          {fileType === 'pdf' && (
+            <Document 
+              file={blobUrl} 
+              onLoadSuccess={onDocumentLoadSuccess}
+              error={<div className="viewer-message error-msg">Error al cargar el PDF.</div>}
+              loading={<div className="viewer-message">Renderizando documento...</div>}
+              className="pdf-document"
+            >
+              <Page 
+                pageNumber={pageNumber} 
+                rotate={rotation} 
+                renderTextLayer={false} 
+                renderAnnotationLayer={false} 
+                className="pdf-page"
+                scale={scale} 
+              />
+            </Document>
+          )}
+          {fileType === 'image' && (
+            <img 
+              src={blobUrl} 
+              alt={fileName}
+              className="image-document"
+              style={{ 
+                transform: `scale(${scale}) rotate(${rotation}deg)`, 
+                transformOrigin: 'top center',
+                transition: 'transform 0.2s ease' 
+              }} 
             />
-          </Document>
+          )}
+          {fileType === 'unsupported' && (
+            <div className="unsupported-container">
+                <i className='material-icons unsupported-icon'>engineering</i>
+                <h3>Formato de Archivo Técnico</h3>
+                <p>El archivo <strong>{fileName}</strong> requiere software especializado (CAD/CAM o utilidades industriales) para su visualización.</p>
+                <Button onClick={handleDownload} variant="default" style={{marginTop: '1rem'}}>
+                  Descargar Archivo Original
+                </Button>
+            </div>
+          )}
         </div>
       </main>
     </div>
