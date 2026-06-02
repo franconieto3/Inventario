@@ -98,14 +98,37 @@ export const agregarMaterialPieza = async (idPieza, materiales) => {
   });
 
   if (error) {
-    if (error.code === '23505') {
-      console.error('Error: Intento de duplicado detectado.');
-      
-      // Lanzamos un error personalizado para que el controlador HTTP lo maneje
-      throw new Error('No se permiten materiales duplicados en una pieza.');
+    const err = new Error();
+    err.originalError = error;
+
+    switch (error.code) {
+      case '23505':
+        err.statusCode = 409;
+        err.message = 'No se permiten materiales duplicados en una pieza.';
+        break;
+
+      case '23503':
+        err.statusCode = 409;
+        err.message = 'El material o la pieza especificada no existe.';
+        break;
+
+      case '23502':
+        err.statusCode = 422;
+        err.message = 'Faltan datos obligatorios.';
+        break;
+
+      case '22P02':
+      case '22023':
+        err.statusCode = 400;
+        err.message = 'Formato de datos inválido.';
+        break;
+
+      default:
+        err.statusCode = 500;
+        err.message = `Error al asociar materiales a la pieza: ${error.message}`;
     }
 
-    throw new Error(`Error al asociar materiales a la pieza: ${error.message}`);
+    throw err;
   }
 
   return data;

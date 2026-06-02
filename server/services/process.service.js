@@ -352,19 +352,28 @@ if (error) {
 
     switch (error.code) {
       case '23503':
+        err.statusCode = 409;
         err.message = 'Error de referencia: Estás intentando asignar un proceso que no existe o eliminar uno en uso.';
         break;
+
       case '23505':
+        err.statusCode = 409;
         err.message = 'Error de duplicado: El proceso o el orden de secuencia ya existe en este BOP.';
         break;
+
       case '23502':
+        err.statusCode = 422;
         err.message = 'Faltan datos obligatorios en los procesos enviados.';
         break;
+
       case '22P02':
       case '22023':
+        err.statusCode = 400;
         err.message = 'El formato de los datos enviados es incorrecto (ej. texto en lugar de número).';
         break;
+
       default:
+        err.statusCode = 500;
         err.message = `Error inesperado al actualizar el BOP: ${error.message}`;
     }
     

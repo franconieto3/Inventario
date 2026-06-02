@@ -61,7 +61,9 @@ export const asociarComponentes = async (idPiezaPadre, componentes) => {
     if (insertError) {
         // Manejo de violaciones de PK (ej: intentar insertar el mismo componente dos veces al mismo padre)
         if (insertError.code === '23505') {
-        throw new Error("Uno de los componentes ya se encuentra asociado a esta pieza.");
+            const err = new Error("Uno de los componentes ya se encuentra asociado a esta pieza.");
+            err.statusCode = 409;
+            throw err;
         }
         throw new Error("Error al guardar la composición en la base de datos.");
     }

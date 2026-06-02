@@ -105,7 +105,7 @@ export const nuevaRutaProcesos = async (req, res)=>{
 
   }catch(err){
     console.log(err);
-    return res.status(500).json({error:"Ocurrió un error creando la ruta de procesos"});
+    return res.status(err.statusCode || 500).json({error: err.message});
   }
 }
 

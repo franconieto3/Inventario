@@ -50,7 +50,9 @@ export const obtenerProductos = async ({ page, limit, rubro, registro_pm })=>{
             err.statusCode = 404;
             throw err;
         }
-        throw new Error("Error al obtener los productos");
+        const err = new Error("Error al obtener productos");
+        err.statusCode = 500;
+        throw err;
     }
 
     //return data;

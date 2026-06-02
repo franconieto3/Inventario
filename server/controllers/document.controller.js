@@ -1,6 +1,6 @@
 import { error } from "node:console";
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension, verificarPathRepetido} from "../services/document.service.js";
 import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
@@ -204,7 +204,7 @@ export const reestablecerVersion = async(req, res)=>{
         });
 
     }catch(err){
-        res.status(500).json({error: err.message});
+        res.status(err.statusCode || 500).json({error: err.message});
     }
 }
 
@@ -212,6 +212,13 @@ export const eliminacionVersion = async (req, res)=>{
     try{    
         const {id} = req.params;
         const data = await eliminarVersion(id);
+/*
+        const esDuplicado = await verificarPathRepetido(data.path);
+
+        if(!esDuplicado){
+            const eliminado = await deleteSupabaseFile('gestion_documental_privada', path)
+        }
+  */      
         res.status(200).json({message: "Versión eliminada exitosamente"});
     }catch(err){
         res.status(err.statusCode? err.statusCode : 500).json({error: err.message});

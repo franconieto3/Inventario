@@ -71,8 +71,17 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
       .maybeSingle();
      
 
-    if (existingUser) throw new Error("El usuario con este DNI o Email ya existe.");
-    if (searchError) throw new Error ("Error al verificar usuario");
+    if (existingUser) {
+      const err = new Error("El usuario con este DNI o Email ya existe.");
+      err.statusCode = 409;
+      throw err;
+    };
+
+    if (searchError){
+      const err = new Error("Error al verificar usuario");
+      err.statusCode = 500;
+      throw err;
+    };
     
     //Encriptar la contraseña (Hashing)
 
@@ -94,7 +103,11 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
       ])
       .select(); 
 
-    if (error) throw new Error ("Error al insertar en la base de datos" );
+    if (error){ 
+      const err = new Error("Error al insertar en la base de datos");
+      err.statusCode = 500;
+      throw err;
+    }
 
     return data;
 }

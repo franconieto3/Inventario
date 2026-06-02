@@ -35,7 +35,7 @@ export const crearMaterial = async (req, res) => {
 
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      return res.status(error.statusCode || 500).json({ error: error.message });
   }
 };
 
@@ -63,7 +63,7 @@ export const listarMateriales = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(error.statusCode || 500).json({ error: error.message });
   }
 };
 
@@ -94,7 +94,7 @@ export const updateMaterial = async (req, res) => {
     
     // Devolvemos un 400 o 500 dependiendo de si es un error de negocio o de servidor
     const statusCode = error.message.includes('Ya existe') ? 400 : 500;
-    return res.status(statusCode).json({ error: error.message });
+    return res.status(statusCode || 500).json({ error: error.message });
   }
 };
 
@@ -111,7 +111,7 @@ export const eliminacionMaterial = async (req, res) => {
     return res.status(200).json({ message: 'Material eliminado con éxito' });
   } catch (err) {
     console.error('Error en eliminacionMaterial:', err);
-    return res.status(500).json({ error: err.message });
+    return res.status(err.statusCode || 500).json({ error: err.message });
   }
 };
 
@@ -124,7 +124,7 @@ export const obtenerMaterialesSelector = async (req, res) => {
 
     res.json(mappedMateriales);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      return res.status(error.statusCode || 500).json({ error: error.message });
   }
 };
 
@@ -148,7 +148,7 @@ export const asociarPieza = async (req, res) => {
     
   } catch(err) {
     console.error('Error en asociarPieza:', err);
-    return res.status(500).json({ error: err.message, message: err.message });
+    return res.status(err.statusCode ||500).json({ error: err.message, message: err.message });
   }
 }
 
@@ -161,7 +161,7 @@ export const quitarMaterial= async(req, res)=>{
 
   }catch(err){
     console.log(err);
-    return res.status(500).json({error: err.message});
+    return res.status(err.statusCode || 500).json({error: err.message});
   }
 }
 

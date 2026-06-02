@@ -1,5 +1,4 @@
 // server/middlewares/checkPermission.js
-import { getUserById } from "../services/auth.services.js";
 import { verificarAccesoProvisorio } from "../services/document.service.js";
 
 
@@ -12,10 +11,8 @@ export const requirePermission = (permisoRequerido) => {
         return res.status(401).json({ error: "Usuario no autenticado." });
       }
 
-      const user = await getUserById(userId);
-
       // Verificamos si tiene el permiso
-      if (user.permisos.includes(permisoRequerido)) {
+      if (req.usuario.permisos.includes(permisoRequerido)) {
         next();
       } else {
         return res.status(403).json({ error: `Acceso denegado. Se requiere el permiso: ${permisoRequerido}` });

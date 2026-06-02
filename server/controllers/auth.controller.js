@@ -17,7 +17,7 @@ export const login = async (req, res) => {
     );
   } catch (err) {
     console.error(err);
-    return res.status(err.statusCode? err.statusCode: 500).json({error: err.message? err.message: "Error interno del servidor"});
+    return res.status(err.statusCode || 500).json({error: err.message? err.message: "Error interno del servidor"});
   }
 };
 
@@ -35,11 +35,8 @@ export const register = async (req, res)=>{
       });
 
     } catch (err) {
-      if(err.message==="El usuario con este DNI o Email ya existe."){
-        res.status(409).json({error: err.message});
-      }
       console.error("Error del servidor:", err);
-      res.status(500).json({ error: err.message });
+      return res.status(err.statusCode || 500).json({ error: err.message });
     }
 }
 
@@ -73,6 +70,6 @@ export const perfil = async (req, res)=>{
     
   }catch(err){
     console.error(err);
-    res.status(err.statusCode? err.statusCode : 500).json({error: err.message? err.message: "Error al obtener perfil"})
+    res.status(err.statusCode || 500).json({error: err.message? err.message: "Error al obtener perfil"})
   }
 }

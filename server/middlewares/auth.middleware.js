@@ -18,7 +18,6 @@ export const verificarToken = (req, res, next) => {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     
     // 3. Si es válido, guardamos los datos del usuario en la request
-    // "verified" contiene lo que guardamos en el payload: { id, email }
     req.usuario = verified;
     
     // 4. Continuar con la siguiente función (la ruta protegida)

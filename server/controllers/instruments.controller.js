@@ -21,7 +21,7 @@ export const nuevoInstrumento = async (req, res) => {
     } catch (error) {
         // Capturamos los errores lanzados desde el service y devolvemos un 400
         console.error("Error en crearInstrumento controller:", error.message);
-        return res.status(400).json({ 
+        return res.status(error.statusCode || 500).json({ 
             message: error.message || "Error interno del servidor al procesar la solicitud" 
         });
     }
@@ -43,7 +43,7 @@ export const nuevaCategoria = async (req, res)=>{
     } catch (error) {
         // Capturamos los errores lanzados desde el service y devolvemos un 400
         console.error("Error en crearInstrumento controller:", error.message);
-        return res.status(400).json({ 
+        return res.status(error.statusCode || 400).json({ 
             message: error.message || "Error interno del servidor al procesar la solicitud" 
         });
     }
@@ -67,7 +67,7 @@ export const edicionCategoria = async (req, res) => {
         console.error("Error en edicionCategoria controller:", error.message);
         
         // Devolvemos el error al frontend para que lo muestre en la interfaz
-        return res.status(400).json({ 
+        return res.status(error.statusCode || 500).json({ 
             message: error.message || "Error interno del servidor al actualizar la categoría" 
         });
     }
@@ -125,7 +125,7 @@ export const instrumentos = async (req, res) => {
 
     } catch (error) {
       console.error('[InstrumentosController.getInstrumentos]', error);
-      return res.status(500).json({ error: 'Error interno del servidor al cargar instrumentos' });
+      return res.status(error.statusCode || 500).json({ error: 'Error interno del servidor al cargar instrumentos' });
     }
   }
 
@@ -135,7 +135,7 @@ export const categorias = async(req, res)=>{
         return res.status(200).json(data)
 
     }catch(err){
-        return res.status(500).json({ error: 'Error interno del servidor al cargar instrumentos' });
+        return res.status(err.statusCode || 500).json({ error: 'Error interno del servidor al cargar instrumentos' });
     }
 }
 
@@ -158,7 +158,7 @@ export const actualizarInstrumento = async (req, res) => {
 
     } catch (error) {
         console.error("Error en actualizarInstrumento controller:", error.message);
-        return res.status(400).json({ 
+        return res.status(error.statusCode || 500).json({ 
             message: error.message || "Error interno del servidor al actualizar el instrumento" 
         });
     }
@@ -183,7 +183,7 @@ export const instrumento = async (req, res)=>{
         return res.status(200).json(data);
 
     }catch(err){
-        return res.status(err.statusCode).json({message: err.message});
+        return res.status(err.statusCode || 500).json({message: err.message});
     }
 }
 
@@ -220,7 +220,7 @@ export const archivoTemporal = async (req, res)=>{
 
     }catch(err){
         console.log(err);
-        return res.status(500).json({error: "Ocurrió un error"})
+        return res.status(err.statusCode || 500).json({error: "Ocurrió un error"})
     }
 }
 
@@ -273,7 +273,7 @@ export const getVerificacionesPorInstrumento = async (req, res) => {
     } catch (error) {
         console.error("Error en getVerificacionesPorInstrumento Controller:", error);
         
-        return res.status(500).json({
+        return res.status(err.statusCode || 500).json({
             success: false,
             message: "Ocurrió un error en el servidor al intentar obtener las verificaciones."
         });
@@ -331,7 +331,7 @@ export const getArchivosPorInstrumento = async (req, res) => {
     } catch (error) {
         console.error("Error en getArchivosPorInstrumento Controller:", error);
         
-        return res.status(500).json({
+        return res.status(err.statusCode || 500).json({
             success: false,
             message: "Ocurrió un error en el servidor al intentar obtener los archivos adjuntos."
         });
@@ -354,7 +354,7 @@ export const agregarPiezaInstrumento = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).json({
+        return res.status(err.statusCode || 500).json({
             success: false,
             message: 'Error al crear la relación en la base de datos',
             error: error.message
@@ -383,7 +383,7 @@ export const eliminarPiezaInstrumento = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({
+        return res.status(err.statusCode || 500).json({
             success: false,
             message: 'Error al intentar eliminar la relación',
             error: error.message

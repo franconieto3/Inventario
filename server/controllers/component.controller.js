@@ -13,10 +13,10 @@ export const asociarPiezas = async (req, res) => {
       data: resultado
     });
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message
-    });
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message
+      });
   }
 };
 
@@ -34,9 +34,9 @@ export const edicionComponente = async(req, res)=>{
 
     } catch (error) {
         console.error("[edicionComponente] Error:", error.message);
-        return res.status(500).json({ 
+        return res.status(error.statusCode ||500).json({ 
             success: false, 
-            message: "Ocurrió un error interno al intentar editar el componente." 
+            message: error.message || "Ocurrió un error interno al intentar editar el componente." 
         });
     }
 }
@@ -51,6 +51,6 @@ export const eliminacionComponente = async (req, res)=>{
     return res.status(200).json({message: "Eliminación exitosa", data: data});
 
   }catch(err){
-    return res.status(500).json({error: err.message});
+    return res.status(err.statusCode || 500).json({error: err.message});
   }
 }

@@ -405,6 +405,19 @@ export const updateSolicitudAcceso = async (id, data, idAprobador = null)=>{
         data: updatedRow[0]
     };
 }
+//Verificar si el path es duplicado
+
+export const verificarPathRepetido = async (path) => {
+    const { data, error } = await supabase.rpc('verificar_path_duplicado', {
+        p_path: path
+    });
+
+    if (error) {
+        throw new Error(`Error al verificar el path duplicado: ${error.message}`);
+    }
+
+    return data;
+}
 
 //Eliminación de archivos en almacenamiento
 
