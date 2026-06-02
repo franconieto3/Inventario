@@ -28,10 +28,10 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
        
     };
 
-    const handleEliminarVersion = async (idDocumento) => {
+    const handleEliminarVersion = async (idDocumento, pathArchivo) => {
         if (window.confirm("¿Desea eliminar este documento?")) {
             try {
-                await apiCall(`${API_URL}/api/documentos/eliminar/${idDocumento}`, { method: 'DELETE' });
+                await apiCall(`${API_URL}/api/documentos/eliminar/${idDocumento}?path=${pathArchivo}`, { method: 'DELETE' });
                 onRefresh();
                 setActiveMenuId(null);
             } catch (err) {
@@ -82,7 +82,7 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
                                         label: 'Eliminar versión',
                                         icon: 'delete',
                                         color: 'red',
-                                        onClick: () => handleEliminarVersion(d.id_version),
+                                        onClick: () => handleEliminarVersion(d.id_version, d.path),
                                         permission: "administrar_documentos"
                                     }
                                 ]}

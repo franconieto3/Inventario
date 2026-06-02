@@ -211,14 +211,16 @@ export const reestablecerVersion = async(req, res)=>{
 export const eliminacionVersion = async (req, res)=>{
     try{    
         const {id} = req.params;
+        const {path} = req.query;
+
         const data = await eliminarVersion(id);
-/*
+
         const esDuplicado = await verificarPathRepetido(data.path);
 
         if(!esDuplicado){
             const eliminado = await deleteSupabaseFile('gestion_documental_privada', path)
         }
-  */      
+             
         res.status(200).json({message: "Versión eliminada exitosamente"});
     }catch(err){
         res.status(err.statusCode? err.statusCode : 500).json({error: err.message});

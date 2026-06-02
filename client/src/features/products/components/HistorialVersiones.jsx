@@ -76,7 +76,7 @@ export function HistorialVersiones( {idPieza, idTipoDocumento, closeHistoryModal
             try{
             console.log("Eliminando versión del documento:", version.id_version);
             
-            const res = await apiCall(`${API_URL}/api/documentos/eliminar/${version.id_version}`,{'method':'DELETE'});
+            const res = await apiCall(`${API_URL}/api/documentos/eliminar/${version.id_version}?path=${version.path}`,{'method':'DELETE'});
             
             setVersiones(prevVersiones => prevVersiones.filter(v => v.id_version !== version.id_version));
             
