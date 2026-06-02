@@ -82,6 +82,7 @@ export const DocumentDetail = () => {
             setDocumentoExiste(false);
         } else {
             setError('Ocurrió un error cargando el documento. Intente más tarde');
+            setDocumentoExiste(false);
         }
       }
     };
@@ -176,7 +177,7 @@ export const DocumentDetail = () => {
       <div className="viewer-message error-msg">
         {error}
       </div>
-      <div style={{marginTop:'15px'}}>
+      <div style={{marginTop:'15px', display:'flex', justifyContent:'center'}}>
         {estadoSolicitud === 'PENDIENTE'? (
           // UI para cuando ya está pedida
           <div style={{ color: '#64748b', fontSize: '14px', fontStyle: 'italic' }}>
@@ -185,16 +186,18 @@ export const DocumentDetail = () => {
           </div>
         ) : (
           // UI para cuando se puede pedir
-          <Can permission='solicitar_acceso'>
-            <Button 
-              variant='default' 
-              onClick={solicitarAcceso}
-              disabled={loading}
-              style={documentoExiste ? {display:'block'}:{display:'none'}}
-            >
-              {loading ? 'Procesando...' : 'Solicitar acceso'}
-            </Button>
-          </Can>
+          <div style={{textAlign:'center'}}>
+            <Can permission='solicitar_acceso'>
+              <Button 
+                variant='default' 
+                onClick={solicitarAcceso}
+                disabled={loading}
+                style={documentoExiste ? {display:'block'}:{display:'none'}}
+              >
+                {loading ? 'Procesando...' : 'Solicitar acceso'}
+              </Button>
+            </Can>
+          </div>
         )}
       </div>
     </div>

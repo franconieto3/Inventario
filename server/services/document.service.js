@@ -408,6 +408,7 @@ export const updateSolicitudAcceso = async (id, data, idAprobador = null)=>{
 //Verificar si el path es duplicado
 
 export const verificarPathRepetido = async (path) => {
+    /*Devuelve true si hay dos filas con el mismo path */
     const { data, error } = await supabase.rpc('verificar_path_duplicado', {
         p_path: path
     });

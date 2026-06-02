@@ -125,7 +125,6 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             //3. Enviar los datos del plano al backend
             const respuesta = await apiCall(`${API_URL}/api/documentos/guardar-documento`, {method: 'POST', body: JSON.stringify(payload)});
             
-            alert("Plano subido y asociado correctamente.");
             setAgregarPlanos(false);
 
             if (onUploadSuccess) {

@@ -4,7 +4,7 @@ import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Button from "../../../components/ui/Button";
 import Can from "../../../components/Can";
 
-export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEditSectores, onDelete, page, setPage, totalPages, loading}){
+export function ListadoUsuarios({usuarios, onEditUser, onOpen, onResetPassword, onEditRoles, onEditSectores, onDelete, page, setPage, totalPages, loading}){
 
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -82,6 +82,12 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                         permission: 'administrar_sectores_usuario'
                     },
                     {
+                        label: "Reestablecer contraseña",
+                        icon : 'key',
+                        onClick: ()=> onResetPassword(row),
+                        permission: 'reestablecer_contraseña'
+                    },
+                    {
                         label: "Dar de baja",
                         icon: "delete",
                         color: "red",
@@ -113,7 +119,7 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onEditRoles, onEd
                 </div>
             </div>
 
-            <Table data={usuarios} columns={columns} padding="180px"></Table>
+            <Table data={usuarios} columns={columns} padding="220px"></Table>
 
             {/* --- CONTROLES DE PAGINACIÓN --- */}
             {totalPages > 1 && (

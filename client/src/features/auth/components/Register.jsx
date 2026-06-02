@@ -28,6 +28,7 @@ export default function Register() {
 
   const [mostrarRegistro, setMostrarRegistro] = useState(false);
   const [mostrarEditarUsuario, setMostrarEditarUsuario] = useState(false);
+  const [mostrarResetPassword, setMostrarResetPassword] = useState(false);
   const [mostrarAdministrarRoles, setMostrarAdministrarRoles] = useState(false);
   const [mostrarAdministrarSectores, setMostrarAdministrarSectores] = useState(false);
   const [nuevoRol, setNuevoRol] = useState(false);
@@ -87,6 +88,10 @@ export default function Register() {
             onEditUser={(usuario)=>{
               setUsuarioSeleccionado(usuario);
               setMostrarEditarUsuario(true);
+            }}
+            onResetPassword={(usuario)=>{
+              setUsuarioSeleccionado(usuario);
+              setMostrarResetPassword(true);
             }}
             onEditRoles={(usuario)=>{
               setUsuarioSeleccionado(usuario);
@@ -153,6 +158,15 @@ export default function Register() {
               }}
               onSuccess={fetchUsuarios}
             />
+          </Modal>
+        }
+        {mostrarResetPassword &&
+          <Modal
+            titulo = "Reestablecer contraseña"
+            descripcion = {usuarioSeleccionado.name}
+            onClose={()=>setMostrarResetPassword(false)}
+          > 
+            
           </Modal>
         }
         {mostrarAdministrarRoles && usuarioSeleccionado &&

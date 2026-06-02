@@ -34,8 +34,7 @@ export const checkStreamPermission = async (req, res, next) => {
         const idVersion = req.params.id;
 
         // 1. Verificamos si tiene el permiso general por Rol
-        const user = await getUserById(userId);
-        if (user.permisos.includes('ver_documentos')) {
+        if (req.usuario.permisos.includes('ver_documentos')) {
             return next();
         }
 

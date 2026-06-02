@@ -212,11 +212,15 @@ export const eliminacionVersion = async (req, res)=>{
     try{    
         const {id} = req.params;
         const {path} = req.query;
+        
+        console.log('Path: ',path);
 
         const data = await eliminarVersion(id);
 
-        const esDuplicado = await verificarPathRepetido(data.path);
-
+        const esDuplicado = await verificarPathRepetido(path);
+        
+        console.log('duplicado: ', esDuplicado);
+        
         if(!esDuplicado){
             const eliminado = await deleteSupabaseFile('gestion_documental_privada', path)
         }
