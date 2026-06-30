@@ -1,5 +1,5 @@
 // server/middlewares/checkPermission.js
-import { verificarAccesoProvisorio } from "../services/document.service.js";
+import { obtenerSolicitud, verificarAccesoProvisorio } from "../services/document.service.js";
 
 
 export const requirePermission = (permisoRequerido) => {
@@ -33,23 +33,32 @@ export const checkStreamPermission = async (req, res, next) => {
         const userId = req.usuario.id_usuario; 
         const idVersion = req.params.id;
 
+        req.permisosProvisorios = { descarga: false, impresion: false };
+
         // 1. Verificamos si tiene el permiso general por Rol
         if (req.usuario.permisos.includes('ver_documentos')) {
             return next();
         }
 
         // 2. Si no tiene el rol, verificamos si tiene una solicitud provisoria válida
-        const estadoSolicitud = await verificarAccesoProvisorio(idVersion, userId);
+        const solicitud = await obtenerSolicitud(idVersion, userId);
+        
+        const ahora = new Date();
+        const horaActual = ahora.toTimeString().split(' ')[0];
 
-        if (estadoSolicitud === 'APROBADA') {
-            // Aquí podrías sumar lógica para validar hora_inicio y hora_fin si lo deseas
+        if (solicitud.v_estado === 'APROBADA' && solicitud.hora_inicio < horaActual && solicitud.hora_fin > horaActual) {
+            req.permisosProvisorios = {
+                descarga: solicitud.permiso_descarga,
+                impresion: solicitud.permiso_impresion
+            };
+
             return next();
         }
 
         // 3. Bloqueamos el acceso pero informamos al frontend el estado de su solicitud
         return res.status(403).json({ 
             error: "No tienes permisos para visualizar este documento.",
-            estado_solicitud: estadoSolicitud || null 
+            estado_solicitud: solicitud.v_estado || null 
         });
 
     } catch (err) {

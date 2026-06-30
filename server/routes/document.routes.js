@@ -39,7 +39,10 @@ router.get('/:id/verificar-acceso',
     verificarToken,
     checkStreamPermission, // <-- Reutilizamos tu middleware estrella
     (req, res) => {
-        res.status(200).json({ acceso: valido });
+        res.status(200).json({
+            acceso: true,
+            permisosProvisorios: req.permisosProvisorios
+        });
     }
 );
 

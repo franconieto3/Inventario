@@ -18,6 +18,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export const DocumentDetail = () => {
   const { id } = useParams();
   const [blobUrl, setBlobUrl] = useState(null);
+  const [permisosLocales, setPermisosLocales] = useState({ descarga: false, impresion: false });
   const [error, setError] = useState(null);
 
   const [fileType, setFileType] = useState('pdf'); 
@@ -43,6 +44,12 @@ export const DocumentDetail = () => {
   useEffect(() => {
     const fetchDocument = async () => {
       try {
+        const accesoData = await apiCall(`${API_URL}/api/documentos/${id}/verificar-acceso`, { method: 'GET' });
+        
+        if (accesoData.permisosProvisorios) {
+          setPermisosLocales(accesoData.permisosProvisorios);
+        }
+
         const blob = await apiCall(`${API_URL}/api/documentos/${id}/stream`, {
           method: 'GET', 
           responseType: 'blob'
@@ -172,6 +179,27 @@ export const DocumentDetail = () => {
     }
   }
 
+  const renderPrintButton = () => {
+    const btn = (
+      <Button variant="secondary" onClick={handlePrint} disabled={fileType !== 'pdf'} title="Imprimir">
+        <i className='material-icons'>print</i>
+      </Button>
+    );
+    // Bypass si hay permiso provisorio; si no, delega al validador de Rol (Can)
+    return permisosLocales.impresion ? btn : <Can permission={'imprimir_documentos'}>{btn}</Can>;
+  };
+
+  const renderDownloadButton = () => {
+    const btn = (
+      <Button variant="default" onClick={handleDownload} title="Descargar">
+        <i className='material-icons'>download</i>
+        <span className='btn-text'>Descargar</span>
+      </Button>
+    );
+    // Bypass si hay permiso provisorio; si no, delega al validador de Rol (Can)
+    return permisosLocales.descarga ? btn : <Can permission={'descargar_documentos'}>{btn}</Can>;
+  };
+
   if (error) return (
     <div style={{textAlign:'center', padding: '20px'}}>
       <div className="viewer-message error-msg">
@@ -263,17 +291,8 @@ export const DocumentDetail = () => {
           <Button variant="secondary" onClick={handleRotate} disabled={fileType === 'unsupported'} title="Rotar">
             <i className='material-icons' >rotate_90_degrees_ccw</i> 
           </Button>
-          <Can permission={'imprimir_documentos'}>
-            <Button variant="secondary" onClick={handlePrint} disabled={fileType !== 'pdf'} title="Imprimir">
-              <i className='material-icons'>print</i>
-            </Button>
-          </Can>
-          <Can permission={'descargar_documentos'}>
-            <Button variant="default" onClick={handleDownload} title="Descargar">
-              <i className='material-icons'>download</i>
-              <span className='btn-text'>Descargar</span>
-            </Button>
-          </Can>
+          {renderPrintButton()}
+          {renderDownloadButton()}
         </div>
       </header>
 

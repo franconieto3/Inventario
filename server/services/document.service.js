@@ -329,6 +329,20 @@ export const verificarAccesoProvisorio = async (idVersion, idUsuario) => {
     return data; 
 }
 
+export const obtenerSolicitud = async (idVersion, idUsuario)=>{
+    const { data, error } = await supabase.rpc('obtener_solicitud_acceso', {
+        p_id_version: parseInt(idVersion),
+        p_id_usuario: idUsuario
+    });
+    
+    if (error) {
+        console.error("Error obteniendo acceso provisorio:", error);
+        throw new Error("No se pudo verificar el estado de los permisos provisorios");
+    }
+    
+    return data[0]; 
+}
+
 export async function fetchSolicitudes({ page = 1, pageSize = 10, estado = null } = {}) {
   try {
     const offset = (page - 1) * pageSize;
