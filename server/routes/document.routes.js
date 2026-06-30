@@ -87,7 +87,7 @@ router.get('/estados-solicitud',
 
 router.post('/solicitud-acceso/:id',
     verificarToken,
-    requirePermission('solicitar_acceso'),
+    //requirePermission('solicitar_acceso'),
     //Validar solicitud: revisar en la base de datos si existe alguna solicitud no expirada que esté aprobada o pendiente para el id_version e id_usuario. Si está pendiente devolver una excepción
     crearSolicitudAcceso
 )

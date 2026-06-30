@@ -79,6 +79,8 @@ export default function AgregarPlano({producto, onUploadSuccess}){
             return;
         }
         //const nombreLimpio = limpiarNombreArchivo(file.name);
+        
+        console.log("MIME type: ", file.type)
 
         try{
             setLoading(true)

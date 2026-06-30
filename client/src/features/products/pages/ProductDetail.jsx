@@ -114,7 +114,7 @@ export default function ProductDetail() {
 
       {loadingData && (
           <div className="loading-state">{/*loading-state en InstrumentDetail.css */}
-              <p>Cargando detalles del instrumento...</p>
+              <p>Cargando detalles del producto...</p>
           </div>
       )}
 

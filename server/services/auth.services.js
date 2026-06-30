@@ -84,9 +84,7 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
     };
     
     //Encriptar la contraseña (Hashing)
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await hashPassword(password);
 
     //Insertar en supabase
 
@@ -112,3 +110,38 @@ export const registerUser = async (dni, password, name, email, telefono)=>{
     return data;
 }
 
+export const changePassword = async (id_usuario, password) => {
+  const { data, error } = await supabase
+    .from('usuarios')
+    .update({ password: password })
+    .eq('id_usuario', id_usuario)
+    .select();
+  
+  // 1. Manejo de errores de formato o base de datos (Supabase sí devuelve 'error')
+  if (error) {
+    const err = new Error("Error al cambiar la contraseña");
+    // '22P02' es el código de Postgres para sintaxis de entrada inválida (ej. UUID mal formado)
+    // '23514' es el código para violación de constraint (ej. si la contraseña es muy corta según la BD)
+    if (error.code === '22P02' || error.code === '23514') {
+      err.message = "Formato de datos no válido";
+      err.statusCode = 400; // Bad Request
+    } else {
+      err.statusCode = 500; // Internal Server Error
+      console.error("Error interno de Supabase:", error);
+    }
+    throw err;
+  }
+  // 2. Manejo de usuario no encontrado
+  if (!data || data.length === 0) {
+    const err = new Error("Usuario no encontrado");
+    err.statusCode = 404; // Not Found
+    throw err;
+  }
+
+  return data[0]; 
+}
+
+export const hashPassword = async (password)=>{
+  const saltRounds = 10;
+  return await bcrypt.hash(password, 10);
+}

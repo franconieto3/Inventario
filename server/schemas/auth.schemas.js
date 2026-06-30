@@ -12,3 +12,7 @@ export const registerSchema = z.object({
     email: z.string().min(1,"El e-mail es obligatorio").email("Ingrese un e-mail válido"),
     telefono: z.string().regex(/^\d+$/, "El teléfono solo debe contener números").optional()
 })
+
+export const passwordResetSchema = z.object({    
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres")
+});

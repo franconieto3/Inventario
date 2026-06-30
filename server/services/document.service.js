@@ -375,7 +375,7 @@ export async function fetchSolicitudes({ page = 1, pageSize = 10, estado = null 
 
 export const updateSolicitudAcceso = async (id, data, idAprobador = null)=>{
 
-    const { hora_inicio, hora_fin, fecha_vencimiento, estado } = data;
+    const { hora_inicio, hora_fin, fecha_vencimiento, estado, permiso_impresion, permiso_descarga} = data;
 
     // Preparamos el objeto de actualización
     const updateData = {
@@ -383,6 +383,8 @@ export const updateSolicitudAcceso = async (id, data, idAprobador = null)=>{
         hora_fin,
         fecha_vencimiento,
         estado,
+        permiso_impresion,
+        permiso_descarga
     };
 
     // Si tenemos un aprobador, lo asignamos

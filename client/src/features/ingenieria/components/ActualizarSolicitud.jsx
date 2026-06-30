@@ -17,21 +17,25 @@ export function ActualizarSolicitud({ solicitud, onClose, onSuccess }) {
   };
 
   const [formData, setFormData] = useState({
-    hora_inicio: solicitud?.hora_inicio || '',
-    hora_fin: solicitud?.hora_fin || '',
+    hora_inicio: solicitud?.hora_inicio || '08:00',
+    hora_fin: solicitud?.hora_fin || '17:00',
     fecha_vencimiento: formatInputDate(solicitud?.fecha_vencimiento),
     estado: solicitud?.estado || 'PENDIENTE',
+    permiso_descarga: solicitud?.permiso_descarga || false,
+    permiso_impresion: solicitud?.permiso_impresion || false,
   });
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
     setError(''); // Limpiar error al escribir
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -119,6 +123,36 @@ export function ActualizarSolicitud({ solicitud, onClose, onSuccess }) {
             value={formData.hora_fin}
             onChange={handleChange}
           />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+          <input
+            type="checkbox"
+            id="permiso_descarga"
+            name="permiso_descarga"
+            checked={formData.permiso_descarga}
+            onChange={handleChange}
+            style={{ width: 'auto', margin: 0 }}
+          />
+          <label htmlFor="permiso_descarga" style={{ margin: 0, cursor: 'pointer' }}>
+            Permitir Descarga
+          </label>
+        </div>
+
+        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+          <input
+            type="checkbox"
+            id="permiso_impresion"
+            name="permiso_impresion"
+            checked={formData.permiso_impresion}
+            onChange={handleChange}
+            style={{ width: 'auto', margin: 0 }}
+          />
+          <label htmlFor="permiso_impresion" style={{ margin: 0, cursor: 'pointer' }}>
+            Permitir Impresión
+          </label>
         </div>
       </div>
 

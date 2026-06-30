@@ -46,7 +46,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                         
                         {!loading && pieza && (
                             <div style={{'display':'flex', 'gap':'15px', 'flexWrap':'wrap'}}>
-                                <Can permission='ver_documentos'>
+                                <Can permission={null}>
                                     {pieza.documentos && (
                                         <PartDocuments 
                                             documentos={pieza.documentos} 
@@ -55,10 +55,10 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                         />
                                     )}
                                 </Can>
-                                <PartComponents
-                                    pieza={pieza} 
-                                    producto={producto} 
-                                    onRefresh={fetchPart}
+                                    <PartComponents
+                                        pieza={pieza} 
+                                        producto={producto} 
+                                        onRefresh={fetchPart}
                                 />
                                 <Can permission='ver_materiales_pieza'>
                                     <PartMaterials

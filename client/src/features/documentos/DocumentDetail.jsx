@@ -187,7 +187,7 @@ export const DocumentDetail = () => {
         ) : (
           // UI para cuando se puede pedir
           <div style={{textAlign:'center'}}>
-            <Can permission='solicitar_acceso'>
+            <Can permission={null}>
               <Button 
                 variant='default' 
                 onClick={solicitarAcceso}

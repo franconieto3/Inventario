@@ -73,3 +73,18 @@ export const perfil = async (req, res)=>{
     res.status(err.statusCode || 500).json({error: err.message? err.message: "Error al obtener perfil"})
   }
 }
+
+export const resetPassword = async (req, res)=>{
+  try{
+    const {id_usuario, password}  = req.body
+
+    const hashedPassword = await authService.hashPassword(password);
+    const data = await authService.changePassword(id_usuario, hashedPassword);
+
+    return res.status(200).json({message: "Contraseña actualizada exitosamente"});
+
+  }catch(err){
+    console.error(err);
+    return res.status(err.statusCode || 500).json({error: err.message});
+  }
+}

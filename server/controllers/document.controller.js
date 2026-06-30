@@ -354,7 +354,7 @@ export const actualizarSolicitudAcceso = async (req, res)=>{
     try{
         const userId = req.usuario.id_usuario;
         const {id} = req.params;
-        const {hora_inicio, hora_fin, fecha_vencimiento, estado} = req.body;
+        const {hora_inicio, hora_fin, fecha_vencimiento, estado, permiso_impresion, permiso_descarga} = req.body;
 
         // 1. Validación de campos obligatorios
         if (!id || !hora_inicio || !hora_fin || !fecha_vencimiento || !estado) {
@@ -368,7 +368,9 @@ export const actualizarSolicitudAcceso = async (req, res)=>{
             hora_inicio,
             hora_fin,
             fecha_vencimiento,
-            estado
+            estado,
+            permiso_impresion,
+            permiso_descarga
         },userId);
 
         if (!result.success) {

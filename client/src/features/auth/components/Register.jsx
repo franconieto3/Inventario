@@ -17,7 +17,7 @@ import { maximoNivelRoles } from '../services/MaximoNivel';
 import { EditarUsuario } from './EditarUsuario';
 import { CrearRol } from './CrearRol';
 import { EditarRol } from './EditarRol';
-
+import { ResetPassword } from './ResetPassword';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -166,7 +166,14 @@ export default function Register() {
             descripcion = {usuarioSeleccionado.name}
             onClose={()=>setMostrarResetPassword(false)}
           > 
-            
+            <ResetPassword 
+              usuario={usuarioSeleccionado} 
+              onSuccess={fetchUsuarios} 
+              onClose={()=>{
+                setMostrarResetPassword(false)
+                setUsuarioSeleccionado(null);
+              }}
+            />
           </Modal>
         }
         {mostrarAdministrarRoles && usuarioSeleccionado &&

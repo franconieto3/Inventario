@@ -126,6 +126,16 @@ export function ListadoSolicitudesAcceso() {
             render: (_) => _ ? new Date(_).toLocaleDateString() : "---"
         },
         {
+            key: "permiso_descarga",
+            header: "Permiso de descarga",
+            render: (_) => _ ? 'Sí' : 'No'
+        },
+        {
+            key: "permiso_impresion",
+            header: "Permiso de impresión",
+            render: (_) => _ ? 'Sí' : 'No'
+        },
+        {
             key: "acciones",
             header: "",
             render: (_, row) => row.estado === 'PENDIENTE' ? (
@@ -139,7 +149,7 @@ export function ListadoSolicitudesAcceso() {
 
     return (
         <>
-            <div style={{marginTop:'40px'}}>
+            <div>
                 <div style={{ display: 'flex', textAlign: 'start', alignItems: 'center', width: '100%', marginBottom: '20px', justifyContent: 'space-between' }}>
                     <div>
                         <h3 style={{ fontWeight: '500' }}>Solicitudes de Acceso a Documentos</h3>

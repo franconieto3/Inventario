@@ -47,7 +47,10 @@ export function PartDocuments({ documentos, idPieza, onRefresh }) {
             </p>
             
             <div>
-                {documentos.map((d) => (
+                {documentos.length === 0 ? (
+                    <p className="componentes-empty">No se encontraron documentos</p>
+                ) :
+                documentos.map((d) => (
                     <div key={d.id_tipo_documento} className='display-documento'>
                         <div style={{ cursor: 'pointer' }} onClick={() => handleVerPlano(d.id_version, d.path)}>
                             <i className='material-icons'>open_in_new</i>
