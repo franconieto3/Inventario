@@ -138,12 +138,12 @@ export function ListadoSolicitudesAcceso() {
         {
             key: "acciones",
             header: "",
-            render: (_, row) => row.estado === 'PENDIENTE' ? (
+            render: (_, row) => (
                 <AccessRequestRowActions 
                     row={row} 
                     onEditClick={handleEditClick} 
                 />
-            ) : null
+            )
         }
     ];
 

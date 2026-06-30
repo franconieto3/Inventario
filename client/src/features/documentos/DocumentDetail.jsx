@@ -200,6 +200,11 @@ export const DocumentDetail = () => {
     return permisosLocales.descarga ? btn : <Can permission={'descargar_documentos'}>{btn}</Can>;
   };
 
+
+  useEffect(()=>{
+    console.log(permisosLocales)
+  },[permisosLocales])
+
   if (error) return (
     <div style={{textAlign:'center', padding: '20px'}}>
       <div className="viewer-message error-msg">
@@ -334,9 +339,6 @@ export const DocumentDetail = () => {
                 <i className='material-icons unsupported-icon'>engineering</i>
                 <h3>Formato de Archivo Técnico</h3>
                 <p>El archivo <strong>{fileName}</strong> requiere software especializado (CAD/CAM o utilidades industriales) para su visualización.</p>
-                <Button onClick={handleDownload} variant="default" style={{marginTop: '1rem'}}>
-                  Descargar Archivo Original
-                </Button>
             </div>
           )}
         </div>
