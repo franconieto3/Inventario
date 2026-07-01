@@ -121,34 +121,55 @@ export const visualizarDocumento = async (req, res)=>{
 }
 
 export const streamDocument = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userId = req.usuario.id_usuario;
 
-    // Obtener info del documento de la BD (para saber su path)
-    const document = await getDocumentById(id);
+    const formatos = ['pdf', 'png', 'jpeg', 'jpg']
+    const mimeTypes = {
+        'pdf': 'application/pdf',
+        'png': 'image/png',
+        'jpeg': 'image/jpeg',
+        'jpg': 'image/jpeg'
+    };
 
-    // Obtener la URL firmada temporal
-    const url = await signedUrl(document.path);
+    try {
+        const { id } = req.params;
+        const userId = req.usuario.id_usuario;
 
-    // Hacer proxy del archivo al cliente
-    const response = await fetch(url.signedUrl);
-    
-    if (!response.ok) throw new Error('Error al descargar el archivo');
+        // Obtener info del documento de la BD (para saber su path)
+        const document = await getDocumentById(id);
 
-    const ext = obtenerExtension(document.path);
+        // Obtener la URL firmada temporal
+        const url = await signedUrl(document.path);
 
-    // Configurar cabeceras para forzar visualización (inline) y tipo de contenido
-    res.setHeader('Content-Type', response.headers.get('content-type') || 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="documento.${ext}"`);
-    
-    // Canalizar el stream de Supabase hacia el cliente
-    Readable.fromWeb(response.body).pipe(res);
+        const ext = obtenerExtension(document.path);
+        
+        const es_renderizable = formatos.includes(ext)
 
-  } catch (error) {
-    console.error(error);
-    res.status(error.statusCode || 500).json({ message: 'Error al transmitir el documento', error: error.message });
-  }
+        if (!es_renderizable) {
+            return res.status(200).json({
+                message: 'El archivo no tiene un formato soportado para visualización en línea.',
+                es_renderizable: false,
+                extension: ext,
+            });
+        }
+        // Hacer proxy del archivo al cliente
+        const response = await fetch(url.signedUrl);
+        
+        if (!response.ok) throw new Error('Error al descargar el archivo');
+
+        const contentType = mimeTypes[ext] || 'application/octet-stream';
+        res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+
+        // Configurar cabeceras para forzar visualización (inline) y tipo de contenido
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Disposition', `inline; filename="documento.${ext}"`);
+        
+        // Canalizar el stream de Supabase hacia el cliente
+        Readable.fromWeb(response.body).pipe(res);
+
+    } catch (error) {
+        console.error(error);
+        res.status(error.statusCode || 500).json({ message: 'Error al transmitir el documento', error: error.message });
+    }
 };
 
 //Historial de versiones

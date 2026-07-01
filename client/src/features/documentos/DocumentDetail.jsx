@@ -44,16 +44,28 @@ export const DocumentDetail = () => {
   useEffect(() => {
     const fetchDocument = async () => {
       try {
+        setLoading(true);
+
         const accesoData = await apiCall(`${API_URL}/api/documentos/${id}/verificar-acceso`, { method: 'GET' });
         
         if (accesoData.permisosProvisorios) {
           setPermisosLocales(accesoData.permisosProvisorios);
         }
 
-        const blob = await apiCall(`${API_URL}/api/documentos/${id}/stream`, {
+        const respuesta = await apiCall(`${API_URL}/api/documentos/${id}/stream`, {
           method: 'GET', 
           responseType: 'blob'
         });
+
+        if (respuesta && respuesta.es_renderizable === false) {
+              setFileType('unsupported');
+              setFileName(`documento.${respuesta.extension}`);
+              setBlobUrl(null); 
+              setLoading(false);
+              return;
+          }
+
+        const blob = respuesta;
 
         if (blob.type === 'application/pdf') {
             setFileType('pdf');
@@ -72,6 +84,7 @@ export const DocumentDetail = () => {
 
         const url = URL.createObjectURL(blob);
         setBlobUrl(url);
+        setLoading(false);
 
       } catch (err) {
         if (err.status === 403) {
@@ -91,6 +104,7 @@ export const DocumentDetail = () => {
             setError('Ocurrió un error cargando el documento. Intente más tarde');
             setDocumentoExiste(false);
         }
+        setLoading(false);
       }
     };
     fetchDocument();
@@ -146,7 +160,12 @@ export const DocumentDetail = () => {
   const zoomOut = () => setScale(prev => Math.max(prev - 0.5, 0.5)); // Límite mín de 0.5x
 
   const handleDownload = () => {
-    if (!blobUrl) return;
+    if (!blobUrl) {
+      if(fileType === 'unsupported'){
+        console.log("Proceso de de descarga de archivo no soportado");
+      }
+      return
+    }
     const link = document.createElement('a');
     link.href = blobUrl;
     link.download = link.download = fileName; 
@@ -201,10 +220,6 @@ export const DocumentDetail = () => {
   };
 
 
-  useEffect(()=>{
-    console.log(permisosLocales)
-  },[permisosLocales])
-
   if (error) return (
     <div style={{textAlign:'center', padding: '20px'}}>
       <div className="viewer-message error-msg">
@@ -236,7 +251,7 @@ export const DocumentDetail = () => {
     </div>
   );
 
-  if (!blobUrl) return (
+  if (!blobUrl && loading) return (
     <>
       <div style={{ position: 'relative', minHeight: '200px' }}>
           <Spinner 
