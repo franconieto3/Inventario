@@ -211,6 +211,55 @@ export const obtenerPiezasVersion = async (idVersion) => {
     return piezas;
 }
 
+export const formatPath = (path)=>{
+    // 1. Encontramos el índice del último punto
+    const ultimoPuntoIndex = path.lastIndexOf('.');
+
+    let nuevoPath;
+
+    // Validación de seguridad: verificamos que el archivo realmente tenga un punto (extensión)
+    if (ultimoPuntoIndex !== -1) {
+        // Extraemos todo ANTES del punto
+        const base = path.slice(0, ultimoPuntoIndex);
+        
+        // Extraemos la extensión (INCLUYENDO el punto)
+        const extension = path.slice(ultimoPuntoIndex);
+        
+        // Unimos las piezas usando template literals (interpolación de strings)
+        nuevoPath = `${base}_copy${extension}`;
+    } else {
+        // Si por algún motivo el archivo no tiene extensión, simplemente lo agregamos al final
+        nuevoPath = `${path}_copy`;
+    }
+    return nuevoPath;
+}
+
+export const duplicarArchivo = async(originalPath, newPath)=>{
+
+    const { data, error } = await supabaseAdmin
+    .storage
+    .from('gestion_documental_privada')
+    .copy(originalPath, newPath);
+
+    // Manejo de errores
+    if (error) {
+        
+        console.log(error);
+
+        const err = new Error('Error al duplicar el archivo:', error.message)
+        
+        if (error.status === 404 || error.message.toLowerCase().includes('not found')) {
+            err.statusCode = 404; 
+        } else {
+            err.statusCode = error.status || 500;
+        }
+
+        throw err;
+    }
+    
+    return data.path;
+}
+
 //Solicitudes de cambio de documentos
 
 export const crearSolicitudCambio = async(idUsuario, mensaje, idVersion)=>{

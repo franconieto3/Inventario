@@ -1,6 +1,6 @@
 import { error } from "node:console";
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension, verificarPathRepetido} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension, verificarPathRepetido, duplicarArchivo, formatPath} from "../services/document.service.js";
 import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
@@ -229,11 +229,18 @@ export const reestablecerVersion = async(req, res)=>{
         //Obtener piezas de la version
         const listadoPiezas = await obtenerPiezasVersion(datosValidados.idVersionRecuperada);
 
+        const pathDefinitivo = formatPath(datosValidados.path)
+
+        const newPath = await duplicarArchivo(
+            datosValidados.path,
+            pathDefinitivo
+        )
+
         const payload = {
             version:{
                 fecha_vigencia: nueva_fecha_vigencia,
                 commit: nuevo_commit,
-                path: datosValidados.path,
+                path: pathDefinitivo,
                 id_tipo_documento: datosValidados.id_tipo_documento
             },
             piezas: listadoPiezas
@@ -261,7 +268,7 @@ export const eliminacionVersion = async (req, res)=>{
         console.log('Path: ',path);
 
         const data = await eliminarVersion(id);
-
+/*
         const esDuplicado = await verificarPathRepetido(path);
         
         console.log('duplicado: ', esDuplicado);
@@ -269,7 +276,9 @@ export const eliminacionVersion = async (req, res)=>{
         if(!esDuplicado){
             const eliminado = await deleteSupabaseFile('gestion_documental_privada', path)
         }
-             
+ */
+        const eliminado = await deleteSupabaseFile('gestion_documental_privada', path)
+
         res.status(200).json({message: "Versión eliminada exitosamente"});
     }catch(err){
         res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
