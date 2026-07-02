@@ -185,10 +185,10 @@ export const DocumentDetail = () => {
         } catch (error) {
           console.error("Error al obtener la URL firmada:", error);
         }
-        setDowloading(false);
+        setDownloading(false);
         return;
       }
-      setDowloading(false);
+      setDownloading(false);
       return;
     }
 
@@ -198,7 +198,7 @@ export const DocumentDetail = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    setDowloading(false);
+    setDownloading(false);
   };
 
   const handlePrint = () => {
