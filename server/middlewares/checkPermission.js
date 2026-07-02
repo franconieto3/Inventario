@@ -32,11 +32,17 @@ export const checkStreamPermission = async (req, res, next) => {
     try {
         const userId = req.usuario.id_usuario; 
         const idVersion = req.params.id;
+        const permisosUsuario = req.usuario.permisos;
+
 
         req.permisosProvisorios = { descarga: false, impresion: false };
 
         // 1. Verificamos si tiene el permiso general por Rol
-        if (req.usuario.permisos.includes('ver_documentos')) {
+        if (permisosUsuario.includes('ver_documentos')) {
+            req.permisosProvisorios = { 
+              descarga: permisosUsuario.includes('descargar_documentos'), 
+              impresion: permisosUsuario.includes('imprimir_documentos')
+            };
             return next();
         }
 
@@ -51,7 +57,6 @@ export const checkStreamPermission = async (req, res, next) => {
                 descarga: solicitud.permiso_descarga,
                 impresion: solicitud.permiso_impresion
             };
-
             return next();
         }
 

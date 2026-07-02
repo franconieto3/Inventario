@@ -26,6 +26,7 @@ export const DocumentDetail = () => {
 
   //Estado de carga
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [documentoExiste, setDocumentoExiste] = useState(true);
 
   // Estados para react-pdf
@@ -159,19 +160,45 @@ export const DocumentDetail = () => {
   const zoomIn = () => setScale(prev => Math.min(prev + 0.5, 4)); // Límite máx de 4x
   const zoomOut = () => setScale(prev => Math.max(prev - 0.5, 0.5)); // Límite mín de 0.5x
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    setDownloading(true);
     if (!blobUrl) {
-      if(fileType === 'unsupported'){
-        console.log("Proceso de de descarga de archivo no soportado");
+      if (fileType === 'unsupported') {
+        try {
+          const res = await apiCall(`${API_URL}/api/documentos/${id}/descargar`, {}); 
+          const signedUrl = res.signedUrl
+
+          if (signedUrl) {
+
+            const link = document.createElement('a');
+            link.href = signedUrl;
+            link.download = fileName; 
+            
+            link.target = '_blank'; 
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } else {
+            console.error("La API no devolvió una URL firmada válida.");
+          }
+        } catch (error) {
+          console.error("Error al obtener la URL firmada:", error);
+        }
+        setDowloading(false);
+        return;
       }
-      return
+      setDowloading(false);
+      return;
     }
+
     const link = document.createElement('a');
     link.href = blobUrl;
     link.download = link.download = fileName; 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setDowloading(false);
   };
 
   const handlePrint = () => {
@@ -210,7 +237,7 @@ export const DocumentDetail = () => {
 
   const renderDownloadButton = () => {
     const btn = (
-      <Button variant="default" onClick={handleDownload} title="Descargar">
+      <Button variant="default" onClick={handleDownload} title="Descargar" disabled={downloading}>
         <i className='material-icons'>download</i>
         <span className='btn-text'>Descargar</span>
       </Button>

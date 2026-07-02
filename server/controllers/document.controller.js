@@ -172,6 +172,30 @@ export const streamDocument = async (req, res) => {
     }
 };
 
+export const downloadDocument = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const permisos = req.permisosProvisorios;
+
+        if (permisos.descarga === false){
+            return res.status(403).json({error: "No tienes permiso para descargar este documento"});
+        }
+
+        // Obtener info del documento de la BD (para saber su path)
+        const document = await getDocumentById(id);
+
+        // Obtener la URL firmada temporal
+        const url = await signedUrl(document.path);
+
+        return res.status(200).json({
+            signedUrl: url.signedUrl,
+        })
+
+    }catch(err){
+        console.error(err);
+        return res.status(err.statusCode || 500).json({ error: err.message })
+    }
+}
 //Historial de versiones
 
 export const historialDocumentos = async (req, res) =>{

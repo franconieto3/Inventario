@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso, eliminarVerificacionInstrumentos, eliminarArchivoInstrumentos} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso, eliminarVerificacionInstrumentos, eliminarArchivoInstrumentos, downloadDocument} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
@@ -45,6 +45,12 @@ router.get('/:id/verificar-acceso',
         });
     }
 );
+
+router.get('/:id/descargar',
+    verificarToken,
+    checkStreamPermission,
+    downloadDocument
+)
 
 //----
 router.get('/historial-versiones-pieza', 
