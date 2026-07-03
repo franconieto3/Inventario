@@ -28,7 +28,7 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
 
     return (
         <>
-            <div className='detail'>
+            <div className='part-header'>
 
                 <PartHeader
                     mostrar={mostrar} 

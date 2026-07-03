@@ -12,11 +12,12 @@
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-
+    transition: background-color 0.2s ease-in-out;
 }
 
-.card :hover{
+.card:hover{
     cursor:pointer;
+    background-color: #f8fafc;
 }
 
 .icons-container{

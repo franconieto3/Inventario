@@ -5,12 +5,28 @@
     padding: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     margin-top: 10px;
+    background-color: white;
+}
+
+.part-header{
+    padding: 15px;
+    text-align: start;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.part-header:hover{
+    background-color: #f8fafc;
 }
 
 .part-title{
     display: flex;
     gap: 10px;
     padding: 10px 0px;
+    width: 100%;
+    cursor: pointer;
 }
 
 .part-title span{

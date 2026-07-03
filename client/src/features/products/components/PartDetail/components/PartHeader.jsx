@@ -31,13 +31,7 @@ export function PartHeader({ mostrar, setMostrar, idPieza, nombrePieza, codigoPi
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div className='part-title'>
-                    <input 
-                        type='checkbox' 
-                        name="Piezas" 
-                        onChange={() => setMostrar(!mostrar)} 
-                        checked={mostrar} 
-                    />
+                <div className='part-title' onClick={()=>setMostrar(!mostrar)}>
                     <span>{producto.nombre} {nombrePieza} · Código: {codigoPieza? `${String(producto.id_rubro).padStart(2, "0")}-${codigoPieza}-XX`: ''}</span>
                 </div>
                 

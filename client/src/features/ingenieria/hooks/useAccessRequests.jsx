@@ -68,6 +68,16 @@ export const useAccessRequests = () => {
         fetchRequests();
     }, [page, selectedStatus, refreshTrigger]);
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (!document.hidden) {
+                refreshRequests();
+            }
+        }, 60000); 
+
+        return () => clearInterval(intervalId);
+    }, [refreshRequests]);
+
     return {
         solicitudes,
         estados,
