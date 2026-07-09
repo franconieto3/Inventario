@@ -5,7 +5,7 @@ import { apiCall } from "../../../services/api";
 import { useParams } from "react-router-dom";
 import { EditarInstrumentos } from "../components/EditarInstrumentos";
 
-import './instrumentDetail.css'
+import './InstrumentDetail.css'
 import { Modal } from "../../../components/ui/Modal";
 import { useInstruments } from "../hooks/useInstruments";
 import { AgregarArchivo } from "../components/AgregarArchivo";
