@@ -49,8 +49,13 @@ export const checkStreamPermission = async (req, res, next) => {
         // 2. Si no tiene el rol, verificamos si tiene una solicitud provisoria válida
         const solicitud = await obtenerSolicitud(idVersion, userId);
 
-        const ahora = new Date();
-        const horaActual = ahora.toTimeString().split(' ')[0];
+        const horaActual = new Date().toLocaleTimeString('es-AR', {
+            timeZone: 'America/Argentina/Buenos_Aires',
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
 
         if (solicitud?.v_estado === 'APROBADA' && solicitud?.hora_inicio < horaActual && solicitud?.hora_fin > horaActual) {
             req.permisosProvisorios = {
