@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { apiCall } from '../../../services/api'; // Ajusta la ruta según tu estructura
-import './historialVerificaciones.css';
+import './HistorialVerificaciones.css';
 import { DropdownMenu } from '../../../components/ui/DropdownMenu';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
