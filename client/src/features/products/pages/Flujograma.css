@@ -1,0 +1,208 @@
+.graph-editor-container {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: scroll; /* Evita que nodos salgan del contenedor visualmente */
+  /* Patrón de cuadrícula tipo Blueprint de fábrica */
+  background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.graph-editor-container.connecting-mode {
+  cursor: crosshair;
+}
+
+/* Estilos para la Barra Superior */
+.graph-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.graph-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.graph-name-input {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.2s;
+}
+
+.graph-name-input:hover,
+.graph-name-input:focus {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+  outline: none;
+}
+
+.graph-actions-section {
+  display: flex;
+  gap: 12px;
+}
+
+.search-button{
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.search-button:hover{
+  background: #ef4444;
+  color: white;
+}
+
+.connection-toast {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  z-index: 100;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.connection-toast button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.graph-edges-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Crucial para que no bloquee los clicks en los nodos */
+  z-index: 1;
+  overflow: visible;
+}
+
+.graph-node {
+  position: absolute;
+  width: 170px;
+  background: white;
+  border: 2px solid #cbd5e1;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  cursor: grab;
+  z-index: 10;
+  user-select: none;
+  touch-action: none;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.graph-node:active {
+  cursor: grabbing;
+}
+
+.graph-node.node-root {
+  border-color: #3b82f6; /* Destacar el nodo raíz */
+}
+
+.graph-node.node-active {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Mostrar acciones al hacer hover */
+.graph-node:hover .node-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.node-header {
+  background: #f1f5f9;
+  text-align: center;
+  padding: 5px;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 4px 4px 0 0;
+}
+
+.node-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.node-body label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.node-actions {
+  position: absolute;
+  bottom: -40px; /* Posicionado flotando bajo el nodo */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 4px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  border: 1px solid #e2e8f0;
+  
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.node-actions button {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.node-actions button:hover {
+  background: #f1f5f9;
+}
+
+.node-actions button.btn-delete:hover {
+  background: #fee2e2;
+}

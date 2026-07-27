@@ -18,6 +18,7 @@ import { DocumentDetail } from './features/documentos/DocumentDetail';
 import RightClickBlocker from './components/layout/RightClickBlocker';
 import { Instrumentos } from './features/instrumentos/pages/Instrumentos';
 import { InstrumentDetail } from './features/instrumentos/pages/InstrumentDetail';
+import { Flujograma } from './features/products/pages/Flujograma';
 
 function App() {
 
@@ -103,6 +104,14 @@ function App() {
                       <DocumentDetail></DocumentDetail>
                     </RightClickBlocker>
                   </PrivateRoute>
+                }
+              />
+              <Route
+                path="/flujograma"
+                element={
+                  <PrivateRoute permission={null}>
+                    <Flujograma></Flujograma>
+                  </PrivateRoute>  
                 }
               />
               <Route
