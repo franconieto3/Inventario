@@ -24,6 +24,8 @@
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .graph-title-section {
@@ -43,6 +45,7 @@
   width: 100%;
   max-width: 400px;
   transition: all 0.2s;
+  min-width: 150px;
 }
 
 .graph-name-input:hover,

@@ -192,3 +192,30 @@ export const quitarRutaPieza = async (req, res)=>{
   }
 
 }
+
+
+// --- GRAFOS DE PROCESOS --- //
+
+export const nuevoGrafoProcesos = async (req, res) => {
+  try {
+    const { nombre, tipoRuta, nodes, edges } = req.body;
+    
+    console.log("Nombre: ", nombre);
+    console.log("Nodos: ", nodes);
+    console.log("Aristas: ", edges);
+
+    // Aquí iría tu lógica para guardar en la base de datos...
+
+    // 1. DEBES RETORNAR UNA RESPUESTA AL FRONTEND
+    return res.status(201).json({ 
+        message: "Grafo de procesos recibido y creado exitosamente" 
+    });
+
+  } catch (err) {
+    // 2. DEBES MANEJAR EL ERROR SI ALGO FALLA
+    console.error('Error al crear el grafo:', err);
+    return res.status(500).json({ 
+        error: err.message || "Error interno del servidor al crear el grafo" 
+    });
+  }
+}

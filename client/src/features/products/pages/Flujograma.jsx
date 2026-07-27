@@ -5,6 +5,8 @@ import { useProcesos } from '../../../features/procesos/hooks/useProcesos';
 import NavBar from '../../../components/layout/NavBar';
 import Button from '../../../components/ui/Button';
 import { Arista } from './Arista'; // Importamos el componente auxiliar
+import { useProcessRoutes } from '../../procesos/hooks/useProcessRoutes';
+import { apiCall } from '../../../services/api';
 
 // Garantizamos el inicio y fin estructural de la ruta de fabricación
 const INITIAL_NODES = [
@@ -30,13 +32,23 @@ const INITIAL_NODES = [
   }
 ];
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 export function Flujograma() {
   const { allProcesos } = useProcesos();
+  const { tipos } = useProcessRoutes();
+
   const [showBuscador, setShowBuscador] = useState(false);
 
+  //Atributos del grafo
+  const [nombre, setNombre] = useState("");
+  const [tipoRuta, setTipoRuta] = useState("");
   const [nodes, setNodes] = useState(INITIAL_NODES);
   const [edges, setEdges] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+  
+  //Estados para conexión de nodos
   const [connectingFrom, setConnectingFrom] = useState(null);
   const [procesoPadre, setProcesoPadre] = useState(null);
   const [procesoSeleccionado, setProcesoSeleccionado] = useState(null);
@@ -45,6 +57,42 @@ export function Flujograma() {
   const [draggingNodeId, setDraggingNodeId] = useState(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const dragStartNodePos = useRef({ x: 0, y: 0 });
+
+  // --- ENVIO DE DATOS
+
+  const handleSubmit = async ()=>{
+
+    //Validaciones
+    if(!nombre || nombre === ""){
+        alert("El nombre de la ruta es obligatorio");
+        return;
+    }
+    if(!tipoRuta || tipoRuta === ""){
+        alert("Debe especificar el tipo de ruta");
+        return;
+    }
+    try{
+        setLoading(true);
+
+        const res = await apiCall(`${API_URL}/api/procesos/ruta-procesos/new`, {
+            method: 'POST',
+            body: JSON.stringify({
+                nodes: nodes,
+                edges: edges,
+                nombre: nombre,
+                tipoRuta: tipoRuta
+            })
+        });
+        
+        // Opcional: Mostrar mensaje de éxito usando 'res.message'
+        console.log("Grafo creado exitosamente:", res.message);
+
+    }catch(err){
+        console.log(err);
+    }finally{
+        setLoading(false);
+    }
+  }
 
   // --- LÓGICA DE RUTAS Y GRAFOS ---
 
@@ -211,11 +259,29 @@ export function Flujograma() {
                     type="text" 
                     className="graph-name-input"
                     placeholder="Nombre de la ruta productiva..."
-                    defaultValue="Nueva Ruta de Producción"
+                    value={nombre}
+                    onChange={(e)=>setNombre(e.target.value)}
                 />
             </div>
+            <div>
+                <select
+                    id="id_tipo_ruta"
+                    name="id_tipo_ruta"
+                    value={tipoRuta}
+                    onChange={(e)=>setTipoRuta(e.target.value)}
+                    required
+                >
+                    <option value="" disabled>Tipo de ruta...</option>
+                    {tipos?.map((tipo) => (
+                    
+                    <option key={tipo.id_tipo_ruta} value={tipo.id_tipo_ruta}>
+                        {tipo.descripcion}
+                    </option>
+                    ))}
+                </select>
+            </div>
             <div className="graph-actions-section">
-                <Button variant='default' onClick={()=>console.log('Guardar Ruta')}>
+                <Button variant='default' onClick={handleSubmit} disabled={loading}>
                     Guardar Ruta
                 </Button>
             </div>
