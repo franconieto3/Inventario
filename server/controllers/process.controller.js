@@ -1,4 +1,4 @@
-import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertProceso, insertRutaProceso, removeRouteFromPart, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
+import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
 
 
 export const obtenerTiposProcesos = async (req, res) => {
@@ -198,24 +198,32 @@ export const quitarRutaPieza = async (req, res)=>{
 
 export const nuevoGrafoProcesos = async (req, res) => {
   try {
-    const { nombre, tipoRuta, nodes, edges } = req.body;
+    const payload = req.body;
     
-    console.log("Nombre: ", nombre);
-    console.log("Nodos: ", nodes);
-    console.log("Aristas: ", edges);
+    // Validaciones de seguridad de que el payload tiene la estructura mínima esperada
+    if (!payload.ruta || !payload.ruta.nombre) {
+        return res.status(400).json({ error: "El objeto 'ruta' o el 'nombre' son obligatorios." });
+    }
+    
+    if (!Array.isArray(payload.nodos) || !Array.isArray(payload.aristas)) {
+        return res.status(400).json({ error: "La estructura de nodos y aristas debe ser un array." });
+    }
 
-    // Aquí iría tu lógica para guardar en la base de datos...
+    // 1. Delegamos el guardado al service
+    const idNuevaRuta = await insertGrafoProceso(payload);
 
-    // 1. DEBES RETORNAR UNA RESPUESTA AL FRONTEND
+    // 2. Retornamos la respuesta exitosa al frontend
     return res.status(201).json({ 
-        message: "Grafo de procesos recibido y creado exitosamente" 
+        message: "Grafo de procesos recibido y creado exitosamente",
+        data: {
+          id_ruta: idNuevaRuta
+        }
     });
 
   } catch (err) {
-    // 2. DEBES MANEJAR EL ERROR SI ALGO FALLA
     console.error('Error al crear el grafo:', err);
-    return res.status(500).json({ 
+    return res.status(err.statusCode || 500).json({ 
         error: err.message || "Error interno del servidor al crear el grafo" 
     });
   }
-}
+};

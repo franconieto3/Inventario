@@ -432,3 +432,39 @@ export const removeRouteFromPart = async (id_pieza, id_bop) =>{
   return data;
 
 }
+
+
+/* --- GRAFOS DE PROCESOS --- */
+
+export const insertGrafoProceso = async (payload) => {
+  const { data, error } = await supabase.rpc('crear_ruta_completa', {
+    payload: payload
+  });
+
+  if (error) {
+    console.error("Error en BD al crear el grafo de procesos:", error);
+
+    const err = new Error();
+    err.originalError = error;
+
+    // Manejo de errores específicos de PostgreSQL
+    switch (error.code) {
+      case '23505': // Unique Violation
+        err.statusCode = 409;
+        err.message = 'Ya existe un registro que entra en conflicto con las restricciones únicas (por ejemplo, múltiples inicios o fines).';
+        break;
+      case '23503': // Foreign Key Violation
+        err.statusCode = 400;
+        err.message = 'Uno de los procesos seleccionados no existe en la base de datos.';
+        break;
+      default:
+        err.statusCode = 500;
+        err.message = `Error inesperado al guardar el grafo: ${error.message}`;
+    }
+    
+    throw err;
+  }
+
+  // Devuelve el ID de la ruta creada (v_id_ruta)
+  return data;
+};
