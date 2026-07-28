@@ -437,6 +437,7 @@ export const removeRouteFromPart = async (id_pieza, id_bop) =>{
 /* --- GRAFOS DE PROCESOS --- */
 
 export const insertGrafoProceso = async (payload) => {
+  
   const { data, error } = await supabase.rpc('crear_ruta_completa', {
     payload: payload
   });
@@ -464,7 +465,11 @@ export const insertGrafoProceso = async (payload) => {
     
     throw err;
   }
-
+  
   // Devuelve el ID de la ruta creada (v_id_ruta)
   return data;
+  
+
+  //console.log(payload);
+  //return 1;
 };

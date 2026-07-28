@@ -2,7 +2,7 @@ import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listarProcesos, nuevaRutaProcesos, nuevoGrafoProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { procesoSchema } from "../schemas/process.schemas.js";
+import { grafoSchema, procesoSchema } from "../schemas/process.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
@@ -87,7 +87,7 @@ router.delete('/ruta/pieza',
 router.post('/ruta-procesos/new',
     verificarToken,
     requirePermission('crear_rutas_procesos'),
-    //Esquema de validación
+    validateSchema(grafoSchema),
     nuevoGrafoProcesos
 )
 

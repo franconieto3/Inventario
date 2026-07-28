@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import './Flujograma.css';
 import Buscador from '../../../components/ui/Buscador';
-import { useProcesos } from '../../../features/procesos/hooks/useProcesos';
+import { useProcesos } from '../hooks/useProcesos';
 import NavBar from '../../../components/layout/NavBar';
 import Button from '../../../components/ui/Button';
-import { Arista } from './Arista'; // Importamos el componente auxiliar
-import { useProcessRoutes } from '../../procesos/hooks/useProcessRoutes';
+import { Arista } from './Arista'; 
+import { useProcessRoutes } from '../hooks/useProcessRoutes';
 import { apiCall } from '../../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 // Garantizamos el inicio y fin estructural de la ruta de fabricación
 const INITIAL_NODES = [
@@ -37,6 +38,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 export function Flujograma() {
   const { allProcesos } = useProcesos();
   const { tipos } = useProcessRoutes();
+  const navigate = useNavigate();
 
   const [showBuscador, setShowBuscador] = useState(false);
 
@@ -73,26 +75,27 @@ export function Flujograma() {
 
         // 1. Mapeo de Nodos
         const nodosFormateados = nodes.map(node => ({
-        id_local: node.id_nodo,
-        id_proceso: node.id_proceso ? parseInt(node.id_proceso) : null,
-        requiere_inspeccion: node.requiere_inspeccion || false,
-        x: Math.round(node.x),
-        y: Math.round(node.y),
-        inicio: node.inicio || false,
-        fin: node.fin || false
+            id_local: node.id_nodo,
+            id_proceso: node.id_proceso ? parseInt(node.id_proceso) : null,
+            requiere_inspeccion: node.requiere_inspeccion || false,
+            x: Math.round(node.x),
+            y: Math.round(node.y),
+            inicio: node.inicio || false,
+            fin: node.fin || false
         }));
 
         // 2. Mapeo de Aristas
         const aristasFormateadas = edges.map(edge => ({
-        origen_local: edge.id_nodo_origen,
-        destino_local: edge.id_nodo_destino,
-        prioridad: edge.prioridad ? parseInt(edge.prioridad) : 1
+            origen_local: edge.id_nodo_origen,
+            destino_local: edge.id_nodo_destino,
+            prioridad: edge.prioridad ? parseInt(edge.prioridad) : 1
         }));
 
         // 3. Estructura del Payload final
         const payload = {
         ruta: {
-            nombre: nombre
+            nombre: nombre,
+            id_tipo_ruta: parseInt(tipoRuta)
         },
         nodos: nodosFormateados,
         aristas: aristasFormateadas
@@ -107,7 +110,8 @@ export function Flujograma() {
             });
             
             console.log("Grafo creado exitosamente:", res.message);
-            // Opcional: Puedes reiniciar los estados o redirigir al usuario aquí
+            navigate("/procesos");
+
         } catch (err) {
             console.error("Error al enviar el grafo:", err);
         } finally {
