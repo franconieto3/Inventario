@@ -23,6 +23,7 @@ export function useGraphEditor(initialNodes, isReadOnly = false) {
         const newNode = {
             id_nodo: newNodeId,
             id_proceso: childData.id_proceso,
+            nombre: childData.nombre,
             label: childData.nombre,
             requiere_inspeccion: false,
             x: parentNode.x + 300,
@@ -41,12 +42,14 @@ export function useGraphEditor(initialNodes, isReadOnly = false) {
 
     const handleDeleteNode = (nodeIdToDelete) => {
         if (isReadOnly) return;
-        const nodeToDelete = nodes.find(n => n.id_nodo === nodeIdToDelete);
-        if (!nodeToDelete || nodeToDelete.inicio || nodeToDelete.fin) return;
+        if(window.confirm('¿Desea eliminar este nodo?')){
+            const nodeToDelete = nodes.find(n => n.id_nodo === nodeIdToDelete);
+            if (!nodeToDelete || nodeToDelete.inicio || nodeToDelete.fin) return;
 
-        // Elimina el nodo y limpia las aristas huérfanas
-        setNodes(nodes.filter(n => n.id_nodo !== nodeIdToDelete));
-        setEdges(edges.filter(e => e.id_nodo_origen !== nodeIdToDelete && e.id_nodo_destino !== nodeIdToDelete));
+            // Elimina el nodo y limpia las aristas huérfanas
+            setNodes(nodes.filter(n => n.id_nodo !== nodeIdToDelete));
+            setEdges(edges.filter(e => e.id_nodo_origen !== nodeIdToDelete && e.id_nodo_destino !== nodeIdToDelete));
+        }
     };
 
     const handleDeleteEdge = (origenId, destinoId) => {
@@ -97,7 +100,7 @@ export function useGraphEditor(initialNodes, isReadOnly = false) {
     };
     
     const handleDragStart = (e, nodeId) => {
-        if (isReadOnly) return; // Bloquear en modo solo lectura
+        
         if (e.target.tagName.toLowerCase() === 'input' || e.target.closest('button') || e.target.closest('.node-actions')) {
             return;
         }
