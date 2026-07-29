@@ -1,4 +1,4 @@
-import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
+import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getGrafoProcesos, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
 
 
 export const obtenerTiposProcesos = async (req, res) => {
@@ -227,3 +227,16 @@ export const nuevoGrafoProcesos = async (req, res) => {
     });
   }
 };
+
+export const obtenerGrafoProcesos = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await getGrafoProcesos(id);
+
+    return res.status(200).json(data);
+
+  } catch (error) {
+    console.error('Error al obtener el grafo:', error);
+    return res.status(error.statusCode || 500).json({ error: error.message });
+  }
+}

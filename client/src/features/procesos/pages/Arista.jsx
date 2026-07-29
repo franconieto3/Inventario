@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Arista = ({ edge, sourceNode, targetNode, onPriorityChange, onDelete }) => {
+export const Arista = ({ edge, sourceNode, targetNode, onPriorityChange, onDelete, isReadOnly=false }) => {
     if (!sourceNode || !targetNode) return null;
 
     // Asumimos que la conexión sale por la derecha del origen y entra por la izquierda del destino
@@ -34,37 +34,43 @@ export const Arista = ({ edge, sourceNode, targetNode, onPriorityChange, onDelet
                 style={{ pointerEvents: 'auto' }} 
             >
                 <div style={{ display: 'flex', gap: '4px', alignItems: 'center', background: '#fff', padding: '2px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
-                    <input 
-                        type="number"
-                        min="1"
-                        value={edge.prioridad || 1}
-                        onChange={(e) => onPriorityChange(edge.id_nodo_origen, edge.id_nodo_destino, e.target.value)}
-                        title="Prioridad"
-                        style={{
-                            width: '40px',
-                            textAlign: 'center',
-                            fontSize: '0.75rem',
-                            border: 'none',
-                            outline: 'none',
-                        }}
-                    />
-                    <button 
-                        onClick={() => onDelete(edge.id_nodo_origen, edge.id_nodo_destino)}
-                        style={{
-                            background: '#fee2e2',
-                            color: '#ef4444',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '2px'
-                        }}
-                        title="Eliminar arista"
-                    >
-                        <i className="material-icons" style={{ fontSize: '14px' }}>close</i>
-                    </button>
+                    {isReadOnly ? 
+                        (<span>{edge.prioridad}</span>):
+                        (<input 
+                            type="number"
+                            min="1"
+                            value={edge.prioridad || 1}
+                            onChange={(e) => onPriorityChange(edge.id_nodo_origen, edge.id_nodo_destino, e.target.value)}
+                            title="Prioridad"
+                            style={{
+                                width: '40px',
+                                textAlign: 'center',
+                                fontSize: '0.75rem',
+                                border: 'none',
+                                outline: 'none',
+                            }}
+                        />
+                        )
+                    }
+                    {!isReadOnly && (
+                        <button 
+                            onClick={() => onDelete(edge.id_nodo_origen, edge.id_nodo_destino)}
+                            style={{
+                                background: '#fee2e2',
+                                color: '#ef4444',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '2px'
+                            }}
+                            title="Eliminar arista"
+                        >
+                            <i className="material-icons" style={{ fontSize: '14px' }}>close</i>
+                        </button>
+                    )}
                 </div>
             </foreignObject>
         </g>

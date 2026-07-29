@@ -469,7 +469,25 @@ export const insertGrafoProceso = async (payload) => {
   // Devuelve el ID de la ruta creada (v_id_ruta)
   return data;
   
+};
 
-  //console.log(payload);
-  //return 1;
+export const getGrafoProcesos = async (idRuta) => {
+  
+  const { data, error } = await supabase.rpc('obtener_ruta_por_id', {p_id_ruta: idRuta});
+
+  if (error) {
+    console.error("Error en BD al obtener el grafo de procesos:", error);
+    const err = new Error();
+    err.statusCode = 500;
+    err.message = `Error al obtener el grafo de procesos: ${error.message}`;
+    throw err;
+  }
+
+  if (!data) {
+    const err = new Error(`No se encontró una ruta con id ${idRuta}`);
+    err.statusCode = 404;
+    throw err;
+  }
+
+  return data;
 };

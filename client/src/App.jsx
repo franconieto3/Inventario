@@ -107,9 +107,17 @@ function App() {
                 }
               />
               <Route
-                path="/flujograma"
+                path="/flujograma/new"
                 element={
                   <PrivateRoute permission={'crear_rutas_procesos'}>
+                    <Flujograma/>
+                  </PrivateRoute>  
+                }
+              />
+              <Route
+                path="/flujograma/:id"
+                element={
+                  <PrivateRoute permission={'ver_rutas_procesos'}>
                     <Flujograma/>
                   </PrivateRoute>  
                 }

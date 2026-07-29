@@ -6,8 +6,9 @@ import NavBar from '../../../components/layout/NavBar';
 import Button from '../../../components/ui/Button';
 import { Arista } from './Arista'; 
 import { useProcessRoutes } from '../hooks/useProcessRoutes';
-import { apiCall } from '../../../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGraphProcessRoutes } from '../hooks/useGraphProcessRoutes';
+import { useGraphEditor } from '../hooks/useGraphEditor';
 
 // Garantizamos el inicio y fin estructural de la ruta de fabricación
 const INITIAL_NODES = [
@@ -33,91 +34,59 @@ const INITIAL_NODES = [
   }
 ];
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+//const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function Flujograma() {
+
+  const {id} = useParams();
+  const isEditMode = Boolean(id);
+  const isReadOnly = false; // Puedes enlazar esto a los permisos de App.jsx
+
   const { allProcesos } = useProcesos();
   const { tipos } = useProcessRoutes();
-  const navigate = useNavigate();
 
-  const [showBuscador, setShowBuscador] = useState(false);
+  const {handleSubmit, loading} = useGraphProcessRoutes();
+  //const { graphData, loading: loadingData } = useGetGraph(id);
+
+  //const [showBuscador, setShowBuscador] = useState(false);
 
   //Atributos del grafo
   const [nombre, setNombre] = useState("");
   const [tipoRuta, setTipoRuta] = useState("");
+
+  const { 
+    nodes, setNodes, edges, setEdges,
+    connectingFrom, setConnectingFrom,
+    handleDragStart, handleAddChild, handleDeleteNode, handleDeleteEdge, 
+    handleEdgePriorityChange, handleNodeClick, updateNodeData, handleStartConnection, procesoPadre, setProcesoPadre, procesoSeleccionado, setProcesoSeleccionado, showBuscador, setShowBuscador
+  } = useGraphEditor(INITIAL_NODES, isReadOnly);
+
+/*
+  useEffect(() => {
+      if (isEditMode && graphData) {
+          setNombre(graphData.nombre);
+          setTipoRuta(graphData.id_tipo_ruta);
+          setNodes(graphData.nodos);
+          setEdges(graphData.aristas);
+      }
+  }, [graphData, isEditMode]);
+*/
+
+/*
+
   const [nodes, setNodes] = useState(INITIAL_NODES);
   const [edges, setEdges] = useState([]);
-
-  const [loading, setLoading] = useState(false);
   
   //Estados para conexión de nodos
   const [connectingFrom, setConnectingFrom] = useState(null);
   const [procesoPadre, setProcesoPadre] = useState(null);
   const [procesoSeleccionado, setProcesoSeleccionado] = useState(null);
 
+
   // Estados de UI para Dragging Libre
   const [draggingNodeId, setDraggingNodeId] = useState(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const dragStartNodePos = useRef({ x: 0, y: 0 });
-
-  // --- ENVIO DE DATOS
-
-    const handleSubmit = async () => {
-        // Validaciones
-        if (!nombre || nombre === "") {
-            alert("El nombre de la ruta es obligatorio");
-            return;
-        }
-        if (!tipoRuta || tipoRuta === "") {
-            alert("Debe especificar el tipo de ruta");
-            return;
-        }
-
-        // 1. Mapeo de Nodos
-        const nodosFormateados = nodes.map(node => ({
-            id_local: node.id_nodo,
-            id_proceso: node.id_proceso ? parseInt(node.id_proceso) : null,
-            requiere_inspeccion: node.requiere_inspeccion || false,
-            x: Math.round(node.x),
-            y: Math.round(node.y),
-            inicio: node.inicio || false,
-            fin: node.fin || false
-        }));
-
-        // 2. Mapeo de Aristas
-        const aristasFormateadas = edges.map(edge => ({
-            origen_local: edge.id_nodo_origen,
-            destino_local: edge.id_nodo_destino,
-            prioridad: edge.prioridad ? parseInt(edge.prioridad) : 1
-        }));
-
-        // 3. Estructura del Payload final
-        const payload = {
-        ruta: {
-            nombre: nombre,
-            id_tipo_ruta: parseInt(tipoRuta)
-        },
-        nodos: nodosFormateados,
-        aristas: aristasFormateadas
-        };
-
-        try {
-            setLoading(true);
-
-            const res = await apiCall(`${API_URL}/api/procesos/ruta-procesos/new`, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-            
-            console.log("Grafo creado exitosamente:", res.message);
-            navigate("/procesos");
-
-        } catch (err) {
-            console.error("Error al enviar el grafo:", err);
-        } finally {
-            setLoading(false);
-        }
-    }
 
   // --- LÓGICA DE RUTAS Y GRAFOS ---
 
@@ -217,7 +186,7 @@ export function Flujograma() {
         dragStartPos.current = { x: clientX, y: clientY };
         dragStartNodePos.current = { x: node.x, y: node.y };
     };
-
+*/
   const CloseSearchBar = () => {
     setShowBuscador(false);
     setProcesoPadre(null);
@@ -228,7 +197,7 @@ export function Flujograma() {
     if(!procesoSeleccionado) return;
     handleAddChild(procesoPadre, procesoSeleccionado);
   }, [procesoSeleccionado]);
-
+/*
   // Manejo de Movimiento Independiente en 2 Ejes
     useEffect(() => {
         const handleMove = (e) => {
@@ -272,12 +241,13 @@ export function Flujograma() {
         };
     }, [draggingNodeId]);
 
+*/
+
 
   return (
     <>
         <NavBar/>
         <div className="graph-top-bar">
-            {/* Mantuvimos top bar sin cambios... */}
             <div className="graph-title-section">
                 <i className="material-icons text-gray-500">account_tree</i>
                 <input 
@@ -286,6 +256,7 @@ export function Flujograma() {
                     placeholder="Nombre de la ruta productiva..."
                     value={nombre}
                     onChange={(e)=>setNombre(e.target.value)}
+                    disabled={isReadOnly}
                 />
             </div>
             <div>
@@ -295,6 +266,7 @@ export function Flujograma() {
                     value={tipoRuta}
                     onChange={(e)=>setTipoRuta(e.target.value)}
                     required
+                    disabled={isReadOnly}
                 >
                     <option value="" disabled>Tipo de ruta...</option>
                     {tipos?.map((tipo) => (
@@ -305,11 +277,13 @@ export function Flujograma() {
                     ))}
                 </select>
             </div>
-            <div className="graph-actions-section">
-                <Button variant='default' onClick={handleSubmit} disabled={loading}>
-                    Guardar Ruta
-                </Button>
-            </div>
+            {!isReadOnly && (
+                <div className="graph-actions-section">
+                    <Button variant='default' onClick={()=>handleSubmit(nombre, tipoRuta, nodes, edges)} disabled={loading}>
+                        {isEditMode ? 'Actualizar Ruta' : 'Guardar Ruta'}
+                    </Button>
+                </div>
+            )}
         </div>
 
         <div className={`graph-editor-container ${connectingFrom ? 'connecting-mode' : ''}`}>
@@ -353,6 +327,7 @@ export function Flujograma() {
                         targetNode={nodes.find(n => n.id_nodo === edge.id_nodo_destino)}
                         onPriorityChange={handleEdgePriorityChange}
                         onDelete={handleDeleteEdge}
+                        isReadOnly={isReadOnly}
                     />
                 ))}
             </svg>
@@ -383,25 +358,26 @@ export function Flujograma() {
                             </label>
                         </div>
                     )}
-
-                    <div className="node-actions">
-                        {!node.fin && (
-                            <>
-                                <button onClick={(e) => { e.stopPropagation(); setProcesoPadre(node.id_nodo); setShowBuscador(true); }} title="Agregar Proceso Siguiente">
-                                    <i className="material-icons">add</i>
+                    {!isReadOnly && (
+                        <div className="node-actions">
+                            {!node.fin && (
+                                <>
+                                    <button onClick={(e) => { e.stopPropagation(); setProcesoPadre(node.id_nodo); setShowBuscador(true); }} title="Agregar Proceso Siguiente">
+                                        <i className="material-icons">add</i>
+                                    </button>
+                                    <button onClick={(e) => { e.stopPropagation(); handleStartConnection(node.id_nodo); }} title="Puentear a otro proceso">
+                                        <i className="material-icons">link</i>
+                                    </button>
+                                </>
+                            )}
+                            
+                            {(!node.inicio && !node.fin) && (
+                                <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDeleteNode(node.id_nodo); }} title="Eliminar Proceso">
+                                    <i className="material-icons" style={{color:'red'}}>delete</i>
                                 </button>
-                                <button onClick={(e) => { e.stopPropagation(); handleStartConnection(node.id_nodo); }} title="Puentear a otro proceso">
-                                    <i className="material-icons">link</i>
-                                </button>
-                            </>
-                        )}
-                        
-                        {(!node.inicio && !node.fin) && (
-                            <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDeleteNode(node.id_nodo); }} title="Eliminar Proceso">
-                                <i className="material-icons" style={{color:'red'}}>delete</i>
-                            </button>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             ))}
         </div>
