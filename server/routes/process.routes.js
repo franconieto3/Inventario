@@ -91,10 +91,18 @@ router.post('/ruta-procesos/new',
     nuevoGrafoProcesos
 )
 
+//Proyección
 router.get('/ruta-procesos/:id',
     verificarToken,
     requirePermission('ver_rutas_procesos'),
     obtenerGrafoProcesos
+)
+
+//Edición
+router.put('ruta-procesos/update/:id',
+    verificarToken,
+    requirePermission('editar_rutas_procesos'),
+
 )
 
 export default router;

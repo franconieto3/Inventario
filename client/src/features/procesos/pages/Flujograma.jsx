@@ -10,6 +10,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGraphProcessRoutes } from '../hooks/useGraphProcessRoutes';
 import { useGraphEditor } from '../hooks/useGraphEditor';
 import { useGetGraph } from '../hooks/useGetGraph';
+import { validarPermiso } from '../../../services/validarPermiso';
+import { Spinner } from '../../../components/ui/Spinner';
 
 // Garantizamos el inicio y fin estructural de la ruta de fabricación
 const INITIAL_NODES = [
@@ -39,7 +41,7 @@ export function Flujograma() {
 
   const {id} = useParams();
   const isEditMode = Boolean(id);
-  const isReadOnly = false; // Puedes enlazar esto a los permisos de App.jsx
+  const isReadOnly = !validarPermiso('editar_rutas_procesos'); // Puedes enlazar esto a los permisos de App.jsx
 
   const { allProcesos } = useProcesos();
   const { tipos } = useProcessRoutes();
@@ -86,6 +88,19 @@ export function Flujograma() {
     handleAddChild(procesoPadre, procesoSeleccionado);
   }, [procesoSeleccionado]);
 
+
+  if (loading) return (
+    <>
+        <div style={{ position: 'relative', minHeight: '200px' }}>
+            <Spinner 
+                size={40} 
+                color="#64748b" 
+                center 
+                label = 'Cargando ruta de fabricación...'
+            />
+        </div>
+    </>
+  );
 
   return (
     <>
