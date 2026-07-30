@@ -491,3 +491,5 @@ export const getGrafoProcesos = async (idRuta) => {
 
   return data;
 };
+
+export const updateGrafoProcesos = async (idRuta, payload) => {};

@@ -137,7 +137,7 @@ export function Flujograma() {
             </div>
             {!isReadOnly && (
                 <div className="graph-actions-section">
-                    <Button variant='default' onClick={()=>handleSubmit(nombre, tipoRuta, nodes, edges)} disabled={loading}>
+                    <Button variant='default' onClick={()=>handleSubmit(id, nombre, tipoRuta, nodes, edges, graphData)} disabled={loading}>
                         {isEditMode ? 'Actualizar Ruta' : 'Guardar Ruta'}
                     </Button>
                 </div>
