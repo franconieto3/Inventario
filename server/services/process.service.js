@@ -492,4 +492,51 @@ export const getGrafoProcesos = async (idRuta) => {
   return data;
 };
 
-export const updateGrafoProcesos = async (idRuta, payload) => {};
+export const updateGrafoProceso = async (idRuta, payloadDiff) => {
+  const { data, error } = await supabase.rpc('actualizar_ruta_completa', {
+    p_id_ruta: idRuta,
+    payload: payloadDiff
+  });
+
+  if (error) {
+    console.error("Error en BD al actualizar el grafo de procesos:", error);
+
+    const err = new Error();
+    err.originalError = error;
+
+    switch (error.code) {
+      case '23505': // Unique Violation
+        err.statusCode = 409;
+        if (error.message.includes('nombre')) {
+            err.message = 'El nombre ingresado para la ruta ya existe. Por favor, elige uno distinto.';
+        } else {
+            err.message = 'Conflicto de restricciones únicas (por ejemplo, estás intentando asignar múltiples inicios o fines).';
+        }
+        break;
+
+      case '23503': // Foreign Key Violation
+        err.statusCode = 400;
+        err.message = 'Error de referencia: Estás intentando asignar un proceso o un tipo de ruta que no existe en el sistema.';
+        break;
+
+      case '22P02': // Invalid Text Representation (Casteo)
+      case '22023': // Invalid Parameter Value
+        err.statusCode = 400;
+        err.message = 'El formato de los datos enviados es incorrecto (ej. texto en lugar de número, o formato JSON inválido).';
+        break;
+
+      case 'P0002': // No Data Found (si aplica)
+        err.statusCode = 404;
+        err.message = 'No se encontró la ruta de procesos para actualizar.';
+        break;
+
+      default:
+        err.statusCode = 500;
+        err.message = `Error inesperado al actualizar el grafo: ${error.message}`;
+    }
+    
+    throw err;
+  }
+  
+  return true; // La función RPC devuelve VOID, por lo que retornamos true en caso de éxito
+};

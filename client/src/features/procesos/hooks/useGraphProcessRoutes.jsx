@@ -59,6 +59,10 @@ export function useGraphProcessRoutes (){
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
+
+                const idNuevaRuta = res.data.id_ruta;
+                navigate(`/flujograma/${idNuevaRuta}`);
+
             }else{
                 const diff = calcularDiffGrafo(estadoOriginal, nodes, edges);
 
@@ -72,10 +76,9 @@ export function useGraphProcessRoutes (){
                     method: 'PUT',
                     body: JSON.stringify(payloadDiff)
                 });
-            }
-            
-            navigate("/procesos");
 
+                navigate(`/flujograma/${idRuta}`);
+            }
         } catch (err) {
             console.error("Error al enviar el grafo:", err);
             alert("Ocurrió un error al guardar la ruta");

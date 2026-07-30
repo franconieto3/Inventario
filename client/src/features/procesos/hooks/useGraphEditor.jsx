@@ -29,11 +29,12 @@ export function useGraphEditor(initialNodes, isReadOnly = false) {
             x: parentNode.x + 300,
             y: parentNode.y,
             inicio: false,
-            fin: false
+            fin: false,
+            valido_hasta: null
         };
 
         setNodes([...nodes, newNode]);
-        setEdges([...edges, { id_nodo_origen: parentId, id_nodo_destino: newNodeId, prioridad: 1 }]);
+        setEdges([...edges, { id_nodo_origen: parentId, id_nodo_destino: newNodeId, prioridad: 1, valido_hasta: null }]);
         
         setShowBuscador(false);
         setProcesoPadre(null);
@@ -87,7 +88,7 @@ export function useGraphEditor(initialNodes, isReadOnly = false) {
                     return;
                 }
                 if (!edgeExists) {
-                    setEdges([...edges, { id_nodo_origen: connectingFrom, id_nodo_destino: targetId, prioridad: 1 }]);
+                    setEdges([...edges, { id_nodo_origen: connectingFrom, id_nodo_destino: targetId, prioridad: 1, valido_hasta: null }]);
                 }
             }
             setConnectingFrom(null);

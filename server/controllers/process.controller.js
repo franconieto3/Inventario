@@ -1,4 +1,4 @@
-import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getGrafoProcesos, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateGrafoProcesos, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
+import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getGrafoProcesos, getProcesos, getRuta, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateGrafoProceso, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
 
 
 export const obtenerTiposProcesos = async (req, res) => {
@@ -243,16 +243,30 @@ export const obtenerGrafoProcesos = async (req, res) => {
 
 export const actualizarGrafoProcesos = async (req, res) => {
   try {
-    const {id} = req.params;
-    const payload = req.body;
-    //const data = await updateGrafoProcesos();
-    console.log(payload);
+
+    const { id } = req.params;
+    const payloadDiff = req.body;
     
-    return res.status(200).json({message: "Actualización exitosa"});
+    // Validaciones de seguridad básicas
+    if (!id) {
+        return res.status(400).json({ error: "El ID de la ruta es obligatorio." });
+    }
 
-  }catch (error) {
-    console.error('Error al actualizar el grafo', error);
-    return res.status(error.statusCode || 500).json({ error: error.message });
+    if (!payloadDiff || !payloadDiff.nodos || !payloadDiff.aristas) {
+        return res.status(400).json({ error: "La estructura del 'Diff' (nodos y aristas) es obligatoria." });
+    }
+
+    // Delegamos la actualización al service
+    await updateGrafoProceso(id, payloadDiff);
+
+    return res.status(200).json({ 
+        message: "Grafo de procesos actualizado exitosamente."
+    });
+
+  } catch (error) {
+    console.error('Error al actualizar el grafo:', error);
+    return res.status(error.statusCode || 500).json({ 
+        error: error.message || "Error interno del servidor al actualizar el grafo" 
+    });
   }
-
-}
+};

@@ -4,6 +4,7 @@ import Buscador from '../../../components/ui/Buscador';
 import { useProcesos } from '../hooks/useProcesos';
 import NavBar from '../../../components/layout/NavBar';
 import Button from '../../../components/ui/Button';
+import {Modal} from '../../../components/ui/Modal';
 import { Arista } from './Arista'; 
 import { useProcessRoutes } from '../hooks/useProcessRoutes';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,7 +24,8 @@ const INITIAL_NODES = [
     x: 50,
     y: 200,
     inicio: true,
-    fin: false
+    fin: false,
+    valido_hasta: null
   },
   {
     id_nodo: 'nodo_fin',
@@ -33,7 +35,8 @@ const INITIAL_NODES = [
     x: 800,
     y: 200,
     inicio: false,
-    fin: true
+    fin: true,
+    valido_hasta: null
   }
 ];
 
@@ -48,6 +51,8 @@ export function Flujograma() {
 
   const {handleSubmit, loading} = useGraphProcessRoutes();
   const { graphData, loadingData } = useGetGraph(id);
+
+  const ahora = new Date();
 
   //Atributos del grafo
   const [nombre, setNombre] = useState("");
@@ -89,7 +94,7 @@ export function Flujograma() {
   }, [procesoSeleccionado]);
 
 
-  if (loading) return (
+  if (loadingData) return (
     <>
         <div style={{ position: 'relative', minHeight: '200px' }}>
             <Spinner 
@@ -177,8 +182,10 @@ export function Flujograma() {
                         <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
                     </marker>
                 </defs>
-                {edges.map((edge) => (
-                    <Arista 
+            {
+                edges.map((edge) =>
+                    edge.valido_hasta === null || new Date(edge.valido_hasta) > ahora ? (
+                    <Arista
                         key={`${edge.id_nodo_origen}-${edge.id_nodo_destino}`}
                         edge={edge}
                         sourceNode={nodes.find(n => n.id_nodo === edge.id_nodo_origen)}
@@ -187,57 +194,63 @@ export function Flujograma() {
                         onDelete={handleDeleteEdge}
                         isReadOnly={isReadOnly}
                     />
-                ))}
+                    ) : null
+                )
+            }
             </svg>
 
-            {nodes.map(node => (
-                <div 
-                    key={node.id_nodo}
-                    className={`graph-node ${node.inicio || node.fin ? 'node-root' : ''} ${connectingFrom === node.id_nodo ? 'node-active' : ''}`}
-                    style={{ left: node.x, top: node.y }}
-                    onMouseDown={(e) => handleDragStart(e, node.id_nodo)}
-                    onTouchStart={(e) => handleDragStart(e, node.id_nodo)}
-                    onClick={() => handleNodeClick(node.id_nodo)}
-                >
-                    <div className="node-header">
-                        <span className="node-title" style={node.inicio || node.fin ? { fontWeight: 'bold', color: '#1e293b' } : {}}>
-                            {getNodeName(node)}
-                        </span>
-                    </div>
+            {
+            nodes.map(node => 
+                node.valido_hasta === null || new Date(node.valido_hasta) > ahora ? (
+                    <div 
+                        key={node.id_nodo}
+                        className={`graph-node ${node.inicio || node.fin ? 'node-root' : ''} ${connectingFrom === node.id_nodo ? 'node-active' : ''}`}
+                        style={{ left: node.x, top: node.y }}
+                        onMouseDown={(e) => handleDragStart(e, node.id_nodo)}
+                        onTouchStart={(e) => handleDragStart(e, node.id_nodo)}
+                        onClick={() => handleNodeClick(node.id_nodo)}
+                    >
+                        <div className="node-header">
+                            <span className="node-title" style={node.inicio || node.fin ? { fontWeight: 'bold', color: '#1e293b' } : {}}>
+                                {getNodeName(node)}
+                            </span>
+                        </div>
 
-                    {(!node.inicio && !node.fin) && (
-                        <div className="node-body">
-                            <label>
-                                <input 
-                                    type="checkbox" 
-                                    checked={node.requiere_inspeccion} 
-                                    onChange={(e) => updateNodeData(node.id_nodo, 'requiere_inspeccion', e.target.checked)}
-                                /> Requiere inspección
-                            </label>
-                        </div>
-                    )}
-                    {!isReadOnly && (
-                        <div className="node-actions">
-                            {!node.fin && (
-                                <>
-                                    <button onClick={(e) => { e.stopPropagation(); setProcesoPadre(node.id_nodo); setShowBuscador(true); }} title="Agregar Proceso Siguiente">
-                                        <i className="material-icons">add</i>
+                        {(!node.inicio && !node.fin) && (
+                            <div className="node-body">
+                                <label>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={node.requiere_inspeccion} 
+                                        onChange={(e) => updateNodeData(node.id_nodo, 'requiere_inspeccion', e.target.checked)}
+                                    /> Requiere inspección
+                                </label>
+                            </div>
+                        )}
+                        {!isReadOnly && (
+                            <div className="node-actions">
+                                {!node.fin && (
+                                    <>
+                                        <button onClick={(e) => { e.stopPropagation(); setProcesoPadre(node.id_nodo); setShowBuscador(true); }} title="Agregar Proceso Siguiente">
+                                            <i className="material-icons">add</i>
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); handleStartConnection(node.id_nodo); }} title="Puentear a otro proceso">
+                                            <i className="material-icons">link</i>
+                                        </button>
+                                    </>
+                                )}
+                                
+                                {(!node.inicio && !node.fin) && (
+                                    <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDeleteNode(node.id_nodo); }} title="Eliminar Proceso">
+                                        <i className="material-icons" style={{color:'red'}}>delete</i>
                                     </button>
-                                    <button onClick={(e) => { e.stopPropagation(); handleStartConnection(node.id_nodo); }} title="Puentear a otro proceso">
-                                        <i className="material-icons">link</i>
-                                    </button>
-                                </>
-                            )}
-                            
-                            {(!node.inicio && !node.fin) && (
-                                <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDeleteNode(node.id_nodo); }} title="Eliminar Proceso">
-                                    <i className="material-icons" style={{color:'red'}}>delete</i>
-                                </button>
-                            )}
-                        </div>
-                    )}
-                </div>
-            ))}
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    ) : null
+                )
+            }
         </div>
     </>
   );

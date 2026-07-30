@@ -8,11 +8,13 @@ import { CrearProceso } from "../components/CrearProceso";
 import { EditarProceso } from "../components/EditarProceso";
 import { CrearRuta} from "../components/CrearRuta";
 import { ListadoRutas } from "../components/ListadoRutas";
+import  {ListadoRutasFabricacion} from "../components/ListadoRutasFabricacion";
 import { useProcessRoutes } from "../hooks/useProcessRoutes";
 import { EditarRuta } from "../components/EditarRuta";
 import { apiCall } from "../../../services/api";
 import Solapador from "../../../components/layout/Solapador";
 import Can from "../../../components/Can";
+import { useProcessGraphs } from "../hooks/useProcessGraphs";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -49,6 +51,8 @@ export function Procesos(){
         crearRuta,
         loadingRoutes
     }= useProcessRoutes();
+
+    const {grafos} = useProcessGraphs();
 
     const editarProceso = (p)=>{
         setProcesoSeleccionado(p);
@@ -109,21 +113,32 @@ export function Procesos(){
                         />
                     </div>
                     <div titulo="Rutas de procesos">
-                            <ListadoRutas
-                                rutas={rutas}
-                                tipos={tipos}
-                                page={pageRutas}
-                                totalPages={totalPagesRutas}
-                                setPage={setPageRutas}
-                                tipoSeleccionado={tipoSeleccionado}
-                                setTipoSeleccionado={setTipoSeleccionado}
-                                refreshRutas={refreshRutas} 
-                                onEdit={(item)=>editarRuta(item)}
-                                onDelete={(item)=>eliminarRuta(item)}
-                                onNewRoute={()=>setMostrarNewRutaProceso(true)}
-                            />
+                        <ListadoRutas
+                            rutas={rutas}
+                            tipos={tipos}
+                            page={pageRutas}
+                            totalPages={totalPagesRutas}
+                            setPage={setPageRutas}
+                            tipoSeleccionado={tipoSeleccionado}
+                            setTipoSeleccionado={setTipoSeleccionado}
+                            refreshRutas={refreshRutas} 
+                            onEdit={(item)=>editarRuta(item)}
+                            onDelete={(item)=>eliminarRuta(item)}
+                            onNewRoute={()=>setMostrarNewRutaProceso(true)}
+                        />
                     </div>
-
+                    <div titulo="Rutas de fabricación">
+                        <ListadoRutasFabricacion
+                            rutas={[]}
+                            tipos={tipos}
+                            page={1}
+                            totalPages={1}
+                            setPage={()=>console.log("setPage")}
+                            tipoSeleccionado={tipoSeleccionado}
+                            setTipoSeleccionado={()=>console.log("setTipoSeleccionado")}
+                            refreshRutas={()=>console.log("refreshRutas")}
+                        />
+                    </div>
                 </Solapador>
             </div>
             {mostrarNewProceso &&
