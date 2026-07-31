@@ -560,3 +560,88 @@ export const getRutasFabricacion = async () => {
   }
   return {rutas: data};
 };
+
+export const asociarRutaPieza = async (p_id_ruta, p_ids_piezas) => {
+
+  if (!Array.isArray(p_ids_piezas) || p_ids_piezas.length === 0) {
+    const err = new Error("Debe proporcionar al menos un ID de pieza.");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const registrosAInsertar = p_ids_piezas.map(id_pieza => ({
+      id_ruta: parseInt(p_id_ruta, 10),
+      id_pieza: parseInt(id_pieza, 10)
+  }));
+
+  const { data, error } = await supabase
+    .from('pieza_ruta_procesos')
+    .insert(registrosAInsertar)
+    .select()
+
+  if (error) {
+    console.error("[Supabase Error en asociarRutaPiezas]:", error);
+    
+    let errorMessage = "Ocurrió un error al asociar las piezas y la ruta especificada";
+    let statusCode = 500; // Por defecto: Internal Server Error
+
+    switch (error.code) {
+      case '23503': // foreign_key_violation
+        if (error.message.includes('id_pieza_fkey')) {
+          errorMessage = "Una o más de las piezas especificadas no existen en la base de datos.";
+        } else if (error.message.includes('id_ruta_fkey')) {
+          errorMessage = "La ruta de procesos especificada no existe.";
+        } else {
+          errorMessage = "Fallo de integridad referencial. El registro relacionado no existe.";
+        }
+        statusCode = 404;
+        break;
+        
+      case '23505': // unique_violation
+        errorMessage = "Una o más de estas piezas ya tienen asignada esta ruta de procesos.";
+        statusCode = 409; 
+        break;
+        
+      case '23502': // not_null_violation
+        errorMessage = "Faltan datos obligatorios para realizar la asociación.";
+        statusCode = 400; 
+        break;
+    }
+      
+    const err = new Error(errorMessage);
+    err.statusCode = statusCode;
+    err.dbCode = error.code; 
+    throw err;
+  }
+
+  return data;
+};
+
+export const desasociarRutaPieza = async (p_id_ruta, p_id_pieza) => {
+
+  const { data, error } = await supabase
+    .from('pieza_ruta_procesos')
+    .delete()
+    .eq('id_ruta', parseInt(p_id_ruta, 10))
+    .eq('id_pieza', parseInt(p_id_pieza, 10))
+    .select();
+
+  // Manejo de errores de base de datos (ej. pérdida de conexión)
+  if (error) {
+    console.error("[Supabase Error en desasociarRutaPieza]:", error);
+    
+    const err = new Error("Ocurrió un error al intentar eliminar la asociación.");
+    err.statusCode = 500; // Internal Server Error
+    err.dbCode = error.code;
+    throw err;
+  }
+
+  // Verificamos si realmente se eliminó algún registro
+  if (!data || data.length === 0) {
+    const err = new Error("La asociación entre esta pieza y ruta no existe o ya fue eliminada.");
+    err.statusCode = 404; // Not Found
+    throw err;
+  }
+
+  return data[0]; 
+};

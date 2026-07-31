@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarGrafoProcesos, actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listadoRutasFabricacion, listarProcesos, nuevaRutaProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
+import { actualizarGrafoProcesos, actualizarProceso, actualizarRutaProcesos, asignarRutaPieza, creacionProceso, eliminacionProceso, eliminacionRuta, eliminarRutaPieza, listadoRutas, listadoRutasFabricacion, listarProcesos, nuevaRutaProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { grafoSchema, procesoSchema } from "../schemas/process.schemas.js";
+import { asociarRutaPiezasSchema, grafoSchema, procesoSchema } from "../schemas/process.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
@@ -111,6 +111,21 @@ router.get('/listado-rutas-fabricacion',
     verificarToken,
     requirePermission('ver_rutas_procesos'),
     listadoRutasFabricacion
+)
+
+//Asociar pieza
+router.post('/ruta/asignacion-pieza',
+    verificarToken,
+    requirePermission('administrar_procesos_pieza'),
+    validateSchema(asociarRutaPiezasSchema),
+    asignarRutaPieza
+);
+
+//Desvincular pieza
+router.delete('/ruta/desvinculacion/:idRuta/:idPieza',
+    verificarToken,
+    requirePermission('administrar_procesos_pieza'),
+    eliminarRutaPieza
 )
 
 export default router;

@@ -14,10 +14,10 @@ import EdicionProducto from "../components/EdicionProducto";
 
 import "./ProductDetail.css"
 import Can from '../../../components/Can';
-import { NuevaRutaProcesos } from '../../procesos/components/NuevaRutaProcesos';
 import Button from '../../../components/ui/Button';
 import { Spinner } from '../../../components/ui/Spinner';
 import { AsociarInstrumentoPieza } from '../../instrumentos/components/AsociarInstrumentoPieza';
+import { AsociarRutaPiezas } from '../../procesos/components/AsociarRutaPiezas';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -176,11 +176,10 @@ export default function ProductDetail() {
 
           <Can permission="crear_rutas_procesos">
             {mostrarCrearRuta &&
-            <NuevaRutaProcesos 
-              producto={producto.nombre}
-              piezas={producto.pieza}
-              onClose={()=>setMostrarCrearRuta(false)}
-              onSuccess={()=>fetchProduct()}
+              <AsociarRutaPiezas
+                producto={producto}
+                onClose={()=>setMostrarCrearRuta(false)}
+                onSuccess={()=>fetchProduct()}
               />
             }
           </Can>

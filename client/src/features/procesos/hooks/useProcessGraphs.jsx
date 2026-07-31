@@ -101,5 +101,5 @@ export function useProcessGraphs(){
         setPage(1);
     }, [tipoSeleccionado]);
 
-    return {allGrafos, grafos, tipos,loading, totalPages, page, loadingRoutes,tipoSeleccionado, setTipoSeleccionado, setLoadingRoutes, setPage, refreshRutas};
+    return {allGrafos, grafos, tipos, loading, totalPages, page, loadingRoutes,tipoSeleccionado, setTipoSeleccionado, setLoadingRoutes, setPage, refreshRutas};
 }

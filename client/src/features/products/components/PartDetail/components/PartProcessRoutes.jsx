@@ -3,7 +3,7 @@ import Button from "../../../../../components/ui/Button";
 import { apiCall } from "../../../../../services/api";
 import { Modal } from "../../../../../components/ui/Modal";
 import { DetalleRuta } from "../../../../procesos/components/DetalleRuta";
-import { useProcessRoutes } from "../../../../procesos/hooks/useProcessRoutes";
+import { useProcessGraphs } from "../../../../procesos/hooks/useProcessGraphs";
 import { DropdownMenu } from "../../../../../components/ui/DropdownMenu";
 
 
@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function PartProcessRoutes({pieza, onBopRemoval}){
 
-    const {tipos} = useProcessRoutes();
+    const {tipos} = useProcessGraphs();
     const [mostrarRuta, setMostrarRuta] = useState(false);
     const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
     const [tiposFiltrados, setTiposFiltrados] = useState([]);
@@ -132,7 +132,8 @@ export function PartProcessRoutes({pieza, onBopRemoval}){
                             </li>
                         ))}
                     </ul>
-            )}
+                )
+            }
             
         </div>
         {mostrarRuta &&
@@ -152,56 +153,54 @@ export function PartProcessRoutes({pieza, onBopRemoval}){
                 descripcion={tipoSeleccionado.descripcion}
                 onClose={()=>setMostrarHistorial(false)} 
             >
-                
-                    <ul className="componentes-list" style={{marginTop:'0px', paddingTop:'0px'}}>
-                        {
-                            pieza
-                            .procesos
-                            .filter((r)=> r.id_tipo_ruta === tipoSeleccionado.id_tipo_ruta)
-                            .sort((a,b)=> new Date(b.fecha_vigencia) - new Date(a.fecha_vigencia))
-                            .map(
-                                (ruta)=>(
-                                <li
-                                    key={`${ruta.id_bop}`} 
-                                    className="componente-item"
-                                >
-                                    <div style={{display:'flex', justifyContent:'space-between', alignItems: 'center', width:'100%'}}>
-                                        <div style={{width:'100%'}}
-                                        onClick={() => {
-                                            setMostrarHistorial(false);
-                                            verRuta(ruta.id_bop)
-                                        }}>
-                                            <p 
-                                                style={{
-                                                    fontSize:'1rem',
-                                                    margin:'0',
-                                                    fontWeight: '500'
-                                                }}
-                                            >
-                                                {ruta.nombre}
-                                            </p>
-                                            <p style={{'margin':'0'}}>Fecha: {new Date(ruta.fecha_vigencia).toISOString().split("T")[0]}</p>
-                                        </div>
-                                        <DropdownMenu
-                                            isOpen={activeHistoryMenuId === ruta.id_bop}
-                                            onToggle={() => toggleHistoryMenu(ruta.id_bop)}
-                                            items={[
-                                                { 
-                                                    label: 'Desvincular ruta',
-                                                    icon: 'delete',
-                                                    color: 'red',
-                                                    onClick: () => {
-                                                        setMostrarHistorial(false);
-                                                        handleRemoveRouteFromPart(ruta.id_bop);
-                                                }}
-                                            ]}
-                                        />
+                <ul className="componentes-list" style={{marginTop:'0px', paddingTop:'0px'}}>
+                    {
+                        pieza
+                        .procesos
+                        .filter((r)=> r.id_tipo_ruta === tipoSeleccionado.id_tipo_ruta)
+                        .sort((a,b)=> new Date(b.fecha_vigencia) - new Date(a.fecha_vigencia))
+                        .map(
+                            (ruta)=>(
+                            <li
+                                key={`${ruta.id_bop}`} 
+                                className="componente-item"
+                            >
+                                <div style={{display:'flex', justifyContent:'space-between', alignItems: 'center', width:'100%'}}>
+                                    <div style={{width:'100%'}}
+                                    onClick={() => {
+                                        setMostrarHistorial(false);
+                                        verRuta(ruta.id_bop)
+                                    }}>
+                                        <p 
+                                            style={{
+                                                fontSize:'1rem',
+                                                margin:'0',
+                                                fontWeight: '500'
+                                            }}
+                                        >
+                                            {ruta.nombre}
+                                        </p>
+                                        <p style={{'margin':'0'}}>Fecha: {new Date(ruta.fecha_vigencia).toISOString().split("T")[0]}</p>
                                     </div>
-                                </li>
-                            ))
-                        }
-                    </ul>
-                
+                                    <DropdownMenu
+                                        isOpen={activeHistoryMenuId === ruta.id_bop}
+                                        onToggle={() => toggleHistoryMenu(ruta.id_bop)}
+                                        items={[
+                                            { 
+                                                label: 'Desvincular ruta',
+                                                icon: 'delete',
+                                                color: 'red',
+                                                onClick: () => {
+                                                    setMostrarHistorial(false);
+                                                    handleRemoveRouteFromPart(ruta.id_bop);
+                                            }}
+                                        ]}
+                                    />
+                                </div>
+                            </li>
+                        ))
+                    }
+                </ul>
             </Modal>
         }
     </>

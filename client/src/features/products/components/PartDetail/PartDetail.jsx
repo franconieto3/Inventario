@@ -6,11 +6,11 @@ import { PartComponents } from './components/PartComponents';
 import { PartHeader } from './components/PartHeader';
 import { PartDocuments } from './components/PartDocuments';
 import { PartMaterials } from './components/PartMaterials';
-import { PartProcessRoutes } from './components/PartProcessRoutes';
-
+import { PartGraphs } from './components/PartGraphs';
 import "./PartDetail.css"
 import { PartInstruments } from './components/PartInstruments';
 import Can from '../../../../components/Can';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -68,9 +68,9 @@ export function PartDetail({ idPieza, nombrePieza, codigoPieza, producto, onRefr
                                     />
                                 </Can>
                                 <Can permission='ver_procesos_pieza'>
-                                    <PartProcessRoutes
+                                    <PartGraphs
                                         pieza={pieza}
-                                        onBopRemoval={fetchPart}
+                                        onRouteRemoval={fetchPart}
                                     />
                                 </Can>
                                 <Can permission='ver_instrumentos_pieza'>

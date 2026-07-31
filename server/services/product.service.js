@@ -139,7 +139,7 @@ export const obtenerInfoPieza = async (idPieza) => {
         //Ultimas versiones de los documentos
         supabase.rpc('obtener_ultima_version_documentos', {p_id_pieza: idPieza}),
         supabase.rpc('obtener_materiales_pieza',{p_id_pieza: idPieza}),
-        supabase.rpc('obtener_procesos_pieza', {p_id_pieza: idPieza}),
+        supabase.rpc('obtener_rutas_pieza', {p_id_pieza: idPieza}),
         supabase.rpc('obtener_instrumentos_pieza', {p_id_pieza: idPieza})
     ]);
 

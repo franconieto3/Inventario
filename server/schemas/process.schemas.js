@@ -139,3 +139,22 @@ export const grafoSchema = z.object({
     invalid_type_error: "La estructura de aristas debe ser un array",
   }),
 });
+
+//Asociación de piezas a una ruta
+export const asociarRutaPiezasSchema = z.object({
+  piezas: z.coerce
+    .number({
+      required_error: "El ID de la ruta es obligatorio.",
+      invalid_type_error: "El ID de la ruta debe ser un número válido.",
+    })
+    .int("El ID de la ruta debe ser un número entero.")
+    .positive("El ID de la ruta debe ser un número positivo."),
+    
+  ruta: 
+    z.coerce
+      .number({
+        invalid_type_error: "El ID de la pieza debe ser un número.",
+      })
+      .int("Los IDs de las piezas deben ser enteros.")
+      .positive("Los IDs de las piezas deben ser positivos.")
+});

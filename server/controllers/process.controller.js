@@ -1,4 +1,4 @@
-import { calcularDiferenciasRuta, deleteProceso, eliminarRuta, getGrafoProcesos, getProcesos, getRuta, getRutasFabricacion, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateGrafoProceso, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
+import { asociarRutaPieza, calcularDiferenciasRuta, deleteProceso, desasociarRutaPieza, eliminarRuta, getGrafoProcesos, getProcesos, getRuta, getRutasFabricacion, getRutasPaginadas, getTiposProcesos, getUnidadesTiempo, insertGrafoProceso, insertProceso, insertRutaProceso, removeRouteFromPart, updateGrafoProceso, updateNombreRuta, updateProceso, updateSecuenciaRuta } from "../services/process.service.js";
 
 
 export const obtenerTiposProcesos = async (req, res) => {
@@ -278,6 +278,49 @@ export const listadoRutasFabricacion = async(req, res)=>{
 
   }catch(err){
     console.error(err);
-    return res.status(err.statusCode? err.statusCode: 500).json(err.message);
+    return res.status(err.statusCode? err.statusCode: 500).json({error: err.message});
   }
 }
+
+export const asignarRutaPieza = async (req, res)=>{
+    try{
+
+      const {ruta, piezas} = req.body;
+      
+      const data = await asociarRutaPieza(ruta, piezas);
+
+      // 2. Retornamos la respuesta exitosa al frontend
+      return res.status(201).json({ 
+        message: "Piezas y ruta de fabricación asociadas exitosamente",
+        data: data
+      });
+
+    }catch(err){
+      console.error(err);
+      return res.status(err.statusCode? err.statusCode: 500).json({error: err.message}); 
+    }
+}
+
+export const eliminarRutaPieza = async (req, res) => {
+  try {
+    // Si lo mandas por URL dinámica ej: /rutas-piezas/:idRuta/:idPieza
+    const { idRuta, idPieza } = req.params; 
+
+    const data = await desasociarRutaPieza(idRuta, idPieza);
+
+    return res.status(200).json({ 
+      message: "Asociación entre pieza y ruta eliminada exitosamente.",
+      data: data
+    });
+
+  } catch (err) {
+    console.error("[Controller Error - eliminarRutaPieza]:", err);
+    
+    const statusCode = err.statusCode || 500;
+    
+    // Mantenemos la estructura JSON para errores
+    return res.status(statusCode).json({
+      error: err.message || "Ocurrió un error inesperado en el servidor."
+    }); 
+  }
+};
