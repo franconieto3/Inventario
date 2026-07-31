@@ -6,11 +6,7 @@ import { useProcesos } from "../hooks/useProcesos";
 import { Modal } from "../../../components/ui/Modal";
 import { CrearProceso } from "../components/CrearProceso";
 import { EditarProceso } from "../components/EditarProceso";
-import { CrearRuta} from "../components/CrearRuta";
-import { ListadoRutas } from "../components/ListadoRutas";
 import  {ListadoRutasFabricacion} from "../components/ListadoRutasFabricacion";
-import { useProcessRoutes } from "../hooks/useProcessRoutes";
-import { EditarRuta } from "../components/EditarRuta";
 import { apiCall } from "../../../services/api";
 import Solapador from "../../../components/layout/Solapador";
 import Can from "../../../components/Can";
@@ -24,10 +20,6 @@ export function Procesos(){
     const [mostrarEdicionProceso, setMostrarEdicionProceso] = useState(false);
     const [procesoSeleccionado, setProcesoSeleccionado] = useState(null);
 
-/*    const [mostrarNewRutaProceso, setMostrarNewRutaProceso] = useState(false);
-    const [mostrarEdicionRuta, setMostrarEdicionRuta] = useState(false);
-    const [rutaSeleccionada, setRutaSeleccionada] = useState(null);*/
-
     const {
         procesos,
         unidades,
@@ -38,19 +30,6 @@ export function Procesos(){
         setPage: setPageProcesos, 
         refreshProcesos
     } = useProcesos();
-
-/*    const {
-        rutas,
-        tipos,
-        page: pageRutas,
-        totalPages: totalPagesRutas,
-        setPage: setPageRutas,
-        tipoSeleccionado,
-        setTipoSeleccionado,
-        refreshRutas,
-        crearRuta,
-        loadingRoutes
-    }= useProcessRoutes();*/
 
     const {
         grafos,
@@ -79,24 +58,7 @@ export function Procesos(){
             }
         }
     }
-/*
-    const editarRuta = (r)=>{
-        setRutaSeleccionada(r);
-        setMostrarEdicionRuta(true);
-    }
 
-    const eliminarRuta = async (r)=>{
-        if(window.confirm(`¿Desea eliminar la ruta ${r.nombre}? Esto afectara a todas las piezas asociadas a esta ruta`)){
-            console.log("Eliminando ruta... ", r.id_bop);
-            try{
-                const res = await apiCall(`${API_URL}/api/procesos/ruta/delete/${r.id_bop}`,{method:'DELETE'});
-                refreshRutas();
-            }catch(err){
-                console.error(err.message);
-            }
-        }
-    }
-*/
     return(
         <>
             <NavBar/>
@@ -122,21 +84,6 @@ export function Procesos(){
                             onNewProcess={()=>setMostrarNewProceso(true)}
                         />
                     </div>
-                    {/*<div titulo="Rutas de procesos">
-                        <ListadoRutas
-                            rutas={rutas}
-                            tipos={tipos}
-                            page={pageRutas}
-                            totalPages={totalPagesRutas}
-                            setPage={setPageRutas}
-                            tipoSeleccionado={tipoSeleccionado}
-                            setTipoSeleccionado={setTipoSeleccionado}
-                            refreshRutas={refreshRutas} 
-                            onEdit={(item)=>editarRuta(item)}
-                            onDelete={(item)=>eliminarRuta(item)}
-                            onNewRoute={()=>setMostrarNewRutaProceso(true)}
-                        />
-                    </div>*/}
                     <div titulo="Rutas de fabricación">
                         <ListadoRutasFabricacion
                             rutas={grafos}
@@ -176,34 +123,6 @@ export function Procesos(){
                     />
                 </Modal>
             }
-            {/*mostrarNewRutaProceso &&
-                <Modal
-                    titulo="Nueva ruta de procesos"
-                    descripcion="Seleccione los procesos y arrastrelos para definir el orden"
-                    onClose={()=>setMostrarNewRutaProceso(false)}
-                >
-                    <CrearRuta 
-                        tipos={tipos}
-                        onSubmit={crearRuta}
-                        onClose={()=>setMostrarNewRutaProceso(false)}
-                        onReturn={null}
-                    />
-                </Modal>
-            */}
-            {/*mostrarEdicionRuta &&
-                <Modal
-                    titulo="Editar ruta de procesos"
-                    descripcion={`Ruta seleccionada: ${rutaSeleccionada.nombre}`}
-                    onClose={()=>setMostrarEdicionRuta(false)}
-                >
-                    <EditarRuta
-                        rutaEdit={rutaSeleccionada}
-                        onSubmit={refreshRutas}
-                        onReturn={null}
-                        onClose={()=>setMostrarEdicionRuta(false)}
-                    />
-                </Modal>
-            */}
         </>
     )
 }
