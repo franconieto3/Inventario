@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarGrafoProcesos, actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listarProcesos, nuevaRutaProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
+import { actualizarGrafoProcesos, actualizarProceso, actualizarRutaProcesos, creacionProceso, eliminacionProceso, eliminacionRuta, listadoRutas, listadoRutasFabricacion, listarProcesos, nuevaRutaProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { grafoSchema, procesoSchema } from "../schemas/process.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
@@ -107,8 +107,10 @@ router.put('/ruta-procesos/update/:id',
 )
 
 //Listado
-router.get('/ruta-procesos/listado',
-    verificarToken
+router.get('/listado-rutas-fabricacion',
+    verificarToken,
+    requirePermission('ver_rutas_procesos'),
+    listadoRutasFabricacion
 )
 
 export default router;

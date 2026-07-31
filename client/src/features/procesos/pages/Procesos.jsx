@@ -24,9 +24,9 @@ export function Procesos(){
     const [mostrarEdicionProceso, setMostrarEdicionProceso] = useState(false);
     const [procesoSeleccionado, setProcesoSeleccionado] = useState(null);
 
-    const [mostrarNewRutaProceso, setMostrarNewRutaProceso] = useState(false);
+/*    const [mostrarNewRutaProceso, setMostrarNewRutaProceso] = useState(false);
     const [mostrarEdicionRuta, setMostrarEdicionRuta] = useState(false);
-    const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
+    const [rutaSeleccionada, setRutaSeleccionada] = useState(null);*/
 
     const {
         procesos,
@@ -39,7 +39,7 @@ export function Procesos(){
         refreshProcesos
     } = useProcesos();
 
-    const {
+/*    const {
         rutas,
         tipos,
         page: pageRutas,
@@ -50,9 +50,19 @@ export function Procesos(){
         refreshRutas,
         crearRuta,
         loadingRoutes
-    }= useProcessRoutes();
+    }= useProcessRoutes();*/
 
-    const {grafos} = useProcessGraphs();
+    const {
+        grafos,
+        tipos,
+        page,
+        setPage,
+        totalPages,
+        tipoSeleccionado,
+        setTipoSeleccionado,
+        refreshRutas,
+        loadingRoutes
+    } = useProcessGraphs();
 
     const editarProceso = (p)=>{
         setProcesoSeleccionado(p);
@@ -69,7 +79,7 @@ export function Procesos(){
             }
         }
     }
-
+/*
     const editarRuta = (r)=>{
         setRutaSeleccionada(r);
         setMostrarEdicionRuta(true);
@@ -86,7 +96,7 @@ export function Procesos(){
             }
         }
     }
-
+*/
     return(
         <>
             <NavBar/>
@@ -112,7 +122,7 @@ export function Procesos(){
                             onNewProcess={()=>setMostrarNewProceso(true)}
                         />
                     </div>
-                    <div titulo="Rutas de procesos">
+                    {/*<div titulo="Rutas de procesos">
                         <ListadoRutas
                             rutas={rutas}
                             tipos={tipos}
@@ -126,17 +136,17 @@ export function Procesos(){
                             onDelete={(item)=>eliminarRuta(item)}
                             onNewRoute={()=>setMostrarNewRutaProceso(true)}
                         />
-                    </div>
+                    </div>*/}
                     <div titulo="Rutas de fabricación">
                         <ListadoRutasFabricacion
-                            rutas={[]}
+                            rutas={grafos}
                             tipos={tipos}
-                            page={1}
-                            totalPages={1}
-                            setPage={()=>console.log("setPage")}
+                            page={page}
+                            totalPages={totalPages}
+                            setPage={setPage}
                             tipoSeleccionado={tipoSeleccionado}
-                            setTipoSeleccionado={()=>console.log("setTipoSeleccionado")}
-                            refreshRutas={()=>console.log("refreshRutas")}
+                            setTipoSeleccionado={setTipoSeleccionado}
+                            refreshRutas={refreshRutas}
                         />
                     </div>
                 </Solapador>
@@ -166,7 +176,7 @@ export function Procesos(){
                     />
                 </Modal>
             }
-            {mostrarNewRutaProceso &&
+            {/*mostrarNewRutaProceso &&
                 <Modal
                     titulo="Nueva ruta de procesos"
                     descripcion="Seleccione los procesos y arrastrelos para definir el orden"
@@ -179,8 +189,8 @@ export function Procesos(){
                         onReturn={null}
                     />
                 </Modal>
-            }
-            {mostrarEdicionRuta &&
+            */}
+            {/*mostrarEdicionRuta &&
                 <Modal
                     titulo="Editar ruta de procesos"
                     descripcion={`Ruta seleccionada: ${rutaSeleccionada.nombre}`}
@@ -193,7 +203,7 @@ export function Procesos(){
                         onClose={()=>setMostrarEdicionRuta(false)}
                     />
                 </Modal>
-            }
+            */}
         </>
     )
 }

@@ -540,3 +540,23 @@ export const updateGrafoProceso = async (idRuta, payloadDiff) => {
   
   return true; // La función RPC devuelve VOID, por lo que retornamos true en caso de éxito
 };
+
+export const getRutasFabricacion = async () => {
+  
+  const { data, error } = await supabase
+    .from('ruta_procesos')
+    .select(`
+      id_ruta,
+      nombre,
+      id_tipo_ruta,
+      tipo_ruta(descripcion)
+    `
+    );
+
+  if (error) {
+    const err = new Error("Error al obtener el listado de rutas");
+    err.statusCode = 500;
+    throw err;
+  }
+  return {rutas: data};
+};

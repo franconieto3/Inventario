@@ -49,7 +49,7 @@ export function useProcessGraphs(){
         const fetchRoutes = async()=>{
             setLoadingRoutes(true);
             try{
-                const data = await apiCall(`${API_URL}/api/procesos/ruta-procesos/listado`, {});
+                const data = await apiCall(`${API_URL}/api/procesos/listado-rutas-fabricacion`, {});
 
                 if (data && data.rutas && Array.isArray(data.rutas)) {
                     setallGrafos(data.rutas);
@@ -69,6 +69,7 @@ export function useProcessGraphs(){
         }
         fetchRoutes();
     },[refreshTrigger]);
+
 
     // --- Paginación en Frontend ---
 
