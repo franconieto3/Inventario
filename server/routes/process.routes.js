@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarGrafoProcesos, actualizarProceso, actualizarRutaProcesos, asignarRutaPieza, creacionProceso, eliminacionProceso, eliminacionRuta, eliminarRutaPieza, listadoRutas, listadoRutasFabricacion, listarProcesos, nuevaRutaProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerRuta, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
+import { actualizarGrafoProcesos, actualizarProceso, asignarRutaPieza, creacionProceso, eliminacionProceso, eliminarRutaPieza, listadoRutasFabricacion, listarProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { asociarRutaPiezasSchema, grafoSchema, procesoSchema } from "../schemas/process.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
@@ -39,47 +39,6 @@ router.delete('/delete/:id',
     requirePermission('eliminar_procesos'),
     eliminacionProceso
 );
-
-//CRUD de rutas
-
-router.post('/ruta/pieza',
-    verificarToken,
-    requirePermission('administrar_procesos_pieza'),
-    requirePermission('crear_rutas_procesos'),
-    //Esquema de validación
-    nuevaRutaProcesos
-);
-
-router.get('/ruta/listado',
-    verificarToken,
-    requirePermission('ver_rutas_procesos'),
-    listadoRutas
-);
-
-router.get('/ruta/:id',
-    verificarToken,
-    requirePermission('ver_rutas_procesos'),
-    obtenerRuta
-);
-
-router.put('/ruta/update/:id',
-    verificarToken,
-    requirePermission('editar_rutas_procesos'),
-    actualizarRutaProcesos
-)
-
-router.delete('/ruta/delete/:id',
-    verificarToken,
-    requirePermission('eliminar_rutas_procesos'),
-    eliminacionRuta
-)
-
-router.delete('/ruta/pieza',
-    verificarToken,
-    requirePermission('administrar_procesos_pieza'),
-    quitarRutaPieza
-)
-
 
 // --- GRAFOS DE PROCESOS --- //
 
