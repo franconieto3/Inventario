@@ -6,13 +6,13 @@ import NavBar from '../../../components/layout/NavBar';
 import Button from '../../../components/ui/Button';
 import {Modal} from '../../../components/ui/Modal';
 import { Arista } from './Arista'; 
-import { useProcessRoutes } from '../hooks/useProcessRoutes';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGraphProcessRoutes } from '../hooks/useGraphProcessRoutes';
 import { useGraphEditor } from '../hooks/useGraphEditor';
 import { useGetGraph } from '../hooks/useGetGraph';
 import { validarPermiso } from '../../../services/validarPermiso';
 import { Spinner } from '../../../components/ui/Spinner';
+import { useProcessGraphs } from '../hooks/useProcessGraphs';
 
 // Garantizamos el inicio y fin estructural de la ruta de fabricación
 const INITIAL_NODES = [
@@ -47,7 +47,7 @@ export function Flujograma() {
   const isReadOnly = !validarPermiso('editar_rutas_procesos'); // Puedes enlazar esto a los permisos de App.jsx
 
   const { allProcesos } = useProcesos();
-  const { tipos } = useProcessRoutes();
+  const { tipos } = useProcessGraphs();
 
   const {handleSubmit, loading} = useGraphProcessRoutes();
   const { graphData, loadingData } = useGetGraph(id);

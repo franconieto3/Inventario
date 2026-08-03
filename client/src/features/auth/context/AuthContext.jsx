@@ -8,7 +8,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export const AuthContextProvider = ({ children }) => {
 
-
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const isAuthenticated = !!user;
@@ -47,6 +46,9 @@ export const AuthContextProvider = ({ children }) => {
 
   // 2. FUNCIÓN LOGIN: Conecta con tu backend
   const login = async (dni, password) => {
+
+      setLoading(true)
+
       try {
           const data = await apiCall(`${API_URL}/auth/login`,{method:'POST',body: JSON.stringify({ dni, password })});
 
@@ -60,7 +62,10 @@ export const AuthContextProvider = ({ children }) => {
           return data; // Retornamos data por si el componente quiere hacer algo extra
 
       } catch (error) {
-      throw error; // Lanzamos el error para que el componente Login lo muestre
+        throw error; // Lanzamos el error para que el componente Login lo muestre
+      }
+      finally{
+        setLoading(false);
       }
   };
 

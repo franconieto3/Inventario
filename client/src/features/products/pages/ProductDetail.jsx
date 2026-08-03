@@ -39,6 +39,8 @@ export default function ProductDetail() {
   const [mostrarCrearRuta, setMostrarCrearRuta] = useState(false);
   const [mostrarAsociarElementos, setMostrarAsociarElementos] = useState(false)
 
+  //const [selectedPart, setSelectedPart] = useState(null);
+
   const fetchProduct = useCallback(async () => {
     try{
       setLoadingData(true);

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { actualizarGrafoProcesos, actualizarProceso, asignarRutaPieza, creacionProceso, eliminacionProceso, eliminarRutaPieza, listadoRutasFabricacion, listarProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerTiposProcesos, obtenerUnidadesTiempo, quitarRutaPieza } from "../controllers/process.controller.js";
+import { actualizarGrafoProcesos, actualizarProceso, asignarRutaPieza, creacionProceso, eliminacionProceso, eliminarRutaPieza, listadoRutasFabricacion, listarProcesos, nuevoGrafoProcesos, obtenerGrafoProcesos, obtenerTiposProcesos, obtenerUnidadesTiempo} from "../controllers/process.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { asociarRutaPiezasSchema, grafoSchema, procesoSchema } from "../schemas/process.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";

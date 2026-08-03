@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 import Table from "../../../components/ui/Table";
-import { useProcessRoutes } from "../hooks/useProcessRoutes";
 import { Modal } from "../../../components/ui/Modal";
 import { useEffect } from "react";
-import { DetalleRuta } from "./DetalleRuta";
 import Button from "../../../components/ui/Button";
 import Can from "../../../components/Can";
 import { useNavigate } from "react-router-dom";

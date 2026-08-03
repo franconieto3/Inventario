@@ -3,6 +3,7 @@ import logo from '../../assets/logo.png';
 //Estilos
 import "./NavBar.css"
 import { UserAuth } from '../../features/auth/context/AuthContext';
+import BackButton from '../ui/BackButton';
 
 export default function NavBar(){
     const { user, logout} = UserAuth();
@@ -27,9 +28,12 @@ export default function NavBar(){
     return(
     <>
         <div className='nav-bar'>
-            <div className='logo-container' onClick={()=>navigate('/HomePage')}>
-                <img className="logo-img" src={logo} alt="logo"></img>
-                <span className='logo-text'>BIOPROTECE S.A.</span>
+            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                <BackButton/>
+                <div className='logo-container' onClick={()=>navigate('/HomePage')}>
+                    <img className="logo-img" src={logo} alt="logo"></img>
+                    <span className='logo-text'>BIOPROTECE S.A.</span>
+                </div>
             </div>
             <div className='user-container'>
                 <button className='user-button'> {user? `${getInitials(user.name)}`: none }</button>

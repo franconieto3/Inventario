@@ -9,7 +9,8 @@ export default function Login() {
   const [dni, setDni] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const { login, loading, isAuthenticated} = UserAuth();
   
@@ -62,7 +63,24 @@ export default function Login() {
           </label>
           <label>
             Contraseña:
-            <input placeholder='Contraseña' type="password" onChange={(e)=>setPassword(e.target.value)}/>
+            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
+              <input 
+                placeholder='Contraseña' 
+                type={showPassword ? "text" : "password"}
+                onChange={(e)=>setPassword(e.target.value)}
+              />
+              <button 
+                type="button" // IMPORTANTE: type="button" evita que envíe el formulario
+                onClick={() => setShowPassword(!showPassword)}
+                style={{background:'transparent', color: '#9e9e9e', border: 'none', cursor:'pointer', padding:'0', display:'flex', alignItems:'center'}}
+              >
+                {showPassword ? 
+                  (<i className="material-icons">visibility</i>): 
+                  (<i className="material-icons">visibility_off</i>)
+                }
+              </button>
+            </div>
+
           </label>
 
           {error && (
