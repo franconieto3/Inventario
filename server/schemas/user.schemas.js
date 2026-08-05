@@ -12,8 +12,8 @@ export const idParamSchema = z.object({
 
 export const editarUsuarioSchema = z.object({
         nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres").optional(),
-        email: z.string().email("Debe ser un formato de correo válido").optional(),
-        telefono: z.string().optional()
+        email: z.string().email("Debe ser un formato de correo válido").nullable().optional(),
+        telefono: z.string().regex(/^\d+$/, "El teléfono solo debe contener números").nullable().optional()
     })
 
 export const bajaUsuarioSchema = z.object({

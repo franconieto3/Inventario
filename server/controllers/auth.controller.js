@@ -88,3 +88,24 @@ export const resetPassword = async (req, res)=>{
     return res.status(err.statusCode || 500).json({error: err.message});
   }
 }
+
+export const updatePassWord = async (req, res)=>{
+  try{
+    const userId = req.usuario.id_usuario;
+    const {currentPassword, newPassword} = req.body;
+
+    const user = await authService.searchUser(null, userId);
+
+    await authService.comparePassword(currentPassword, user.password);
+
+    const hashedPassword = await authService.hashPassword(newPassword);
+    
+    const data = await authService.changePassword(userId, hashedPassword);
+
+    return res.status(200).json({message: "Contraseña actualizada exitosamente"});
+
+  }catch(err){
+    console.error(err);
+    return res.status(err.statusCode || 500).json({error: err.message});  
+  }
+}

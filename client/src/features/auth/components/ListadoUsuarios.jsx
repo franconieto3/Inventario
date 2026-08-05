@@ -21,7 +21,10 @@ export function ListadoUsuarios({usuarios, onEditUser, onOpen, onResetPassword, 
             header: "DNI"
         },{
             key: "email",
-            header: "Email"
+            header: "Email",
+            render: (_, row)=>(
+                <span>{row.email || '---'}</span>
+            )
         },{
             key: "",
             header: "Estado",

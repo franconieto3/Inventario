@@ -32,11 +32,19 @@ export function NewUser({onSuccess, onClose}){
         
         if (!name.trim()) { setError("El nombre es obligatorio"); return false; }
         
-        if (!email.trim()) { setError("El email es obligatorio"); return false; }
-        if (!/\S+@\S+\.\S+/.test(email)) { setError("El email no es válido"); return false; }
-        
-        if (!telefono.trim()) { setError("El teléfono es obligatorio"); return false; }
-        if (telefono.length < 6) { setError("El teléfono debe tener al menos 6 dígitos"); return false; }
+        if (email.length > 0 && !/\S+@\S+\.\S+/.test(email)) { setError("El email no es válido"); return false; }
+
+        if (telefono.length > 0) {
+            if (!/^\d+$/.test(telefono)) {
+                setError("El teléfono solo debe contener números");
+                return false;
+            }
+
+            if (telefono.length < 6) {
+                setError("El teléfono debe tener al menos 6 dígitos");
+                return false;
+            }
+        }
 
         return true;
     };
@@ -49,7 +57,16 @@ export function NewUser({onSuccess, onClose}){
 
         setLoading(true);
         try {
-            const data = await apiCall(`${API_URL}/auth/register`, {method:'POST', body: JSON.stringify({ dni, password, name, email, telefono })});
+            const data = await apiCall(`${API_URL}/auth/register`, {
+                method:'POST', 
+                body: JSON.stringify({ 
+                    dni,
+                    password, 
+                    name, 
+                    email: email || null, 
+                    telefono:  telefono || null
+                })
+            });
 
             console.log("Registro exitoso:",{ dni, password, name, email, telefono })
 

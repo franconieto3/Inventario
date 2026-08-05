@@ -11,8 +11,8 @@ export function EditarUsuario({usuario, onSuccess, onClose}){
 
     const [formData, setFormData] = useState({
         name: usuario.name,
-        email: usuario.email,
-        telefono: usuario.telefono
+        email: usuario.email? usuario.email.toString() : "",
+        telefono: usuario.telefono? usuario.telefono.toString() : ""
     });
     
     const { name, email, telefono } = formData;
@@ -21,10 +21,20 @@ export function EditarUsuario({usuario, onSuccess, onClose}){
         if (!name.trim()) { setError("El nombre es obligatorio"); return false; }
         
         if (!email.trim()) { setError("El email es obligatorio"); return false; }
-        if (!/\S+@\S+\.\S+/.test(email)) { setError("El email no es válido"); return false; }
+
+        if (email.length > 0 && !/\S+@\S+\.\S+/.test(email)) { setError("El email no es válido"); return false; }
         
-        if (!telefono.trim()) { setError("El teléfono es obligatorio"); return false; }
-        if (telefono.length < 6) { setError("El teléfono debe tener al menos 6 dígitos"); return false; }
+        if (telefono.length > 0) {
+            if (!/^\d+$/.test(telefono)) {
+                setError("El teléfono solo debe contener números");
+                return false;
+            }
+
+            if (telefono.length < 6) {
+                setError("El teléfono debe tener al menos 6 dígitos");
+                return false;
+            }
+        }
 
         return true;
     };
@@ -37,7 +47,16 @@ export function EditarUsuario({usuario, onSuccess, onClose}){
 
         setLoading(true);
         try {
-            const data = await apiCall(`${API_URL}/api/usuarios/${usuario.id_usuario}/edit`, {method:'PUT', body: JSON.stringify({ name, email, telefono })});
+            const data = await apiCall(`${API_URL}/api/usuarios/${usuario.id_usuario}/edit`, 
+                {
+                    method:'PUT', 
+                    body: JSON.stringify({ 
+                        name, 
+                        email: email || null, 
+                        telefono:  telefono || null
+                    })
+                }
+            );
 
             if (onSuccess) onSuccess();
             if (onClose) onClose();

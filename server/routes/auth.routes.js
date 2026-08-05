@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { login, perfil, register, resetPassword, verificar } from "../controllers/auth.controller.js"; 
+import { login, perfil, register, resetPassword, updatePassWord, verificar } from "../controllers/auth.controller.js"; 
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { loginSchema, registerSchema, passwordResetSchema } from "../schemas/auth.schemas.js";
+import { loginSchema, registerSchema, passwordResetSchema, updatePasswordSchema } from "../schemas/auth.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
 
 // Importar register, verify, etc.
@@ -14,6 +14,7 @@ router.post('/login',
     login);
 
 router.post('/register',
+    verificarToken,
     validateSchema(registerSchema),
     requirePermission('crear_usuarios'),
     register);
@@ -25,6 +26,12 @@ router.get('/verificar',
 router.get('/perfil', 
     verificarToken, 
     perfil);
+
+router.put('/update-password',
+    verificarToken,
+    validateSchema(updatePasswordSchema),
+    updatePassWord
+)
 
 router.post('/reset-password',
     verificarToken,

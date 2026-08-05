@@ -4,10 +4,17 @@ import logo from '../../assets/logo.png';
 import "./NavBar.css"
 import { UserAuth } from '../../features/auth/context/AuthContext';
 import BackButton from '../ui/BackButton';
+import {DropdownMenu} from '../ui/DropdownMenu';
+import { Modal } from '../../components/ui/Modal';
+import UpdatePassword from '../../features/auth/components/UpdatePassword';
+import { useState } from 'react';
 
 export default function NavBar(){
     const { user, logout} = UserAuth();
     const navigate = useNavigate();
+
+    const [openDropdown, setOpenDropdown] = useState(false);
+    const [updatePassword, setUpdatePassword] = useState(false);
 
     const handleLogOut = async ()=>{
         try{
@@ -37,13 +44,34 @@ export default function NavBar(){
             </div>
             <div className='user-container'>
                 <button className='user-button'> {user? `${getInitials(user.name)}`: none }</button>
-                <button className='logout-button' onClick={handleLogOut}>
-                    <div>
-                    <i className="material-icons">logout</i>
-                    </div>
-                </button>
-            </div>
-            
+                <DropdownMenu
+                    items={[
+                        {
+                            label: "Actualizar contraseña",
+                            icon: "key",
+                            onClick:()=>setUpdatePassword(true)
+                        },{
+                            label: "Cerrar sesión",
+                            icon: "logout",
+                            color: "red",
+                            onClick:()=>handleLogOut()
+                        }
+                    ]}
+                    isOpen={openDropdown}
+                    onToggle={() => setOpenDropdown(!openDropdown)}
+                />
+            </div>  
         </div>
+        {
+            updatePassword && (
+                <Modal
+                    titulo="Actualizar contraseña"
+                    descripcion={user.name}
+                    onClose={()=>setUpdatePassword(false)}
+                >
+                    <UpdatePassword onClose={()=>setUpdatePassword(false)}/>
+                </Modal>
+            )
+        }
     </>);
 }

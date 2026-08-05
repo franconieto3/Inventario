@@ -2,11 +2,21 @@ import { supabase } from "../config/supabase.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const searchUser = async(dni)=>{
+export const searchUser = async(dni, id = null)=>{
+
+    if (!dni && !id) {
+      const err = new Error("Se requiere proporcionar un DNI o un ID");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const campoBusqueda = id ? 'id_usuario' : 'dni';
+    const valorBusqueda = id ? id : dni;
+
     const { data: user, error } = await supabase
     .from('usuarios')
     .select('*')
-    .eq('dni', dni)
+    .eq(campoBusqueda, valorBusqueda)
     .maybeSingle();
 
     if(error){
