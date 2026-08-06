@@ -90,13 +90,14 @@ export const grafoSchema = z.object({
 
 //Asociación de piezas a una ruta
 export const asociarRutaPiezasSchema = z.object({
-  piezas: z.coerce
-    .number({
-      required_error: "El ID de la ruta es obligatorio.",
-      invalid_type_error: "El ID de la ruta debe ser un número válido.",
-    })
-    .int("El ID de la ruta debe ser un número entero.")
-    .positive("El ID de la ruta debe ser un número positivo."),
+  piezas: z.array(
+      z.coerce
+        .number({
+          invalid_type_error: "El ID de la pieza debe ser un número válido.",
+        })
+        .int("Los IDs de las piezas deben ser enteros.")
+        .positive("Los IDs de las piezas deben ser positivos.")
+    ).min(1, "Debes incluir al menos una pieza."),
     
   ruta: 
     z.coerce
