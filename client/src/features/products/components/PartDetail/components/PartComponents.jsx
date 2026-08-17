@@ -6,6 +6,7 @@ import Button from "../../../../../components/ui/Button";
 import { AgregarComponentes } from "../../../../ensambles/components/AgregarComponentes";
 import { EditarComponente } from "../../../../ensambles/components/EditarComponentes";
 import Can from "../../../../../components/Can";
+import { Modal } from "../../../../../components/ui/Modal";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
@@ -72,12 +73,18 @@ export function PartComponents({ pieza, producto, onRefresh }) {
 
             {/* Modales aislados de la vista principal */}
             {mostrarAgregar && (
-                <AgregarComponentes 
-                    idPiezaPadre={pieza.id_pieza} 
-                    nombrePiezaPadre={`${producto.nombre} ${pieza.nombre}`}
-                    onClose={() => setMostrarAgregar(false)} 
-                    onSuccess={onRefresh} 
-                />
+                <Modal
+                    titulo="Agregar componentes"
+                    descripcion={`${producto.nombre} ${pieza.nombre}`}
+                    onClose={() => setMostrarAgregar(false)}
+                >
+                    <AgregarComponentes 
+                        idPiezaPadre={pieza.id_pieza} 
+                        nombrePiezaPadre={`${producto.nombre} ${pieza.nombre}`}
+                        onClose={() => setMostrarAgregar(false)} 
+                        onSuccess={onRefresh} 
+                    />
+                </Modal>
             )}
             
             {mostrarEditar && (

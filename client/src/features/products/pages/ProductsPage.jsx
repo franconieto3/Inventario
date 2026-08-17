@@ -15,6 +15,7 @@ import { ListadoProductos } from "../components/ListadoProductos";
 //Estilos
 import "./ProductsPage.css"
 import Button from "../../../components/ui/Button";
+import CargaMasiva from "../components/CargaMasiva";
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -39,6 +40,7 @@ export default function ProductsPage(){
 
     const [mostrarEdicion, setMostrarEdicion] = useState(false);
     const [showNewProduct, setShowNewProduct] = useState(false);
+    const [massiveUpload, setMassiveUpload] = useState(false);
     const [productoSeleccionado, setProductoSeleccionado] = useState(null);
     const [idRubroSeleccionado, setIdRubroSeleccionado] = useState(null);
     const [idRegistroSeleccionado, setIdRegistroSeleccionado] = useState(null);
@@ -58,6 +60,7 @@ export default function ProductsPage(){
         setMostrarEdicion(false);
         setProductoSeleccionado(null);
         setShowNewProduct(false);
+        setMassiveUpload(false);
     }
     //Refrescar la página una vez editado o eliminado un producto
     const handleSuccess = ()=>{
@@ -126,10 +129,6 @@ export default function ProductsPage(){
                 </div>
                 <div className='filters'>
                     <div className='search-box'>
-                        {/* NOTA: Si hay paginación en el backend, este buscador local
-                           solo buscará en los 20 productos visibles actualmente.
-                           Para buscar en todo, el componente Buscador debería llamar a la API.
-                        */}
                         <Buscador              
                             opciones={productos}
                             placeholder="Buscar productos..."
@@ -143,6 +142,7 @@ export default function ProductsPage(){
                     <Can permission="administrar_productos">
                         <div className='button-container'>
                             <Button variant="default" onClick={()=>setShowNewProduct(true)}>Agregar producto</Button>
+                            <Button variant="default" onClick={()=>setMassiveUpload(true)}>Carga masiva de productos</Button>
                         </div>
                     </Can>
                     
@@ -225,6 +225,13 @@ export default function ProductsPage(){
                         onSuccess={handleSuccess}
                         registros = {registrosPM} 
                         rubros = {rubros}/>
+                )}
+                {massiveUpload && (
+                    <CargaMasiva
+                        isOpen={massiveUpload}
+                        onClose={()=>setMassiveUpload(false)}
+                        onSuccess={handleSuccess}
+                    />
                 )}
                 {mostrarEdicion &&
                     <EdicionProducto 

@@ -18,6 +18,7 @@ import Button from '../../../components/ui/Button';
 import { Spinner } from '../../../components/ui/Spinner';
 import { AsociarInstrumentoPieza } from '../../instrumentos/components/AsociarInstrumentoPieza';
 import { AsociarRutaPiezas } from '../../procesos/components/AsociarRutaPiezas';
+import { AsociarComponentesPieza } from '../../ensambles/components/AsociarComponentesPieza';
 
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -36,6 +37,7 @@ export default function ProductDetail() {
   const [rubros, setRubros] = useState(null);
   const [registrosPM, setRegistrosPM] = useState(null);
 
+  const [mostrarAgregarComponentes, setMostrarAgregarComponentes] = useState(false);
   const [mostrarCrearRuta, setMostrarCrearRuta] = useState(false);
   const [mostrarAsociarElementos, setMostrarAsociarElementos] = useState(false)
 
@@ -158,6 +160,13 @@ export default function ProductDetail() {
             <AgregarPieza producto={producto} onUploadSuccess={fetchProduct}/>
           </Can>
 
+          <Can permission="administrar_productos">
+            <button className='add-span' onClick={()=>{setMostrarAgregarComponentes(true)}}>
+                <i className='material-icons' id="add-icon">add</i>
+                Agregar componentes
+            </button>
+          </Can>
+
           <Can permission='administrar_documentos'>
             <AgregarPlano producto={producto} onUploadSuccess={fetchProduct}/>
           </Can>
@@ -204,6 +213,14 @@ export default function ProductDetail() {
                     fetchProduct();
                     }} 
                 onClose={()=>setMostrarEdicion(false)}
+            />
+          }
+
+          {mostrarAgregarComponentes &&
+            <AsociarComponentesPieza
+              producto={producto}
+              onClose={()=>setMostrarAgregarComponentes(false)}
+              onSuccess={()=>fetchProduct()}
             />
           }
 

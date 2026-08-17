@@ -98,3 +98,83 @@ export const eliminarComponente = async(idPadre, idHijo)=>{
 
     return data;
 }
+
+export const asociarComponentesBulk = async (idPiezasPadre, componentes) => {
+    const idsComponentes = componentes.map(c => c.idComponente);
+
+    // REGLA 1: Evitar que una pieza sea componente de sí misma
+    const interseccion = idPiezasPadre.filter(id => idsComponentes.includes(id));
+    if (interseccion.length > 0) {
+        const err = new Error("Una pieza no puede tenerse a sí misma como componente (Conflicto en IDs).");
+        err.statusCode = 400;
+        throw err;
+    }
+
+    // REGLA 2: Evitar asociar piezas con el mismo id_producto
+    const { data: piezas, error: piezasError } = await supabase
+        .from('pieza')
+        .select('id_pieza, id_producto')
+        .in('id_pieza', [...idPiezasPadre, ...idsComponentes]);
+
+    if (piezasError) throw new Error("Error al consultar las piezas en la base de datos.");
+
+    // Mapeamos los productos de los padres seleccionados
+    const piezasPadreData = piezas.filter(p => idPiezasPadre.includes(p.id_pieza));
+    if (piezasPadreData.length !== idPiezasPadre.length) {
+        throw new Error("Una o más piezas padre especificadas no existen.");
+    }
+    const productosPadresIds = piezasPadreData.map(p => p.id_producto);
+
+    // Verificamos si algún componente pertenece al mismo producto de cualquiera de los padres
+    const componentesMismoProducto = piezas.filter(
+        p => !idPiezasPadre.includes(p.id_pieza) && productosPadresIds.includes(p.id_producto)
+    );
+
+    if (componentesMismoProducto.length > 0) {
+        const err = new Error("No se pueden asociar componentes que pertenezcan al mismo producto que alguna pieza padre.");
+        err.statusCode = 400;
+        throw err;
+    }
+
+    // REGLA 3: Evitar loop infinito (Nivel 1)
+    // Buscamos si los hijos ya contienen a CUALQUIERA de los padres como sus propios hijos
+    const { data: loops, error: loopError } = await supabase
+        .from('composicion_pieza')
+        .select('id_pieza_padre, id_pieza_hijo')
+        .in('id_pieza_padre', idsComponentes)
+        .in('id_pieza_hijo', idPiezasPadre);
+
+    if (loopError) throw new Error("Error al verificar dependencias circulares.");
+    if (loops && loops.length > 0) {
+        throw new Error("Loop detectado: Uno de los componentes ya tiene a una de las piezas padre como su propio componente.");
+    }
+
+    // 4. Construcción del set total de inserciones (Producto cartesiano de Padres x Hijos)
+    const datosAInsertar = [];
+    for (const idPadre of idPiezasPadre) {
+        for (const comp of componentes) {
+            datosAInsertar.push({
+                id_pieza_padre: idPadre,
+                id_pieza_hijo: comp.idComponente,
+                cantidad: comp.cantidad
+            });
+        }
+    }
+
+    // Inserción en lote
+    const { data, error: insertError } = await supabase
+        .from('composicion_pieza')
+        .insert(datosAInsertar)
+        .select();
+
+    if (insertError) {
+        if (insertError.code === '23505') {
+            const err = new Error("Uno o varios componentes ya se encuentran asociados a alguna de las piezas seleccionadas.");
+            err.statusCode = 409;
+            throw err;
+        }
+        throw new Error("Error al guardar la composición masiva en la base de datos.");
+    }
+
+    return data;
+};

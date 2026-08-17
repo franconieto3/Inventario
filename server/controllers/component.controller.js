@@ -1,4 +1,4 @@
-import { asociarComponentes, editarComponente, eliminarComponente } from "../services/component.service.js";
+import { asociarComponentes, asociarComponentesBulk, editarComponente, eliminarComponente } from "../services/component.service.js";
 
 
 export const asociarPiezas = async (req, res) => {
@@ -54,3 +54,25 @@ export const eliminacionComponente = async (req, res)=>{
     return res.status(err.statusCode || 500).json({error: err.message});
   }
 }
+
+export const asociarPiezasBulk = async (req, res) => {
+  try {
+    const { idPiezasPadre, componentes } = req.body;
+
+    // Ejecutamos el servicio masivo
+    const resultado = await asociarComponentesBulk(idPiezasPadre, componentes);
+
+    return res.status(201).json({
+      success: true,
+      message: "Componentes asociados masivamente de forma exitosa",
+      data: resultado
+    });
+    
+  } catch (error) {
+    console.error("[asociarPiezasBulk] Error:", error.message);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Ocurrió un error interno al procesar la asociación masiva."
+    });
+  }
+};

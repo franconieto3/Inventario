@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { rubros, registrosPM, productos, nuevoProducto, producto, pieza, agregarPieza, edicionPieza, eliminacionPieza, edicionProducto, eliminacionProducto, piezas} from '../controllers/product.controller.js';
+import { rubros, registrosPM, productos, nuevoProducto, producto, pieza, agregarPieza, edicionPieza, eliminacionPieza, edicionProducto, eliminacionProducto, piezas, cargaMasivaProductos} from '../controllers/product.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 
-import { crearPiezaSchema, editarPiezaSchema, editarProductoSchema, productoSchema } from "../schemas/product.schemas.js";
+import { cargaMasivaSchema, crearPiezaSchema, editarPiezaSchema, editarProductoSchema, productoSchema } from "../schemas/product.schemas.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
@@ -69,6 +69,13 @@ router.delete('/pieza/eliminacion/:id',
     verificarToken,
     requirePermission('administrar_productos'), 
     eliminacionPieza);
+
+router.post('/masivo', 
+    verificarToken, 
+    requirePermission('administrar_productos'),
+    validateSchema(cargaMasivaSchema),
+    cargaMasivaProductos
+);
 
 
 export default router;

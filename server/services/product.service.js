@@ -347,3 +347,19 @@ export const obtenerPiezasHijas = async (idPiezaPadre) => {
 
   return data;
 };
+
+export const procesarCargaMasiva = async (payload) => {
+    // Llamada a la función RPC de Supabase que creamos previamente en PostgreSQL
+    const { data, error } = await supabase.rpc('fn_carga_masiva_productos', {
+        payload: payload
+    });
+
+    if (error) {
+        console.error("Error Supabase RPC (Carga Masiva):", error);
+        const err = new Error(error.message || "Error al procesar la carga masiva en la base de datos.");
+        err.statusCode = 400; // Asumimos un Bad Request por fallas de regla de negocio
+        throw err;
+    }
+
+    return data;
+};

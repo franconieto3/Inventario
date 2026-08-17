@@ -19,3 +19,16 @@ export const editarComposicionSchema = z.object(
     cantidad: z.number().int().min(1, "La cantidad debe ser al menos 1")
   }
 );
+
+export const asociarComposicionBulkSchema = z.object({
+  idPiezasPadre: z.array(z.coerce.number({
+    required_error: "Cada id de pieza padre debe ser un número entero."
+  })).min(1, "Debes seleccionar al menos una pieza padre."),
+  
+  componentes: z.array(
+    z.object({
+      idComponente: z.coerce.number({ required_error: "El id del componente es obligatorio." }),
+      cantidad: z.coerce.number().min(1, "La cantidad debe ser mayor o igual a 1.")
+    })
+  ).min(1, "Debes agregar al menos un componente.")
+});

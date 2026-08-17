@@ -20,6 +20,7 @@ export const registrosPM = async (req, res) =>{
         res.status(500).json({ error: "Error al obtener registros PM" });
     }
 }
+
 //CRUD productos 
 
 export const productos = async (req, res)=>{
@@ -133,6 +134,31 @@ export const eliminacionProducto = async (req, res)=>{
     }
 }
 
+export const cargaMasivaProductos = async (req, res) => {
+    try {
+        const payload = req.body;
+
+        // 1. Validación básica de que el payload es un array y no está vacío
+        if (!Array.isArray(payload) || payload.length === 0) {
+            return res.status(400).json({ error: "El cuerpo de la petición debe ser un arreglo de productos válido." });
+        }
+
+        // 3. Ejecución del servicio
+        const data = await productService.procesarCargaMasiva(payload);
+
+        // 4. Respuesta exitosa
+        res.status(201).json({ 
+            message: "Carga masiva completada exitosamente.",
+            details: data 
+        });
+
+    } catch (err) {
+        console.error("Error en cargaMasivaProductos:", err);
+        return res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};
+
+
 //CRUD pieza
 
 export const pieza = async (req, res) =>{
@@ -243,3 +269,5 @@ export const piezas = async (req, res)=>{
         res.status(err.statusCode? err.statusCode: 500).json({error: err.message});    
     }
 }
+
+

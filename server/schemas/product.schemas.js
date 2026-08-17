@@ -74,3 +74,33 @@ export const editarPiezaSchema = z.object({
   // Reutilizamos la misma lógica para el código
   codigo: z.string().optional()
 });
+
+// Validación individual de la pieza para la carga masiva
+const piezaMasivaSchema = z.object({
+    nombre: z.string({
+        required_error: "El nombre de la pieza debe ser un texto (puede ser vacío)",
+        invalid_type_error: "El nombre de la pieza debe ser una cadena de texto"
+    }), 
+    codigo_produccion: z.string().optional().default("")
+});
+
+// Validación del producto que contiene las piezas
+const productoMasivoSchema = z.object({
+    nombre: z.string()
+        .trim()
+        .min(1, "El nombre del producto es obligatorio y no puede estar vacío"),
+    id_registro_pm: z.coerce.number().int().nonnegative().optional().default(0),
+    id_rubro: z.coerce.number().int().nonnegative().optional().default(0),
+    piezas: z.array(piezaMasivaSchema)
+        .min(1, "Un producto debe tener al menos una pieza asociada")
+        .refine(
+            (piezas) => {
+                const nombres = piezas.map((p) => p.nombre);
+                return new Set(nombres).size === nombres.length;
+            },
+            { message: "Dos piezas no pueden tener el mismo nombre dentro de un mismo producto" }
+        )
+});
+
+export const cargaMasivaSchema = z.array(productoMasivoSchema)
+    .min(1, "El lote a procesar debe contener al menos un producto");

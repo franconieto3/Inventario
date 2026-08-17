@@ -42,17 +42,13 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre, nombrePie
             setError("Debes agregar al menos un componente.");
             return;
         }
-        
         if (componentes.some(c => !c.cantidad || c.cantidad < 1)) {
             setError("Todas las cantidades deben ser mayores a 0.");
             return;
         }
-
         // Limpiar errores previos y setear loading
         setError("");
         setLoading(true);
-
-        
 
         // Armado del body
         const body = {
@@ -92,62 +88,48 @@ export function AgregarComponentes({ onClose, onSuccess, idPiezaPadre, nombrePie
     }, [componentes]);
 
     return (
-        <div className="overlay">
-            <div className="modal">
+        <>
+            <div className="modal-content">
+                <BuscadorPiezas key={reload} onSelect={(id, value) => handleSelectPart(id, value)} />
                 
-                {/* Cabecera y Botón de cierre del modal */}
-                <div className="modal-header">
-                    <div style={{textAlign:'start'}}>
-                        <h3 className="modal-title">Agregar Componentes</h3>
-                        <p style={{fontSize:'1rem',marginTop:'5px'}}>{nombrePiezaPadre}</p>
-                    </div>
-                    <button className="modal-close" onClick={onClose} aria-label="Cerrar">
-                        &times;
-                    </button>
-                </div>
-                <div className="modal-content">
-                    <BuscadorPiezas key={reload} onSelect={(id, value) => handleSelectPart(id, value)} />
-                    
-                    {error && <p className="form-error">{error}</p>}
+                {error && <p className="form-error">{error}</p>}
 
-                    <div className="component-list-container">
-                        {componentes.length === 0 ? (
-                            <p className="empty-state">No hay componentes agregados aún.</p>
-                        ) : (
-                            <ul className="component-list">
-                                {componentes.map((c) => (
-                                    <li key={c.idComponente} className="component-item">
-                                        <span className="component-name">{c.nombreComponente}</span>
-                                        <div className="component-actions">
-                                            <input 
-                                                type="number" 
-                                                min="1"
-                                                className="shadcn-input"
-                                                placeholder="Consumo estimado"
-                                                value={c.cantidad}
-                                                onChange={(e) => handleQuantityChange(c.idComponente, e.target.value)}
-                                            />
-                                            <button 
-                                                className="delete-btn" 
-                                                onClick={() => handleRemovePart(c.idComponente)}
-                                                title="Eliminar componente"
-                                            >
-                                                <i className="material-icons">delete</i>
-                                            </button>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
-
-                <div className="modal-footer">
-                    <Button variant="secondary" disabled={loading} onClick={submitComponents}>
-                        {loading ? "Guardando..." : "Guardar"}
-                    </Button>
+                <div className="component-list-container">
+                    {componentes.length === 0 ? (
+                        <p className="empty-state">No hay componentes agregados aún.</p>
+                    ) : (
+                        <ul className="component-list">
+                            {componentes.map((c) => (
+                                <li key={c.idComponente} className="component-item">
+                                    <span className="component-name">{c.nombreComponente}</span>
+                                    <div className="component-actions">
+                                        <input 
+                                            type="number" 
+                                            min="1"
+                                            className="shadcn-input"
+                                            placeholder="Consumo estimado"
+                                            value={c.cantidad}
+                                            onChange={(e) => handleQuantityChange(c.idComponente, e.target.value)}
+                                        />
+                                        <button 
+                                            className="delete-btn" 
+                                            onClick={() => handleRemovePart(c.idComponente)}
+                                            title="Eliminar componente"
+                                        >
+                                            <i className="material-icons">delete</i>
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
-        </div>
+            <div className="modal-footer">
+                <Button variant="default" disabled={loading} onClick={submitComponents}>
+                    {loading ? "Guardando..." : "Guardar"}
+                </Button>
+            </div>
+        </>
     );
 }
