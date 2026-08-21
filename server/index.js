@@ -9,6 +9,7 @@ import processRoutes from "./routes/process.routes.js";
 import instrumentRoutes from "./routes/instruments.routes.js";
 import userRoutes from "./routes/user.routes.js"
 import sectorRoutes from "./routes/sectors.routes.js"
+import ordenFabricacionRoutes from "./routes/ordenFabricacion.routes.js"
 
 // Middlewares
 const app = express();
@@ -28,6 +29,7 @@ app.use('/api/procesos', processRoutes);
 app.use('/api/instrumentos', instrumentRoutes);
 app.use('/api/usuarios', userRoutes);
 app.use('/api/sectores', sectorRoutes);
+app.use('/api/ordenes-fabricacion', ordenFabricacionRoutes);
 
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
