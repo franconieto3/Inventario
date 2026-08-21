@@ -19,6 +19,7 @@ import RightClickBlocker from './components/layout/RightClickBlocker';
 import { Instrumentos } from './features/instrumentos/pages/Instrumentos';
 import { InstrumentDetail } from './features/instrumentos/pages/InstrumentDetail';
 import { Flujograma } from './features/procesos/pages/Flujograma';
+import GenerarOrdenFabricacion from './features/produccion/pages/GenerarOrdenFabricacion';
 
 function App() {
 
@@ -127,6 +128,14 @@ function App() {
                   element={
                     <PrivateRoute permission={null}>
                       <InstrumentDetail />
+                    </PrivateRoute>
+                  }
+              />
+              <Route
+                  path='/supervision/generar-orden'
+                  element={
+                    <PrivateRoute permission={"crear_ordenes_fabricacion"}>
+                      <GenerarOrdenFabricacion />
                     </PrivateRoute>
                   }
               />
