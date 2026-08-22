@@ -31,7 +31,7 @@ export default function GenerarOrdenFabricacion() {
         <>
             <NavBar />
             <div className="body-container">
-                <h1>Nueva orden de fabricación</h1>
+                <h1 className="of-title">Nueva orden de fabricación</h1>
 
                 <Buscador
                     opciones={productos}

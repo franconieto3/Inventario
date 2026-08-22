@@ -1,0 +1,17 @@
+.supervision-tc{
+  display: flex;
+  padding: 0px;
+  justify-content: space-between;
+  margin-top: 0px;
+  align-items: center;
+}
+
+.supervision-titulos{
+  margin: 0%;
+  font-size: 25px;
+  font-family: "Inter", sans-serif;
+  font-size: 2rem;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}

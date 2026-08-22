@@ -20,6 +20,7 @@ import { Instrumentos } from './features/instrumentos/pages/Instrumentos';
 import { InstrumentDetail } from './features/instrumentos/pages/InstrumentDetail';
 import { Flujograma } from './features/procesos/pages/Flujograma';
 import GenerarOrdenFabricacion from './features/produccion/pages/GenerarOrdenFabricacion';
+import { DashboardProduccion } from './features/produccion/pages/DashboardProduccion';
 
 function App() {
 
@@ -68,7 +69,7 @@ function App() {
               <Route
                 path="/materiales"
                 element={
-                  <PrivateRoute permission={null}>
+                  <PrivateRoute permission="acceso_materiales">
                     <Materiales/>
                   </PrivateRoute>
                 }
@@ -76,15 +77,23 @@ function App() {
               <Route
                 path='/procesos'
                 element={
-                  <PrivateRoute permission={null}>
+                  <PrivateRoute permission="acceso_procesos">
                     <Procesos/>
                   </PrivateRoute>
                 }
               /> 
               <Route
+                path='/supervision'
+                element={
+                  <PrivateRoute permission="acceso_supervision">
+                    <DashboardProduccion></DashboardProduccion>
+                  </PrivateRoute>
+                }
+              />
+              <Route
                 path='/instrumentos'
                 element={
-                  <PrivateRoute permission={null}>
+                  <PrivateRoute permission="acceso_instrumentos">
                     <Instrumentos/>
                   </PrivateRoute>
                 }

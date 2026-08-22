@@ -5,7 +5,7 @@
     font-weight: 500;
 }
 
-.body-container h1 {
+.of-title{
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 1.875rem; /* Tamaño grande pero proporcionado */
     font-weight: 400; /* Semi-bold para destacar sin ser muy pesado */
@@ -13,6 +13,7 @@
     letter-spacing: -0.025em; /* Un letter-spacing negativo da un aspecto más moderno */
     margin-top: 0;
     margin-bottom: 2rem;
+    text-align: start;
 }
 
 .empty-state {

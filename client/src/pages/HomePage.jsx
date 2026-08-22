@@ -106,6 +106,20 @@ export default function HomePage(){
                             <p className='card-description'>Gestión de procesos productivos</p>
                         </div>
                     </Can>
+                    <Can permission="acceso_supervision">
+                        <div className="card" onClick={()=>navigate("/supervision")}>
+                            <div className='icons-container'>
+                                <div className="first-icon">
+                                    <i className="material-icons">assignment</i>
+                                </div>
+                                <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            </div>
+                            <div className='card-title'>
+                                <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Supervisión de producción</h1>
+                            </div>
+                            <p className='card-description'>Creación y visualización del estado de las ordenes de producción</p>    
+                        </div>
+                    </Can>
                 </div>
             </div>
         </div>
