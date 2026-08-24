@@ -13,6 +13,7 @@ import ProductsPage from './features/products/pages/ProductsPage';
 import ProductDetail from "./features/products/pages/ProductDetail";
 import { Ingenieria } from './features/ingenieria/pages/Ingenieria';
 import { Materiales } from './features/materiales/pages/Materiales';
+import { ValidacionMateriales } from './features/materiales/pages/ValidacionMateriales';
 import { Procesos } from './features/procesos/pages/Procesos';
 import { DocumentDetail } from './features/documentos/DocumentDetail';
 import RightClickBlocker from './components/layout/RightClickBlocker';
@@ -71,6 +72,14 @@ function App() {
                 element={
                   <PrivateRoute permission="acceso_materiales">
                     <Materiales/>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/materiales/ordenes"
+                element={
+                  <PrivateRoute permission="acceso_materiales">
+                    <ValidacionMateriales/>
                   </PrivateRoute>
                 }
               />

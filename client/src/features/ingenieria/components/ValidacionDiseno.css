@@ -1,0 +1,71 @@
+.validacion-diseno-acciones {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.vd-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #475569;
+}
+
+.vd-campo select {
+    min-width: 220px;
+}
+
+.vd-orden-produccion {
+    display: flex;
+    gap: 6px;
+}
+
+.vd-orden-produccion input {
+    width: 160px;
+}
+
+.vd-btn-secundario {
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f8fafc;
+    cursor: pointer;
+}
+
+.vd-btn-secundario:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vd-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.vd-ruta-asignada {
+    font-size: 0.85rem;
+    color: #166534;
+    font-weight: 500;
+}
+
+.vd-badge-hija {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.vd-badge-ensamble {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: #e0e7ff;
+    color: #3730a3;
+    font-size: 0.7rem;
+    font-weight: 500;
+}

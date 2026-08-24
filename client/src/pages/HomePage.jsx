@@ -120,6 +120,20 @@ export default function HomePage(){
                             <p className='card-description'>Creación y visualización del estado de las ordenes de producción</p>    
                         </div>
                     </Can>
+                    <Can permission={null}>
+                        <div className="card" onClick={()=>navigate("/materiales/ordenes")}>
+                            <div className='icons-container'>
+                                <div className="first-icon">
+                                    <i className="material-icons">shopping_cart</i>
+                                </div>
+                                <i className="material-icons" style={{"fontSize":"2rem", "color":"rgb(97, 97, 97)"}}>arrow_outward</i>
+                            </div>
+                            <div className='card-title'>
+                                <h1 style={{"fontFamily":"Inter","fontWeight":"500","textAlign":"start"}}>Compras</h1>
+                            </div>
+                            <p className='card-description'>Visualización del estado de pedidos de producción, validación de materiales</p>    
+                        </div>
+                    </Can>
                 </div>
             </div>
         </div>
