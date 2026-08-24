@@ -1,0 +1,40 @@
+.print-only {
+    display: none;
+}
+
+.print-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.print-tabla th,
+.print-tabla td {
+    border: 1px solid #94a3b8;
+    padding: 8px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .print-only,
+    .print-only * {
+        visibility: visible;
+    }
+
+    .print-only {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+}

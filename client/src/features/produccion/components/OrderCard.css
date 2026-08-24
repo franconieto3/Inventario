@@ -1,0 +1,81 @@
+.order-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.order-card-seleccionada {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+.order-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.order-card-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.order-card-badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.order-card-badge-medida {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.order-card-titulo {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.order-card-detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #475569;
+}
+
+.order-card-orden-produccion {
+    display: flex;
+    gap: 6px;
+}
+
+.order-card-orden-produccion input {
+    flex: 1;
+    min-width: 0;
+}
+
+.order-card-orden-produccion button {
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f8fafc;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.order-card-orden-produccion button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

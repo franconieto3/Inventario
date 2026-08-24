@@ -28,6 +28,31 @@ export const requirePermission = (permisoRequerido) => {
   };
 };
 
+export const requireAnyPermission = (permisosRequeridos) => {
+  return async (req, res, next) => {
+    try {
+      const userId = req.usuario.id_usuario;
+
+      if (!userId) {
+        return res.status(401).json({ error: "Usuario no autenticado." });
+      }
+
+      const permisosUsuario = req.usuario.permisos || [];
+      const tieneAlguno = permisosRequeridos.some(p => permisosUsuario.includes(p));
+
+      if (tieneAlguno) {
+        next();
+      } else {
+        return res.status(403).json({ error: `Acceso denegado. Se requiere alguno de los siguientes permisos: ${permisosRequeridos.join(', ')}` });
+      }
+
+    } catch (err) {
+      console.error("Error verificando permisos:", err);
+      return res.status(500).json({ error: "Error interno verificando permisos" });
+    }
+  };
+};
+
 export const checkStreamPermission = async (req, res, next) => {
     try {
         const userId = req.usuario.id_usuario; 

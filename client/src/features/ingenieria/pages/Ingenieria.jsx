@@ -2,6 +2,7 @@ import NavBar from "../../../components/layout/NavBar";
 import { ListadoSolicitudesAcceso } from "../components/ListadoSolicitudesAcceso";
 import Solapador from "../../../components/layout/Solapador";
 import { ListadoSolicitudesCambio } from "../components/ListadoSolicitudesCambio";
+import { ValidacionDiseno } from "../components/ValidacionDiseno";
 
 //Estilos
 import "./Ingenieria.css"
@@ -16,6 +17,9 @@ export function Ingenieria(){
                 <p className='ingenieria-titulos'>Ingeniería</p>
               </div>
               <Solapador>
+                <div titulo="Validación de diseño">
+                  <ValidacionDiseno/>
+                </div>
                 <div titulo="Solicitudes de cambios">
                   <ListadoSolicitudesCambio/>
                 </div>

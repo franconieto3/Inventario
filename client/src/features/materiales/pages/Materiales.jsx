@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NavBar from "../../../components/layout/NavBar";
 import Button from "../../../components/ui/Button";
 import { ListadoMateriales } from "../components/ListadoMateriales";
@@ -12,6 +13,7 @@ import Can from "../../../components/Can";
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function Materiales(){
+    const navigate = useNavigate();
     const {
         rubros,
         unidades,
@@ -59,13 +61,13 @@ export function Materiales(){
                         <p className='products-text'>Materiales</p>
                     </div>
                 </div>
-                <Can permission='crear_materiales'>
-                    <div style={{width:'100%', textAlign:'start', marginBottom:'10px'}}>
+                <div style={{width:'100%', display:'flex', gap:'10px', textAlign:'start', marginBottom:'10px'}}>
+                    <Can permission='crear_materiales'>
                         <Button onClick={()=>setMostrarNewMaterial(true)}>
                             Agregar material
                         </Button>
-                    </div>  
-                </Can>
+                    </Can>
+                </div>
                 <ListadoMateriales 
                     rubros={rubros} 
                     materiales={materiales} 

@@ -91,6 +91,17 @@ export const getMaterialesParaSelector = async () => {
   return data;
 };
 
+export const getMaterialesPieza = async (idPieza) => {
+  const { data, error } = await supabase.rpc('obtener_materiales_pieza', { p_id_pieza: idPieza });
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudieron obtener los materiales de la pieza.");
+  }
+
+  return data || [];
+};
+
 export const agregarMaterialPieza = async (idPieza, materiales) => {
   const { data, error } = await supabase.rpc('asociar_materiales_pieza', {
     p_id_pieza: idPieza,
