@@ -6,6 +6,7 @@ export const ESTADO_PENDIENTE_MATERIALES = 2;
 export const ESTADO_ACEPTADA = 3;
 export const ESTADO_PAUSADA = 4;
 export const ESTADO_FINALIZADA = 5;
+export const ESTADO_CANCELADA = 6;
 
 const ESTADOS_ACTIVOS = [ESTADO_PENDIENTE_DISENO, ESTADO_PENDIENTE_MATERIALES, ESTADO_ACEPTADA];
 
@@ -52,4 +53,11 @@ export const actualizarOrden = async (idOf, cambios) => {
     }
 
     return await ordenFabricacionRepo.actualizarOrdenFabricacion(idOf, cambios);
+};
+
+// Cancela la orden indicada y, en cascada, todas sus órdenes hijas
+// (fn_cancelar_orden_fabricacion se encarga del árbol completo y de
+// no reabrir/sobreescribir órdenes ya finalizadas o canceladas).
+export const cancelarOrden = async (idOf) => {
+    return await ordenFabricacionRepo.cancelarOrdenFabricacion(idOf);
 };

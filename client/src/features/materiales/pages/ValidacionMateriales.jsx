@@ -99,7 +99,7 @@ export function ValidacionMateriales() {
         },
         {
             key: "",
-            header: "Detalle",
+            header: "Listado de materiales",
             render: (_, row) => <DetalleMaterialesPieza pieza={row.pieza} />
         },
         {

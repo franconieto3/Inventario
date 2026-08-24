@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./Login.css";
 import { UserAuth } from '../context/AuthContext';
+import Button from '../../../components/ui/Button';
 
 export default function Login() {
   
@@ -89,9 +90,9 @@ export default function Login() {
             </p>
           )}
 
-          <button className="btn-submit" type="submit" disabled={loading}>
+          <Button variant='default' type="submit" disabled={loading} style={{width:'100%', marginTop:'15px'}}>
             {loading ? "Cargando..." : "Ingresar"}
-          </button>
+          </Button>
         </form>
         
         <div className="login-footer">

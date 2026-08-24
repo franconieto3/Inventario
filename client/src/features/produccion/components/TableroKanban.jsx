@@ -1,7 +1,7 @@
 import { OrderCard } from "./OrderCard";
 import "./TableroKanban.css";
 
-export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggleSeleccion, onGuardarOrdenProduccion }) {
+export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden }) {
     return (
         <div className="kanban-board no-print">
             {columnas.map((col) => (
@@ -23,6 +23,7 @@ export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggl
                                     actualizando={actualizandoId}
                                     onToggleSeleccion={onToggleSeleccion}
                                     onGuardarOrdenProduccion={onGuardarOrdenProduccion}
+                                    onCancelarOrden={onCancelarOrden}
                                 />
                             ))
                         )}
