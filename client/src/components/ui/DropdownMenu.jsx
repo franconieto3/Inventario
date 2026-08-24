@@ -56,15 +56,20 @@ export const DropdownMenu = ({
                         // Opción normal
                         return (
                             <Can permission={item.permission? item.permission : null}>
-                                <div 
-                                    key={index} 
-                                    className="dropdown-item" 
+                                <div
+                                    key={index}
+                                    className="dropdown-item"
                                     onClick={(e) => {
                                         e.stopPropagation(); // Evitar burbujeo
+                                        if (item.disabled) return;
                                         item.onClick();
                                         onToggle(e);
                                     }}
-                                    style={{ color: item.color || 'inherit'}}
+                                    style={{
+                                        color: item.color || 'inherit',
+                                        opacity: item.disabled ? 0.5 : 1,
+                                        cursor: item.disabled ? 'not-allowed' : 'pointer'
+                                    }}
                                 >
                                     {item.icon && (
                                         <i 

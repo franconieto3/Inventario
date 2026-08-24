@@ -64,6 +64,23 @@ export const useOrdenesActivas = () => {
         }
     }, [refreshOrdenes]);
 
+    const cancelarOrden = useCallback(async (idOf) => {
+        setActualizandoId(idOf);
+        try {
+            await apiCall(`${API_URL}/api/ordenes-fabricacion/${idOf}/cancelar`, {
+                method: 'PATCH'
+            });
+            refreshOrdenes();
+            return true;
+        } catch (err) {
+            console.error("Error al cancelar la orden de fabricación", err);
+            alert(err.message || "Ocurrió un error al cancelar la orden de fabricación.");
+            return false;
+        } finally {
+            setActualizandoId(null);
+        }
+    }, [refreshOrdenes]);
+
     const columnas = [
         { estado: ESTADO_PENDIENTE_DISENO, titulo: "Validación de diseño" },
         { estado: ESTADO_PENDIENTE_MATERIALES, titulo: "Validación de materiales" },
@@ -85,6 +102,7 @@ export const useOrdenesActivas = () => {
         toggleSeleccion,
         limpiarSeleccion,
         guardarOrdenProduccion,
+        cancelarOrden,
         refreshOrdenes
     };
 };

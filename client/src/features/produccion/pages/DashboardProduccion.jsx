@@ -19,7 +19,8 @@ export function DashboardProduccion(){
         seleccionadas,
         ordenesSeleccionadas,
         toggleSeleccion,
-        guardarOrdenProduccion
+        guardarOrdenProduccion,
+        cancelarOrden
     } = useOrdenesActivas();
 
     return (
@@ -50,6 +51,7 @@ export function DashboardProduccion(){
                         actualizandoId={actualizandoId}
                         onToggleSeleccion={toggleSeleccion}
                         onGuardarOrdenProduccion={guardarOrdenProduccion}
+                        onCancelarOrden={cancelarOrden}
                     />
                 )}
             </div>

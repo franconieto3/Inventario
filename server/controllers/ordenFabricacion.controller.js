@@ -72,3 +72,18 @@ export const actualizarOrden = async (req, res) => {
         res.status(err.statusCode || 500).json({ error: err.message });
     }
 };
+
+export const cancelarOrden = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await ordenFabricacionService.cancelarOrden(id);
+
+        res.status(200).json({
+            message: "Orden de fabricación cancelada exitosamente",
+            ordenes: data
+        });
+    } catch (err) {
+        console.error("Error en cancelarOrden:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};

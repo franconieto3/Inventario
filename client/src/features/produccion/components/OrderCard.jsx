@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./OrderCard.css";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 
-export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion, onGuardarOrdenProduccion }) {
+export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden }) {
    
     const [idOrdenProduccion, setIdOrdenProduccion] = useState(orden.id_orden_produccion || "");
     const [expandida, setExpandida] = useState(false);
@@ -41,7 +41,12 @@ export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion
                             icon: 'cancel',
                             color:'red',
                             permission: 'cancelar_orden_fabricacion',
-                            onClick: ()=> console.log("Cancelando orden")
+                            disabled: deshabilitado,
+                            onClick: () => {
+                                if (window.confirm(`¿Cancelar la orden #${orden.id_of}? Si tiene órdenes hijas, también se cancelarán.`)) {
+                                    onCancelarOrden(orden.id_of);
+                                }
+                            }
                         }]}
                     ></DropdownMenu>
                 </div>

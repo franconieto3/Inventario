@@ -5,7 +5,8 @@ import {
     obtenerPendientesMateriales,
     obtenerActivas,
     obtenerRutasPieza,
-    actualizarOrden
+    actualizarOrden,
+    cancelarOrden
 } from "../controllers/ordenFabricacion.controller.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
@@ -45,5 +46,10 @@ router.patch('/:id',
     requireAnyPermission(['acceso_ingenieria', 'acceso_materiales', 'acceso_supervision']),
     validateSchema(actualizarOrdenSchema),
     actualizarOrden);
+
+router.patch('/:id/cancelar',
+    verificarToken,
+    requirePermission('cancelar_orden_fabricacion'),
+    cancelarOrden);
 
 export default router;

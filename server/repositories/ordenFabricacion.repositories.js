@@ -109,6 +109,21 @@ export const actualizarOrdenFabricacion = async (idOf, cambios) => {
     return data;
 };
 
+export const cancelarOrdenFabricacion = async (idOf) => {
+    const { data, error } = await supabase.rpc('fn_cancelar_orden_fabricacion', {
+        p_id_of: idOf
+    });
+
+    if (error) {
+        console.error("Error Supabase RPC (fn_cancelar_orden_fabricacion):", error);
+        const err = new Error(error.message || "Error al cancelar la orden de fabricación.");
+        err.statusCode = error.code === 'P0001' ? 400 : 500;
+        throw err;
+    }
+
+    return data;
+};
+
 export const obtenerRutasPieza = async (idPieza) => {
     const { data, error } = await supabase.rpc('obtener_rutas_pieza', { p_id_pieza: idPieza });
 
