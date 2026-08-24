@@ -78,7 +78,7 @@ function App() {
               <Route
                 path="/materiales/ordenes"
                 element={
-                  <PrivateRoute permission="acceso_materiales">
+                  <PrivateRoute permission="acceso_compras">
                     <ValidacionMateriales/>
                   </PrivateRoute>
                 }
@@ -144,7 +144,7 @@ function App() {
               <Route
                   path='/instrumento/:id'
                   element={
-                    <PrivateRoute permission={null}>
+                    <PrivateRoute permission="ver_instrumentos">
                       <InstrumentDetail />
                     </PrivateRoute>
                   }

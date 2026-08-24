@@ -1,7 +1,7 @@
 .vm-acciones {
     display: flex;
     align-items: flex-end;
-    gap: 16px;
+    gap: 50px;
     flex-wrap: wrap;
 }
 

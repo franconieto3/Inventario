@@ -15,7 +15,7 @@ function FilaAcciones({ orden, actualizando, onAprobar, onGuardarOrdenProduccion
     const deshabilitado = actualizando === orden.id_of;
 
     return (
-        <div className="vm-acciones" style={{alignItems:'center', justifyContent:'space-between'}}>
+        <div className="vm-acciones" style={{alignItems:'center'}}>
             {/*Especificación de IR*/}
             <div className="vm-campo">
                 <label>ID materia prima</label>

@@ -120,7 +120,7 @@ export default function HomePage(){
                             <p className='card-description'>Creación y visualización del estado de las ordenes de producción</p>    
                         </div>
                     </Can>
-                    <Can permission={null}>
+                    <Can permission="acceso_compras">
                         <div className="card" onClick={()=>navigate("/materiales/ordenes")}>
                             <div className='icons-container'>
                                 <div className="first-icon">
