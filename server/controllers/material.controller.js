@@ -128,6 +128,18 @@ export const obtenerMaterialesSelector = async (req, res) => {
   }
 };
 
+export const obtenerMaterialesPieza = async (req, res) => {
+  try {
+    const { idPieza } = req.params;
+
+    const materiales = await MaterialService.getMaterialesPieza(idPieza);
+    return res.status(200).json(materiales);
+
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ error: error.message });
+  }
+};
+
 export const asociarPieza = async (req, res) => {
   try {
     const { idPieza, materiales } = req.body;

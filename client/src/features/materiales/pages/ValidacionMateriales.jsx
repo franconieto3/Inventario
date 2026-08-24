@@ -4,6 +4,7 @@ import NavBar from "../../../components/layout/NavBar";
 import Table from "../../../components/ui/Table";
 import Button from "../../../components/ui/Button";
 import { useOrdenesMateriales } from "../hooks/useOrdenesMateriales";
+import { DetalleMaterialesPieza } from "../components/DetalleMaterialesPieza";
 import "./ValidacionMateriales.css";
 import Can from "../../../components/Can";
 
@@ -95,6 +96,11 @@ export function ValidacionMateriales() {
             key: "",
             header: "Ruta de fabricación",
             render: (_, row) => row.ruta_procesos?.nombre || "- - -"
+        },
+        {
+            key: "",
+            header: "Detalle",
+            render: (_, row) => <DetalleMaterialesPieza pieza={row.pieza} />
         },
         {
             key: "",

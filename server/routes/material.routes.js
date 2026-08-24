@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { verificarToken } from "../middlewares/auth.middleware.js";
-import { asociarPieza, crearMaterial, edicionBom, eliminacionMaterial, listarMateriales, obtenerMaterialesSelector, obtenerRubros, obtenerUnidades, quitarMaterial, updateMaterial } from "../controllers/material.controller.js";
+import { asociarPieza, crearMaterial, edicionBom, eliminacionMaterial, listarMateriales, obtenerMaterialesPieza, obtenerMaterialesSelector, obtenerRubros, obtenerUnidades, quitarMaterial, updateMaterial } from "../controllers/material.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { asociarPiezaSchema, materialPayloadSchema } from "../schemas/material.schemas.js";
-import { requirePermission } from "../middlewares/checkPermission.js";
+import { requirePermission, requireAnyPermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
 
@@ -40,6 +40,12 @@ router.get('/selector',
     verificarToken, 
     requirePermission('ver_materiales_listado'),
     obtenerMaterialesSelector
+);
+
+router.get('/pieza/:idPieza',
+    verificarToken,
+    requireAnyPermission(['acceso_materiales', 'ver_materiales_pieza']),
+    obtenerMaterialesPieza
 );
 
 //Asociar con piezas
