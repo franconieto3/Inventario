@@ -28,11 +28,11 @@ export function DashboardProduccion(){
             <NavBar/>
             <div className="body-container">
 
-                <div className="supervision-tc" style={{marginBottom:'30px'}}>
+                <div className="supervision-tc" style={{marginBottom:'30px', flexWrap:'wrap'}}>
                     <div className="no-print">
                         <p className='supervision-titulos'>Supervisión de producción</p>
                     </div>
-                    <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
+                    <div style={{display:'flex', gap:'10px',marginTop:'20px', alignItems:'center',flexWrap:'wrap'}}>
                         <ImpresionOrdenes ordenesSeleccionadas={ordenesSeleccionadas} />
                         <Can permission='crear_ordenes_fabricacion'>
                             <div className="no-print">

@@ -2,20 +2,6 @@
     display: none;
 }
 
-.print-tabla {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-}
-
-.print-tabla th,
-.print-tabla td {
-    border: 1px solid #94a3b8;
-    padding: 8px;
-    text-align: left;
-    font-size: 0.9rem;
-}
-
 @media print {
     body * {
         visibility: hidden;
@@ -31,10 +17,158 @@
     }
 
     .print-only {
-        display: block !important;
+        display: flex !important;
+        flex-direction: column;
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
+        min-height: 100vh; /* Ocupa el alto total de la hoja */
+        color: #000;
+        padding-right: 15px; 
+        box-sizing: border-box;
     }
+
+    /* El contenedor principal crece para empujar el footer hacia abajo */
+    .print-content-wrapper {
+        flex-grow: 1;
+    }
+}
+
+/* =========================================
+   ESTILOS DEL ENCABEZADO (FORMATO EXCEL)
+   ========================================= */
+.print-header-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+}
+
+.print-header-table td {
+    border: 1px solid #000;
+    padding: 8px;
+}
+
+.header-logo-cell {
+    width: 20%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.header-logo-cell img {
+    max-width: 80px;
+    height: auto;
+}
+
+.header-title-cell {
+    width: 60%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.header-title-cell h1 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.header-meta-cell {
+    width: 20%;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* =========================================
+   ESTILOS DE LA TABLA DE DATOS
+   ========================================= */
+.print-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.print-tabla th,
+.print-tabla td {
+    border: 1px solid #000; /* Cambiado a negro para igualar al Excel */
+    padding: 8px;
+    text-align: left;
+    font-size: 0.7rem;
+}
+
+.print-tabla th {
+    background-color: #f2f2f2; /* Fondo gris ligero para la cabecera */
+    font-weight: bold;
+}
+
+/* =========================================
+   ESTILOS DEL PIE DE PÁGINA
+   ========================================= */
+.print-footer {
+    width: 100%;
+    margin-top: 30px;
+    font-size: 0.7rem;
+    page-break-inside: avoid;
+}
+
+.footer-nota {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.footer-nota span {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.lineas-nota {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.linea {
+    border-bottom: 1px solid #000;
+    height: 22px; /* Define la separación de los renglones */
+    width: 100%;
+}
+
+.footer-firmas {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-bottom: 15px;
+}
+
+.firma-box {
+    display: flex;
+    align-items: flex-end;
+}
+
+.firma-box span {
+    font-weight: bold;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.linea-firma {
+    border-bottom: 1px solid #000;
+    flex-grow: 1;
+}
+
+.firma-box-group {
+    display: flex;
+    gap: 40px;
+}
+
+.firma-box-group .firma-box {
+    flex: 1;
+}
+
+.footer-version {
+    font-size: 0.8rem;
+    text-align: left;
 }

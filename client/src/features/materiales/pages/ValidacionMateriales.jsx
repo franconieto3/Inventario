@@ -120,18 +120,20 @@ export function ValidacionMateriales() {
         <>
             <NavBar />
             <div className="body-container">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px', flexWrap:'wrap' }}>
                     <div>
                         <p className='products-text' style={{textAlign:'start'}}>Compras</p>
                         <p className="table-description">
                             Órdenes de fabricación pendientes de confirmación de materia prima.
                         </p>
                     </div>
-                    <Can permission="acceso_materiales">
-                        <Button variant="default" onClick={() => navigate('/materiales')}>
-                            Listado de materiales
-                        </Button>
-                    </Can>
+                    <div style={{marginTop:'20px'}}>
+                        <Can permission="acceso_materiales">
+                            <Button variant="default" onClick={() => navigate('/materiales')}>
+                                Listado de materiales
+                            </Button>
+                        </Can>
+                    </div>
                 </div>
 
                 {loadingOrdenes ? (
