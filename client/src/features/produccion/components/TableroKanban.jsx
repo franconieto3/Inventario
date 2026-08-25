@@ -1,5 +1,21 @@
-import { OrderCard } from "./OrderCard";
+import { ProductGroup } from "./ProductGroup";
 import "./TableroKanban.css";
+
+function agruparOrdenesPorProducto(ordenes) {
+    const grupos = new Map();
+
+    for (const orden of ordenes) {
+        const idProducto = orden.pieza?.producto?.id_producto ?? "sin-producto";
+        const nombreProducto = orden.pieza?.producto?.nombre || "Sin producto";
+
+        if (!grupos.has(idProducto)) {
+            grupos.set(idProducto, { idProducto, nombreProducto, ordenes: [] });
+        }
+        grupos.get(idProducto).ordenes.push(orden);
+    }
+
+    return Array.from(grupos.values());
+}
 
 export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden }) {
     return (
@@ -15,12 +31,13 @@ export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggl
                         {col.ordenes.length === 0 ? (
                             <p className="kanban-column-empty">Sin órdenes en esta etapa.</p>
                         ) : (
-                            col.ordenes.map((orden) => (
-                                <OrderCard
-                                    key={orden.id_of}
-                                    orden={orden}
-                                    seleccionada={seleccionadas.has(orden.id_of)}
-                                    actualizando={actualizandoId}
+                            agruparOrdenesPorProducto(col.ordenes).map((grupo) => (
+                                <ProductGroup
+                                    key={grupo.idProducto}
+                                    nombreProducto={grupo.nombreProducto}
+                                    ordenes={grupo.ordenes}
+                                    seleccionadas={seleccionadas}
+                                    actualizandoId={actualizandoId}
                                     onToggleSeleccion={onToggleSeleccion}
                                     onGuardarOrdenProduccion={onGuardarOrdenProduccion}
                                     onCancelarOrden={onCancelarOrden}

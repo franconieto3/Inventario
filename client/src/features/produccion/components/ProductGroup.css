@@ -1,0 +1,58 @@
+.product-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.product-group-header:hover {
+    background-color: #f1f5f9;
+}
+
+.product-group-caret {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #64748b;
+    transition: transform 0.15s ease-in-out;
+}
+
+.product-group-caret-abierto {
+    transform: rotate(90deg);
+}
+
+.product-group-nombre {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.product-group-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    background-color: #e2e8f0;
+    border-radius: 999px;
+    padding: 2px 9px;
+}
+
+.product-group-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 12px;
+    border-left: 2px solid #e2e8f0;
+}
