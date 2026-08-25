@@ -26,7 +26,7 @@ export function ImpresionOrdenes({ ordenesSeleccionadas }) {
                 <table className="print-tabla">
                     <thead>
                         <tr>
-                            <th>Producto / Pieza</th>
+                            <th>Pieza</th>
                             <th>Cantidad</th>
                             <th>ID Materia Prima</th>
                             <th>ID Orden de Producción</th>
@@ -35,7 +35,7 @@ export function ImpresionOrdenes({ ordenesSeleccionadas }) {
                     <tbody>
                         {ordenesSeleccionadas.map((orden) => (
                             <tr key={orden.id_of}>
-                                <td>{orden.pieza?.producto?.nombre} — {orden.pieza?.nombre}</td>
+                                <td>{orden.pieza?.producto?.nombre} {orden.pieza?.nombre}</td>
                                 <td>{orden.cantidad}</td>
                                 <td>{orden.id_materia_prima || "- - -"}</td>
                                 <td>{orden.id_orden_produccion || "- - -"}</td>

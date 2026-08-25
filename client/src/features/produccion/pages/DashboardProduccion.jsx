@@ -28,16 +28,18 @@ export function DashboardProduccion(){
             <NavBar/>
             <div className="body-container">
 
-                <div className="supervision-tc no-print" style={{marginBottom:'30px'}}>
-                    <div>
+                <div className="supervision-tc" style={{marginBottom:'30px'}}>
+                    <div className="no-print">
                         <p className='supervision-titulos'>Supervisión de producción</p>
                     </div>
                     <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
                         <ImpresionOrdenes ordenesSeleccionadas={ordenesSeleccionadas} />
                         <Can permission='crear_ordenes_fabricacion'>
-                            <Button variant='default' onClick={()=>navigate('/supervision/generar-orden')}>
-                                Nuevo pedido de producción
-                            </Button>
+                            <div className="no-print">
+                                <Button variant='default' onClick={()=>navigate('/supervision/generar-orden')}>
+                                    Nuevo pedido de producción
+                                </Button>
+                            </div>
                         </Can>
                     </div>
                 </div>
