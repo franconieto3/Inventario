@@ -94,11 +94,6 @@ export default function Login() {
             {loading ? "Cargando..." : "Ingresar"}
           </Button>
         </form>
-        
-        <div className="login-footer">
-            Olvidó su contraseña? <a href="#">Recuperar contraseña</a>
-        </div>
-
       </div>
     </div>
     </>

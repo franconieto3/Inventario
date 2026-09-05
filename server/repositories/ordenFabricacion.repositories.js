@@ -12,6 +12,12 @@ const SELECT_ORDEN_FABRICACION = `
     fecha_creacion,
     fecha_finalizacion,
     a_medida,
+    id_pedido,
+    pedido_fabricacion (
+        id_pedido,
+        fecha_entrega,
+        id_estado_pedido
+    ),
     pieza (
         id_pieza,
         nombre,

@@ -11,6 +11,7 @@ export const useGenerarOrdenFabricacion = () => {
     const [piezasState, setPiezasState] = useState({});
     const [loadingPiezas, setLoadingPiezas] = useState(false);
     const [errorPiezas, setErrorPiezas] = useState("");
+    const [fechaEntrega, setFechaEntrega] = useState("");
 
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
@@ -73,6 +74,7 @@ export const useGenerarOrdenFabricacion = () => {
         setPiezasState({});
         setErrorPiezas("");
         setSubmitError("");
+        setFechaEntrega("");
     }, []);
 
     const submitOrdenes = useCallback(async () => {
@@ -91,11 +93,20 @@ export const useGenerarOrdenFabricacion = () => {
             return null;
         }
 
+        if (!fechaEntrega) {
+            setSubmitError("Debés indicar la fecha de entrega del pedido.");
+            return null;
+        }
+
         setSubmitting(true);
         try {
-            const data = await apiCall(`${API_URL}/api/ordenes-fabricacion/bulk`, {
+            const data = await apiCall(`${API_URL}/api/pedidos-fabricacion`, {
                 method: 'POST',
-                body: JSON.stringify({ ordenes }),
+                body: JSON.stringify({
+                    id_producto: producto.id_producto,
+                    fecha_entrega: fechaEntrega,
+                    ordenes
+                }),
                 headers: { 'Content-Type': 'application/json' }
             });
 
@@ -103,12 +114,12 @@ export const useGenerarOrdenFabricacion = () => {
             return data;
 
         } catch (err) {
-            setSubmitError(err.message || "Ocurrió un error al generar las órdenes de fabricación.");
+            setSubmitError(err.message || "Ocurrió un error al generar el pedido de fabricación.");
             return null;
         } finally {
             setSubmitting(false);
         }
-    }, [piezasState, reset]);
+    }, [piezasState, fechaEntrega, producto, reset]);
 
     return {
         productos,
@@ -117,6 +128,8 @@ export const useGenerarOrdenFabricacion = () => {
         piezasState,
         loadingPiezas,
         errorPiezas,
+        fechaEntrega,
+        setFechaEntrega,
         submitting,
         submitError,
         seleccionarProducto,

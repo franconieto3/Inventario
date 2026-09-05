@@ -1,21 +1,68 @@
 import { useState } from "react";
 import { OrderCard } from "./OrderCard";
+import Button from "../../../components/ui/Button";
+import Can from "../../../components/Can";
 import "./ProductGroup.css";
 
-export function ProductGroup({ nombreProducto, ordenes, seleccionadas, actualizandoId, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden }) {
+export function ProductGroup({
+    idPedido,
+    nombreProducto,
+    fechaEntrega,
+    ordenes,
+    seleccionadas,
+    actualizandoId,
+    onToggleSeleccion,
+    onGuardarOrdenProduccion,
+    onCancelarOrden,
+    onAceptarPedido,
+    pedidoListo
+}) {
     const [expandido, setExpandido] = useState(false);
+    const aceptando = actualizandoId === `pedido-${idPedido}`;
 
     return (
         <div className="product-group">
-            <button
-                type="button"
+            <div
+                role="button"
+                tabIndex={0}
                 className="product-group-header"
                 onClick={() => setExpandido(prev => !prev)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") setExpandido(prev => !prev);
+                }}
             >
                 <span className={`product-group-caret ${expandido ? "product-group-caret-abierto" : ""}`}>▸</span>
-                <span className="product-group-nombre">{nombreProducto}</span>
+                <span className="product-group-nombre">
+                    {nombreProducto}
+                    {fechaEntrega && (
+                        <span className="order-card-badge" style={{marginLeft:'8px'}}>
+                            Entrega: {new Date(fechaEntrega).toLocaleDateString("es-AR", { timeZone: "UTC" })}
+                        </span>
+                    )}
+                    {!idPedido || idPedido === "sin-pedido" ? (
+                        <span className="order-card-badge" style={{marginLeft:'8px'}}>Sin pedido (legado)</span>
+                    ) : null}
+                </span>
                 <span className="product-group-count">{ordenes.length}</span>
-            </button>
+
+                {pedidoListo && idPedido && (
+                    <Can permission="aceptar_pedido_fabricacion">
+                        <div onClick={(e) => e.stopPropagation()}>
+                            <Button
+                                variant="default"
+                                disabled={aceptando}
+                                onClick={() => {
+                                    if (window.confirm(`¿Aceptar el pedido #${idPedido}? Todas sus órdenes pasarán a Aceptada.`)) {
+                                        onAceptarPedido(idPedido);
+                                    }
+                                }}
+                            >
+                                {aceptando ? "Aceptando..." : "Aceptar pedido"}
+                            </Button>
+                        </div>
+                    </Can>
+                )}
+            </div>
 
             {expandido && (
                 <div className="product-group-body">

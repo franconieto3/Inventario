@@ -38,7 +38,7 @@ export const useOrdenesMateriales = () => {
         try {
             await apiCall(`${API_URL}/api/ordenes-fabricacion/${idOf}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ id_materia_prima: idMateriaPrima, id_estado_of: 3 })
+                body: JSON.stringify({ id_materia_prima: idMateriaPrima })
             });
             refreshOrdenes();
             return true;

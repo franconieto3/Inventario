@@ -12,6 +12,8 @@ export default function GenerarOrdenFabricacion() {
         piezasState,
         loadingPiezas,
         errorPiezas,
+        fechaEntrega,
+        setFechaEntrega,
         submitting,
         submitError,
         seleccionarProducto,
@@ -23,7 +25,7 @@ export default function GenerarOrdenFabricacion() {
     const handleSubmit = async () => {
         const data = await submitOrdenes();
         if (data) {
-            alert(`Se generaron ${data.ordenes.length} órdenes de fabricación exitosamente.`);
+            alert(`Se generó el pedido #${data.pedido.id_pedido} con ${data.ordenes.length} órdenes de fabricación exitosamente.`);
         }
     };
 
@@ -54,6 +56,16 @@ export default function GenerarOrdenFabricacion() {
                 {!loadingPiezas && producto && (
                     <div className="of-piezas-container">
                         <h2>{producto.nombre}</h2>
+
+                        <label className="of-pieza-field" style={{marginBottom:'20px'}}>
+                            Fecha de entrega del pedido
+                            <input
+                                type="date"
+                                className="shadcn-input"
+                                value={fechaEntrega}
+                                onChange={(e) => setFechaEntrega(e.target.value)}
+                            />
+                        </label>
 
                         {(!producto.pieza || producto.pieza.length === 0) ? (
                             <p className="empty-state">Este producto no tiene piezas activas.</p>
@@ -96,7 +108,7 @@ export default function GenerarOrdenFabricacion() {
 
                         {submitError && <p className="form-error">{submitError}</p>}
                         <div style={{width:'100%', marginTop:'50px', textAlign:'end'}}>
-                            <Button variant="default" disabled={submitting} onClick={handleSubmit}>
+                            <Button variant="default" disabled={submitting || !fechaEntrega} onClick={handleSubmit}>
                                 {submitting ? "Generando..." : "Generar Órdenes"}
                             </Button>
                         </div>
