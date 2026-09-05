@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { OrderCard } from "./OrderCard";
-import Button from "../../../components/ui/Button";
-import Can from "../../../components/Can";
 import "./ProductGroup.css";
 
 export function ProductGroup({
@@ -13,12 +11,9 @@ export function ProductGroup({
     actualizandoId,
     onToggleSeleccion,
     onGuardarOrdenProduccion,
-    onCancelarOrden,
-    onAceptarPedido,
-    pedidoListo
+    onCancelarOrden
 }) {
     const [expandido, setExpandido] = useState(false);
-    const aceptando = actualizandoId === `pedido-${idPedido}`;
 
     return (
         <div className="product-group">
@@ -44,24 +39,6 @@ export function ProductGroup({
                     ) : null}
                 </span>
                 <span className="product-group-count">{ordenes.length}</span>
-
-                {pedidoListo && idPedido && (
-                    <Can permission="aceptar_pedido_fabricacion">
-                        <div onClick={(e) => e.stopPropagation()}>
-                            <Button
-                                variant="default"
-                                disabled={aceptando}
-                                onClick={() => {
-                                    if (window.confirm(`¿Aceptar el pedido #${idPedido}? Todas sus órdenes pasarán a Aceptada.`)) {
-                                        onAceptarPedido(idPedido);
-                                    }
-                                }}
-                            >
-                                {aceptando ? "Aceptando..." : "Aceptar pedido"}
-                            </Button>
-                        </div>
-                    </Can>
-                )}
             </div>
 
             {expandido && (

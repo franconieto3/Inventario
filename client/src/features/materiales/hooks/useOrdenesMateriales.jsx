@@ -28,23 +28,55 @@ export const useOrdenesMateriales = () => {
         fetchOrdenes();
     }, [refreshTrigger]);
 
-    const aprobarMateriales = useCallback(async (idOf, idMateriaPrima) => {
-        if (!idMateriaPrima) {
-            alert("Debe ingresar el identificador de la materia prima.");
-            return false;
-        }
+    const agregarMateriaPrima = useCallback(async (idOf, identificador) => {
+        if (!identificador) return false;
 
         setActualizandoId(idOf);
         try {
-            await apiCall(`${API_URL}/api/ordenes-fabricacion/${idOf}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ id_materia_prima: idMateriaPrima })
+            await apiCall(`${API_URL}/api/ordenes-fabricacion/${idOf}/materia-prima`, {
+                method: 'POST',
+                body: JSON.stringify({ identificador })
             });
             refreshOrdenes();
             return true;
         } catch (err) {
-            console.error("Error al aprobar los materiales de la orden", err);
-            alert(err.message || "Ocurrió un error al aprobar los materiales.");
+            console.error("Error al agregar el identificador de materia prima", err);
+            alert(err.message || "Ocurrió un error al agregar el identificador de materia prima.");
+            return false;
+        } finally {
+            setActualizandoId(null);
+        }
+    }, [refreshOrdenes]);
+
+    const eliminarMateriaPrima = useCallback(async (idOf, idMateriaPrima) => {
+        setActualizandoId(idOf);
+        try {
+            await apiCall(`${API_URL}/api/ordenes-fabricacion/${idOf}/materia-prima/${idMateriaPrima}`, {
+                method: 'DELETE'
+            });
+            refreshOrdenes();
+            return true;
+        } catch (err) {
+            console.error("Error al eliminar el identificador de materia prima", err);
+            alert(err.message || "Ocurrió un error al eliminar el identificador de materia prima.");
+            return false;
+        } finally {
+            setActualizandoId(null);
+        }
+    }, [refreshOrdenes]);
+
+    const toggleAprobacionMateriales = useCallback(async (idOf, aprobar) => {
+        setActualizandoId(idOf);
+        try {
+            await apiCall(`${API_URL}/api/ordenes-fabricacion/${idOf}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ materiales_aprobados: aprobar })
+            });
+            refreshOrdenes();
+            return true;
+        } catch (err) {
+            console.error("Error al actualizar la aprobación de materiales", err);
+            alert(err.message || "Ocurrió un error al actualizar la aprobación de materiales.");
             return false;
         } finally {
             setActualizandoId(null);
@@ -75,7 +107,9 @@ export const useOrdenesMateriales = () => {
         ordenes,
         loadingOrdenes,
         actualizandoId,
-        aprobarMateriales,
+        agregarMateriaPrima,
+        eliminarMateriaPrima,
+        toggleAprobacionMateriales,
         guardarOrdenProduccion,
         refreshOrdenes
     };

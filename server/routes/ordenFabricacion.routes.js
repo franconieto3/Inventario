@@ -6,12 +6,14 @@ import {
     obtenerActivas,
     obtenerRutasPieza,
     actualizarOrden,
+    agregarMateriaPrima,
+    eliminarMateriaPrima,
     cancelarOrden
 } from "../controllers/ordenFabricacion.controller.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { requirePermission, requireAnyPermission } from "../middlewares/checkPermission.js";
-import { ordenesFabricacionBulkSchema, actualizarOrdenSchema } from "../schemas/ordenFabricacion.schemas.js";
+import { ordenesFabricacionBulkSchema, actualizarOrdenSchema, materiaPrimaSchema } from "../schemas/ordenFabricacion.schemas.js";
 
 const router = Router();
 
@@ -46,6 +48,17 @@ router.patch('/:id',
     requireAnyPermission(['acceso_ingenieria', 'acceso_materiales', 'acceso_supervision']),
     validateSchema(actualizarOrdenSchema),
     actualizarOrden);
+
+router.post('/:id/materia-prima',
+    verificarToken,
+    requirePermission('acceso_materiales'),
+    validateSchema(materiaPrimaSchema),
+    agregarMateriaPrima);
+
+router.delete('/:id/materia-prima/:idMateriaPrima',
+    verificarToken,
+    requirePermission('acceso_materiales'),
+    eliminarMateriaPrima);
 
 router.patch('/:id/cancelar',
     verificarToken,

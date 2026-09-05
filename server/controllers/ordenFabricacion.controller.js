@@ -73,6 +73,36 @@ export const actualizarOrden = async (req, res) => {
     }
 };
 
+export const agregarMateriaPrima = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { identificador } = req.body;
+        const idUsuario = req.usuario.id_usuario;
+
+        const data = await ordenFabricacionService.agregarMateriaPrima(id, identificador, idUsuario);
+
+        res.status(201).json({
+            message: "Identificador de materia prima agregado exitosamente",
+            materiaPrima: data
+        });
+    } catch (err) {
+        console.error("Error en agregarMateriaPrima:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};
+
+export const eliminarMateriaPrima = async (req, res) => {
+    try {
+        const { id, idMateriaPrima } = req.params;
+        await ordenFabricacionService.eliminarMateriaPrima(id, idMateriaPrima);
+
+        res.status(200).json({ message: "Identificador de materia prima eliminado exitosamente" });
+    } catch (err) {
+        console.error("Error en eliminarMateriaPrima:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};
+
 export const cancelarOrden = async (req, res) => {
     try {
         const { id } = req.params;

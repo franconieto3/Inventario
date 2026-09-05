@@ -84,23 +84,6 @@ export const useOrdenesActivas = () => {
         }
     }, [refreshOrdenes]);
 
-    const aceptarPedido = useCallback(async (idPedido) => {
-        setActualizandoId(`pedido-${idPedido}`);
-        try {
-            await apiCall(`${API_URL}/api/pedidos-fabricacion/${idPedido}/aceptar`, {
-                method: 'PATCH'
-            });
-            refreshOrdenes();
-            return true;
-        } catch (err) {
-            console.error("Error al aceptar el pedido de fabricación", err);
-            alert(err.message || "Ocurrió un error al aceptar el pedido de fabricación.");
-            return false;
-        } finally {
-            setActualizandoId(null);
-        }
-    }, [refreshOrdenes]);
-
     const columnas = [
         { estado: ESTADO_PENDIENTE_DISENO, titulo: "Validación de diseño" },
         { estado: ESTADO_PENDIENTE_MATERIALES, titulo: "Validación de materiales" },
@@ -113,24 +96,6 @@ export const useOrdenesActivas = () => {
 
     const ordenesSeleccionadas = ordenes.filter(o => seleccionadas.has(o.id_of));
 
-    // Un pedido está listo para aceptarse cuando está Pendiente (id_estado_pedido 1)
-    // y todas sus órdenes activas ya están validadas en diseño y materiales
-    // (Pendiente Materiales + id_materia_prima asignado).
-    const pedidosListos = new Set();
-    const ordenesPorPedido = new Map();
-    for (const orden of ordenes) {
-        if (!orden.id_pedido) continue;
-        if (!ordenesPorPedido.has(orden.id_pedido)) ordenesPorPedido.set(orden.id_pedido, []);
-        ordenesPorPedido.get(orden.id_pedido).push(orden);
-    }
-    for (const [idPedido, ordenesDelPedido] of ordenesPorPedido) {
-        const estadoPedido = ordenesDelPedido[0]?.pedido_fabricacion?.id_estado_pedido;
-        const listo = estadoPedido === 1 && ordenesDelPedido.every(
-            o => o.id_estado_of === ESTADO_PENDIENTE_MATERIALES && !!o.id_materia_prima
-        );
-        if (listo) pedidosListos.add(idPedido);
-    }
-
     return {
         ordenes,
         columnas,
@@ -142,8 +107,6 @@ export const useOrdenesActivas = () => {
         limpiarSeleccion,
         guardarOrdenProduccion,
         cancelarOrden,
-        aceptarPedido,
-        pedidosListos,
         refreshOrdenes
     };
 };

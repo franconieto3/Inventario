@@ -71,7 +71,32 @@ export const actualizarOrden = async (idOf, cambios) => {
         }
     }
 
-    return await ordenFabricacionRepo.actualizarOrdenFabricacion(idOf, cambios);
+    const ordenActualizada = await ordenFabricacionRepo.actualizarOrdenFabricacion(idOf, cambios);
+
+    // Req. 11 (ampliado): tildar el checkbox de materiales aprueba también el pedido
+    // completo si esa era la última orden que faltaba validar, reemplazando al botón
+    // manual "Aceptar pedido" de Supervisión de Producción — ahora es el encargado de
+    // compras quien, al aprobar materiales, dispara la aceptación conjunta del pedido.
+    // Si todavía quedan otras órdenes del pedido sin validar, intentarAceptarPedido no
+    // hace nada (no es un error): la orden queda igual en Pendiente Materiales, aprobada.
+    if (cambios.materiales_aprobados === true && ordenActualizada.id_pedido) {
+        const aceptado = await ordenFabricacionRepo.intentarAceptarPedido(ordenActualizada.id_pedido);
+        if (aceptado) {
+            return await ordenFabricacionRepo.obtenerOrdenCompleta(idOf);
+        }
+    }
+
+    return ordenActualizada;
+};
+
+// La regla "no se puede aprobar sin al menos un identificador cargado" vive en
+// Postgres (trigger tg_validar_aprobacion_materiales, ver roadmap.md Req. 11).
+export const agregarMateriaPrima = async (idOf, identificador, idUsuario) => {
+    return await ordenFabricacionRepo.agregarMateriaPrima(idOf, identificador, idUsuario);
+};
+
+export const eliminarMateriaPrima = async (idOf, idMateriaPrima) => {
+    return await ordenFabricacionRepo.eliminarMateriaPrima(idOf, idMateriaPrima);
 };
 
 // Cancela la orden indicada y, en cascada, todas sus órdenes hijas

@@ -53,3 +53,52 @@
     font-size: 0.75rem;
     color: #64748b;
 }
+
+.vm-lista-materia-prima {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.vm-lista-materia-prima li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.8rem;
+    background: #f1f5f9;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.vm-btn-quitar {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.vm-btn-quitar:hover {
+    color: #dc2626;
+}
+
+.vm-btn-quitar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vm-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    cursor: pointer;
+    margin-top: 4px;
+}

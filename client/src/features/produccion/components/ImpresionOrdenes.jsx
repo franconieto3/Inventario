@@ -67,7 +67,7 @@ export function ImpresionOrdenes({ ordenesSeleccionadas }) {
                                     </td>
                                     <td>{orden.pieza?.producto?.nombre} {orden.pieza?.nombre}</td>
                                     <td>{orden.cantidad}</td>
-                                    <td>{orden.id_materia_prima || "- - -"}</td>
+                                    <td>{(orden.orden_fabricacion_materia_prima || []).map(m => m.identificador).join(', ') || "- - -"}</td>
                                     <td>{orden.id_orden_produccion || "- - -"}</td>
                                     <td></td> {/* Columna vacía */}
                                     <td></td> {/* Columna vacía */}

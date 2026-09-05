@@ -57,7 +57,7 @@ export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion
                     <div className="order-card-detalle">
                         <span>Cantidad: <strong>{orden.cantidad}</strong></span>
                         <span>Ruta: <strong>{orden.ruta_procesos?.nombre || "- - -"}</strong></span>
-                        <span>Materia prima: <strong>{orden.id_materia_prima || "- - -"}</strong></span>
+                        <span>Materia prima: <strong>{(orden.orden_fabricacion_materia_prima || []).map(m => m.identificador).join(', ') || "- - -"}</strong></span>
                     </div>
 
                     {/* Agregamos stopPropagation al contenedor del input y botón */}

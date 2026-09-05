@@ -19,7 +19,7 @@ function agruparOrdenesPorPedido(ordenes) {
     return Array.from(grupos.values());
 }
 
-export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden, onAceptarPedido, pedidosListos }) {
+export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden }) {
     return (
         <div className="kanban-board no-print">
             {columnas.map((col) => (
@@ -46,8 +46,6 @@ export function TableroKanban({ columnas, seleccionadas, actualizandoId, onToggl
                                     onToggleSeleccion={onToggleSeleccion}
                                     onGuardarOrdenProduccion={onGuardarOrdenProduccion}
                                     onCancelarOrden={onCancelarOrden}
-                                    onAceptarPedido={onAceptarPedido}
-                                    pedidoListo={pedidosListos?.has(grupo.idPedido)}
                                 />
                             ))
                         )}

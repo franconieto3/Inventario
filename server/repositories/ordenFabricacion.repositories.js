@@ -7,12 +7,17 @@ const SELECT_ORDEN_FABRICACION = `
     id_ruta,
     id_estado_of,
     cantidad,
-    id_materia_prima,
+    materiales_aprobados,
     id_orden_produccion,
     fecha_creacion,
     fecha_finalizacion,
     a_medida,
     id_pedido,
+    orden_fabricacion_materia_prima (
+        id_materia_prima,
+        identificador,
+        fecha_carga
+    ),
     pedido_fabricacion (
         id_pedido,
         fecha_entrega,
@@ -69,7 +74,7 @@ export const listarOrdenesFabricacionPorEstados = async (estados) => {
 export const obtenerOrdenPorId = async (idOf) => {
     const { data, error } = await supabase
         .from('orden_fabricacion')
-        .select('id_of, id_ruta, id_materia_prima, id_estado_of')
+        .select('id_of, id_ruta, materiales_aprobados, id_estado_of')
         .eq('id_of', idOf)
         .single();
 
@@ -105,6 +110,9 @@ export const actualizarOrdenFabricacion = async (idOf, cambios) => {
         if (error.code === '23503') {
             statusCode = 400;
             message = "La ruta de fabricación indicada no existe.";
+        } else if (error.code === 'P0001') {
+            statusCode = 400;
+            message = error.message;
         }
 
         const err = new Error(message);
@@ -113,6 +121,87 @@ export const actualizarOrdenFabricacion = async (idOf, cambios) => {
     }
 
     return data;
+};
+
+export const agregarMateriaPrima = async (idOf, identificador, idUsuario) => {
+    const { data, error } = await supabase
+        .from('orden_fabricacion_materia_prima')
+        .insert({ id_of: idOf, identificador, id_usuario_carga: idUsuario })
+        .select('id_materia_prima, identificador, fecha_carga')
+        .single();
+
+    if (error) {
+        console.error("Error Supabase (agregarMateriaPrima):", error);
+
+        let statusCode = 500;
+        let message = "Error al agregar el identificador de materia prima.";
+
+        if (error.code === '23505') {
+            statusCode = 400;
+            message = "Ese identificador ya fue cargado para esta orden.";
+        } else if (error.code === '23503') {
+            statusCode = 404;
+            message = "No se encontró la orden de fabricación indicada.";
+        }
+
+        const err = new Error(message);
+        err.statusCode = statusCode;
+        throw err;
+    }
+
+    return data;
+};
+
+export const eliminarMateriaPrima = async (idOf, idMateriaPrima) => {
+    const { error } = await supabase
+        .from('orden_fabricacion_materia_prima')
+        .delete()
+        .eq('id_of', idOf)
+        .eq('id_materia_prima', idMateriaPrima);
+
+    if (error) {
+        console.error("Error Supabase (eliminarMateriaPrima):", error);
+        const err = new Error("Error al eliminar el identificador de materia prima.");
+        err.statusCode = 500;
+        throw err;
+    }
+};
+
+export const obtenerOrdenCompleta = async (idOf) => {
+    const { data, error } = await supabase
+        .from('orden_fabricacion')
+        .select(SELECT_ORDEN_FABRICACION)
+        .eq('id_of', idOf)
+        .single();
+
+    if (error) {
+        console.error("Error Supabase (obtenerOrdenCompleta):", error);
+        const err = new Error("Error al obtener la orden de fabricación.");
+        err.statusCode = 500;
+        throw err;
+    }
+
+    return data;
+};
+
+// Intenta aceptar el pedido completo de la orden indicada (fn_aceptar_pedido_fabricacion,
+// Req. 10/13). Se usa como disparador automático desde la aprobación de materiales
+// (Req. 11 ampliado): si el pedido todavía tiene otras órdenes sin validar, la función
+// rechaza la aceptación con una excepción esperada, que acá se trata como "todavía no",
+// no como un error de la aprobación de materiales que sí se pudo guardar.
+export const intentarAceptarPedido = async (idPedido) => {
+    const { error } = await supabase.rpc('fn_aceptar_pedido_fabricacion', {
+        p_id_pedido: idPedido
+    });
+
+    if (error) {
+        if (error.code !== 'P0001') {
+            console.error("Error Supabase RPC (fn_aceptar_pedido_fabricacion, auto-aceptación):", error);
+        }
+        return false;
+    }
+
+    return true;
 };
 
 export const cancelarOrdenFabricacion = async (idOf) => {
