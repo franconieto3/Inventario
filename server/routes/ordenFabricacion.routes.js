@@ -5,6 +5,7 @@ import {
     obtenerPendientesMateriales,
     obtenerActivas,
     obtenerRutasPieza,
+    obtenerSugerenciasComposicion,
     actualizarOrden,
     agregarMateriaPrima,
     eliminarMateriaPrima,
@@ -13,7 +14,7 @@ import {
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { requirePermission, requireAnyPermission } from "../middlewares/checkPermission.js";
-import { ordenesFabricacionBulkSchema, actualizarOrdenSchema, materiaPrimaSchema } from "../schemas/ordenFabricacion.schemas.js";
+import { ordenesFabricacionBulkSchema, actualizarOrdenSchema, materiaPrimaSchema, sugerenciasComposicionSchema } from "../schemas/ordenFabricacion.schemas.js";
 
 const router = Router();
 
@@ -42,6 +43,12 @@ router.get('/rutas-pieza/:idPieza',
     verificarToken,
     requirePermission('acceso_ingenieria'),
     obtenerRutasPieza);
+
+router.post('/sugerencias-composicion',
+    verificarToken,
+    requirePermission('crear_ordenes_fabricacion'),
+    validateSchema(sugerenciasComposicionSchema),
+    obtenerSugerenciasComposicion);
 
 router.patch('/:id',
     verificarToken,

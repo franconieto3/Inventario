@@ -219,6 +219,26 @@ export const cancelarOrdenFabricacion = async (idOf) => {
     return data;
 };
 
+// Req. 12: vista previa de sólo lectura de la explosión de componentes de una pieza
+// ensamble (misma multiplicación de cantidades que antes hacía fn_crear_orden_fabricacion_recursiva,
+// pero sin insertar nada). Devuelve el árbol completo (excluida la raíz); ver
+// fn_sugerir_composicion_pieza en roadmap.md.
+export const sugerirComposicionPieza = async (idPieza, cantidad) => {
+    const { data, error } = await supabase.rpc('fn_sugerir_composicion_pieza', {
+        p_id_pieza: idPieza,
+        p_cantidad: cantidad
+    });
+
+    if (error) {
+        console.error("Error Supabase RPC (fn_sugerir_composicion_pieza):", error);
+        const err = new Error("Error al calcular las sugerencias de composición de la pieza.");
+        err.statusCode = 500;
+        throw err;
+    }
+
+    return data;
+};
+
 export const obtenerRutasPieza = async (idPieza) => {
     const { data, error } = await supabase.rpc('obtener_rutas_pieza', { p_id_pieza: idPieza });
 

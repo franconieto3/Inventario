@@ -2,19 +2,18 @@ import * as pedidoFabricacionService from "../services/pedidoFabricacion.service
 
 export const crearPedido = async (req, res) => {
     try {
-        const { id_producto, fecha_entrega, ordenes } = req.body;
+        const { fecha_entrega, ordenes } = req.body;
         const idUsuarioCreador = req.usuario.id_usuario;
 
         const data = await pedidoFabricacionService.crearPedidoConOrdenes(
-            id_producto,
             fecha_entrega,
             idUsuarioCreador,
             ordenes
         );
 
         res.status(201).json({
-            message: "Pedido de fabricación creado exitosamente",
-            pedido: data.pedido,
+            message: "Pedido(s) de fabricación creado(s) exitosamente",
+            pedidos: data.pedidos,
             ordenes: data.ordenes
         });
 

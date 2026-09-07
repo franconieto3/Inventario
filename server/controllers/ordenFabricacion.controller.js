@@ -58,6 +58,17 @@ export const obtenerRutasPieza = async (req, res) => {
     }
 };
 
+export const obtenerSugerenciasComposicion = async (req, res) => {
+    try {
+        const { piezas } = req.body;
+        const data = await ordenFabricacionService.obtenerSugerenciasComposicion(piezas);
+        res.status(200).json({ sugerencias: data });
+    } catch (err) {
+        console.error("Error en obtenerSugerenciasComposicion:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};
+
 export const actualizarOrden = async (req, res) => {
     try {
         const { id } = req.params;

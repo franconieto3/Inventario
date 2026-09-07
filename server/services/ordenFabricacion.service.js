@@ -39,6 +39,20 @@ export const obtenerRutasPieza = async (idPieza) => {
     return await ordenFabricacionRepo.obtenerRutasPieza(idPieza);
 };
 
+// Req. 12: para cada pieza raíz solicitada, calcula el árbol de sugerencias de
+// componentes (sin crear nada) y lo agrupa bajo esa raíz para que el frontend arme
+// la vista previa por fila del pedido.
+export const obtenerSugerenciasComposicion = async (piezas) => {
+    const resultados = await Promise.all(
+        piezas.map(async ({ id_pieza, cantidad }) => ({
+            raiz_id_pieza: id_pieza,
+            componentes: await ordenFabricacionRepo.sugerirComposicionPieza(id_pieza, cantidad)
+        }))
+    );
+
+    return resultados;
+};
+
 export const actualizarOrden = async (idOf, cambios) => {
     const actual = await ordenFabricacionRepo.obtenerOrdenPorId(idOf);
 
