@@ -22,6 +22,8 @@ import { InstrumentDetail } from './features/instrumentos/pages/InstrumentDetail
 import { Flujograma } from './features/procesos/pages/Flujograma';
 import GenerarOrdenFabricacion from './features/produccion/pages/GenerarOrdenFabricacion';
 import { DashboardProduccion } from './features/produccion/pages/DashboardProduccion';
+import DetallePedidoFabricacion from './features/produccion/pages/DetallePedidoFabricacion';
+import EscaneoPedido from './features/produccion/pages/EscaneoPedido';
 
 function App() {
 
@@ -154,6 +156,22 @@ function App() {
                   element={
                     <PrivateRoute permission={"crear_ordenes_fabricacion"}>
                       <GenerarOrdenFabricacion />
+                    </PrivateRoute>
+                  }
+              />
+              <Route
+                  path='/pedidos-fabricacion/:id'
+                  element={
+                    <PrivateRoute permission={null}>
+                      <DetallePedidoFabricacion />
+                    </PrivateRoute>
+                  }
+              />
+              <Route
+                  path='/escaneo-pedido'
+                  element={
+                    <PrivateRoute permission={null}>
+                      <EscaneoPedido />
                     </PrivateRoute>
                   }
               />

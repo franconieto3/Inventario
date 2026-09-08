@@ -3,8 +3,9 @@ import NavBar from "../../../components/layout/NavBar";
 import Button from "../../../components/ui/Button";
 import Can from "../../../components/Can";
 import { TableroKanban } from "../components/TableroKanban";
-import { ImpresionOrdenes } from "../components/ImpresionOrdenes";
+import { ImpresionPedido } from "../components/ImpresionPedido";
 import { useOrdenesActivas } from "../hooks/useOrdenesActivas";
+import { useImprimirPedido } from "../hooks/useImprimirPedido";
 
 import './DashboardProduccion.css'
 
@@ -16,12 +17,11 @@ export function DashboardProduccion(){
         columnas,
         loadingOrdenes,
         actualizandoId,
-        seleccionadas,
-        ordenesSeleccionadas,
-        toggleSeleccion,
         guardarOrdenProduccion,
         cancelarOrden
     } = useOrdenesActivas();
+
+    const { pedidoImprimir, solicitarImpresion } = useImprimirPedido();
 
     return (
         <>
@@ -33,7 +33,7 @@ export function DashboardProduccion(){
                         <p className='supervision-titulos'>Supervisión de producción</p>
                     </div>
                     <div style={{display:'flex', gap:'10px',marginTop:'20px', alignItems:'center',flexWrap:'wrap'}}>
-                        <ImpresionOrdenes ordenesSeleccionadas={ordenesSeleccionadas} />
+                        <ImpresionPedido pedido={pedidoImprimir} />
                         <Can permission='crear_ordenes_fabricacion'>
                             <div className="no-print">
                                 <Button variant='default' onClick={()=>navigate('/supervision/generar-orden')}>
@@ -49,11 +49,10 @@ export function DashboardProduccion(){
                 ) : (
                     <TableroKanban
                         columnas={columnas}
-                        seleccionadas={seleccionadas}
                         actualizandoId={actualizandoId}
-                        onToggleSeleccion={toggleSeleccion}
                         onGuardarOrdenProduccion={guardarOrdenProduccion}
                         onCancelarOrden={cancelarOrden}
+                        onImprimir={solicitarImpresion}
                     />
                 )}
             </div>

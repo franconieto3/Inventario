@@ -2,6 +2,7 @@ import NavBar from "../../../components/layout/NavBar";
 import Buscador from "../../../components/ui/Buscador";
 import Button from "../../../components/ui/Button";
 import { useGenerarOrdenFabricacion } from "../hooks/useGenerarOrdenFabricacion";
+import { SugerenciasComposicion } from "../components/SugerenciasComposicion";
 import "./GenerarOrdenFabricacion.css";
 
 export default function GenerarOrdenFabricacion() {
@@ -12,21 +13,47 @@ export default function GenerarOrdenFabricacion() {
         piezasState,
         loadingPiezas,
         errorPiezas,
+        fechaEntrega,
+        setFechaEntrega,
+        revisando,
+        loadingSugerencias,
+        sugerenciasPorPieza,
+        aprobadasPorPieza,
         submitting,
         submitError,
         seleccionarProducto,
         actualizarCantidad,
         actualizarAMedida,
-        submitOrdenes
+        iniciarRevision,
+        toggleAprobado,
+        volverAEditar,
+        confirmarYGenerar
     } = useGenerarOrdenFabricacion();
 
-    const handleSubmit = async () => {
-        const data = await submitOrdenes();
-        if (data) {
-            alert(`Se generaron ${data.ordenes.length} órdenes de fabricación exitosamente.`);
-        }
+    const avisarPedidosGenerados = (data) => {
+        if (!data) return;
+        const numeros = data.pedidos.map((p) => `#${p.pedido.id_pedido}`).join(', ');
+        const plural = data.pedidos.length > 1 ? 'pedidos' : 'pedido';
+        alert(`Se generó el ${plural} ${numeros} con ${data.ordenes.length} órdenes de fabricación en total.`);
     };
 
+    const handleGenerar = async () => {
+        const resultado = await iniciarRevision();
+        if (resultado !== 'sin-ensambles') return; // 'error' ya se mostró; 'revision' espera confirmación
+
+        const data = await confirmarYGenerar();
+        avisarPedidosGenerados(data);
+    };
+
+    const handleConfirmarRevision = async () => {
+        const data = await confirmarYGenerar();
+        avisarPedidosGenerados(data);
+    };
+
+    const piezasSeleccionadasConEnsamble = (producto?.pieza || []).filter(
+        (p) => p.es_ensamble && Number(piezasState[p.id_pieza]?.cantidad) > 0
+    );
+    
     return (
         <>
             <NavBar />
@@ -55,6 +82,17 @@ export default function GenerarOrdenFabricacion() {
                     <div className="of-piezas-container">
                         <h2>{producto.nombre}</h2>
 
+                        <label className="of-pieza-field" style={{marginBottom:'20px'}}>
+                            Fecha de entrega del pedido
+                            <input
+                                type="date"
+                                className="shadcn-input"
+                                value={fechaEntrega}
+                                disabled={revisando}
+                                onChange={(e) => setFechaEntrega(e.target.value)}
+                            />
+                        </label>
+
                         {(!producto.pieza || producto.pieza.length === 0) ? (
                             <p className="empty-state">Este producto no tiene piezas activas.</p>
                         ) : (
@@ -76,6 +114,7 @@ export default function GenerarOrdenFabricacion() {
                                                     min="0"
                                                     className="shadcn-input"
                                                     value={piezasState[p.id_pieza]?.cantidad ?? 0}
+                                                    disabled={revisando}
                                                     onChange={(e) => actualizarCantidad(p.id_pieza, e.target.value)}
                                                 />
                                             </label>
@@ -85,6 +124,7 @@ export default function GenerarOrdenFabricacion() {
                                                 <input
                                                     type="checkbox"
                                                     checked={piezasState[p.id_pieza]?.a_medida ?? false}
+                                                    disabled={revisando}
                                                     onChange={(e) => actualizarAMedida(p.id_pieza, e.target.checked)}
                                                 />
                                             </label>
@@ -94,11 +134,41 @@ export default function GenerarOrdenFabricacion() {
                             </ul>
                         )}
 
+                        {loadingSugerencias && (
+                            <p className="loading-state">Calculando sugerencias de componentes...</p>
+                        )}
+
+                        {revisando && !loadingSugerencias && (
+                            <>
+                                {piezasSeleccionadasConEnsamble.map((p) => (
+                                    <SugerenciasComposicion
+                                        key={p.id_pieza}
+                                        nombreRaiz={p.nombre}
+                                        idPieza={p.id_pieza}
+                                        sugerencias={sugerenciasPorPieza[p.id_pieza]}
+                                        aprobadas={aprobadasPorPieza[p.id_pieza] || new Set()}
+                                        onToggle={(ruta, checked) => toggleAprobado(p.id_pieza, ruta, checked)}
+                                    />
+                                ))}
+                            </>
+                        )}
+
                         {submitError && <p className="form-error">{submitError}</p>}
-                        <div style={{width:'100%', marginTop:'50px', textAlign:'end'}}>
-                            <Button variant="default" disabled={submitting} onClick={handleSubmit}>
-                                {submitting ? "Generando..." : "Generar Órdenes"}
-                            </Button>
+                        <div style={{width:'100%', marginTop:'50px', textAlign:'end', display:'flex', justifyContent:'flex-end', gap:'10px'}}>
+                            {revisando ? (
+                                <>
+                                    <Button variant="outline" disabled={submitting} onClick={volverAEditar}>
+                                        Volver a editar
+                                    </Button>
+                                    <Button variant="default" disabled={submitting} onClick={handleConfirmarRevision}>
+                                        {submitting ? "Generando..." : "Confirmar y generar"}
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button variant="default" disabled={submitting || loadingSugerencias || !fechaEntrega} onClick={handleGenerar}>
+                                    {loadingSugerencias ? "Calculando..." : (submitting ? "Generando..." : "Generar Órdenes")}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 )}

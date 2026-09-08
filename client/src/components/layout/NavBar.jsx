@@ -20,7 +20,7 @@ export default function NavBar(){
         try{
             await logout();
         }catch(err){
-            setError(err.message);
+            console.error("Error al cerrar sesión", err);
         }
     }
 
@@ -43,9 +43,14 @@ export default function NavBar(){
                 </div>
             </div>
             <div className='user-container'>
-                <button className='user-button'> {user? `${getInitials(user.name)}`: none }</button>
+                <button className='user-button'> {user? `${getInitials(user.name)}`: "?" }</button>
                 <DropdownMenu
                     items={[
+                        /*{
+                            label: "Escanear pedido",
+                            icon: "qr_code_scanner",
+                            onClick:()=>navigate('/escaneo-pedido')
+                        },*/
                         {
                             label: "Actualizar contraseña",
                             icon: "key",

@@ -10,6 +10,7 @@ import instrumentRoutes from "./routes/instruments.routes.js";
 import userRoutes from "./routes/user.routes.js"
 import sectorRoutes from "./routes/sectors.routes.js"
 import ordenFabricacionRoutes from "./routes/ordenFabricacion.routes.js"
+import pedidoFabricacionRoutes from "./routes/pedidoFabricacion.routes.js"
 
 // Middlewares
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/instrumentos', instrumentRoutes);
 app.use('/api/usuarios', userRoutes);
 app.use('/api/sectores', sectorRoutes);
 app.use('/api/ordenes-fabricacion', ordenFabricacionRoutes);
+app.use('/api/pedidos-fabricacion', pedidoFabricacionRoutes);
 
 const PORT = 4000;
 app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));

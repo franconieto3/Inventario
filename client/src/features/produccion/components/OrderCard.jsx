@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./OrderCard.css";
 import { DropdownMenu } from "../../../components/ui/DropdownMenu";
 
-export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion, onGuardarOrdenProduccion, onCancelarOrden }) {
+export function OrderCard({ orden, actualizando, onGuardarOrdenProduccion, onCancelarOrden }) {
    
     const [idOrdenProduccion, setIdOrdenProduccion] = useState(orden.id_orden_produccion || "");
     const [expandida, setExpandida] = useState(false);
@@ -11,18 +11,14 @@ export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion
 
     return (
         <div 
-            className={`order-card ${seleccionada ? "order-card-seleccionada" : ""}`}
+            className={`order-card`}
             onClick={() => setExpandida(!expandida)}
             style={{ cursor: "pointer" }} // Añade un cursor interactivo
         >
             <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
                 <div className="order-card-header">
+                    
                     <label className="order-card-checkbox" onClick={(e) => e.stopPropagation()}>
-                        <input
-                            type="checkbox"
-                            checked={seleccionada}
-                            onChange={() => onToggleSeleccion(orden.id_of)}
-                        />
                         <span>#{orden.id_of}</span>
                     </label>
                     {orden.id_of_padre && <span className="order-card-badge">Hija de #{orden.id_of_padre}</span>}
@@ -57,7 +53,7 @@ export function OrderCard({ orden, seleccionada, actualizando, onToggleSeleccion
                     <div className="order-card-detalle">
                         <span>Cantidad: <strong>{orden.cantidad}</strong></span>
                         <span>Ruta: <strong>{orden.ruta_procesos?.nombre || "- - -"}</strong></span>
-                        <span>Materia prima: <strong>{orden.id_materia_prima || "- - -"}</strong></span>
+                        <span>Materia prima: <strong>{(orden.orden_fabricacion_materia_prima || []).map(m => m.identificador).join(', ') || "- - -"}</strong></span>
                     </div>
 
                     {/* Agregamos stopPropagation al contenedor del input y botón */}

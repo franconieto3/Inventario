@@ -5,14 +5,14 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export const ESTADO_PENDIENTE_DISENO = 1;
 export const ESTADO_PENDIENTE_MATERIALES = 2;
-export const ESTADO_ACEPTADA = 3;
+export const ESTADO_EN_PRODUCCION = 3;
+export const ESTADO_ACEPTADA = 7;
 
 export const useOrdenesActivas = () => {
     const [ordenes, setOrdenes] = useState([]);
     const [loadingOrdenes, setLoadingOrdenes] = useState(false);
     const [actualizandoId, setActualizandoId] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [seleccionadas, setSeleccionadas] = useState(new Set());
 
     const refreshOrdenes = useCallback(() => {
         setRefreshTrigger(prev => prev + 1);
@@ -32,17 +32,6 @@ export const useOrdenesActivas = () => {
         };
         fetchOrdenes();
     }, [refreshTrigger]);
-
-    const toggleSeleccion = useCallback((idOf) => {
-        setSeleccionadas(prev => {
-            const next = new Set(prev);
-            if (next.has(idOf)) next.delete(idOf);
-            else next.add(idOf);
-            return next;
-        });
-    }, []);
-
-    const limpiarSeleccion = useCallback(() => setSeleccionadas(new Set()), []);
 
     const guardarOrdenProduccion = useCallback(async (idOf, idOrdenProduccion) => {
         if (!idOrdenProduccion) return false;
@@ -84,23 +73,18 @@ export const useOrdenesActivas = () => {
     const columnas = [
         { estado: ESTADO_PENDIENTE_DISENO, titulo: "Validación de diseño" },
         { estado: ESTADO_PENDIENTE_MATERIALES, titulo: "Validación de materiales" },
-        { estado: ESTADO_ACEPTADA, titulo: "En producción" }
+        { estado: ESTADO_ACEPTADA, titulo: "Aceptada" },
+        { estado: ESTADO_EN_PRODUCCION, titulo: "En producción" }
     ].map(col => ({
         ...col,
         ordenes: ordenes.filter(o => o.id_estado_of === col.estado)
     }));
-
-    const ordenesSeleccionadas = ordenes.filter(o => seleccionadas.has(o.id_of));
 
     return {
         ordenes,
         columnas,
         loadingOrdenes,
         actualizandoId,
-        seleccionadas,
-        ordenesSeleccionadas,
-        toggleSeleccion,
-        limpiarSeleccion,
         guardarOrdenProduccion,
         cancelarOrden,
         refreshOrdenes

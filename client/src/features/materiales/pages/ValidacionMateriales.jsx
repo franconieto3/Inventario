@@ -8,32 +8,57 @@ import { DetalleMaterialesPieza } from "../components/DetalleMaterialesPieza";
 import "./ValidacionMateriales.css";
 import Can from "../../../components/Can";
 
-function FilaAcciones({ orden, actualizando, onAprobar, onGuardarOrdenProduccion }) {
-    const [idMateriaPrima, setIdMateriaPrima] = useState(orden.id_materia_prima || "");
+function FilaAcciones({ orden, actualizando, onAgregarMateriaPrima, onEliminarMateriaPrima, onToggleAprobacion, onGuardarOrdenProduccion }) {
+    const [nuevoIdentificador, setNuevoIdentificador] = useState("");
     const [idOrdenProduccion, setIdOrdenProduccion] = useState(orden.id_orden_produccion || "");
 
     const deshabilitado = actualizando === orden.id_of;
+    const identificadores = orden.orden_fabricacion_materia_prima || [];
+
+    const handleAgregar = async () => {
+        if (!nuevoIdentificador) return;
+        const ok = await onAgregarMateriaPrima(orden.id_of, nuevoIdentificador);
+        if (ok) setNuevoIdentificador("");
+    };
 
     return (
         <div className="vm-acciones" style={{alignItems:'center'}}>
             {/*Especificación de IR*/}
             <div className="vm-campo">
-                <label>ID materia prima</label>
+                <label>Identificadores de materia prima</label>
+                {identificadores.length > 0 && (
+                    <ul className="vm-lista-materia-prima">
+                        {identificadores.map((item) => (
+                            <li key={item.id_materia_prima}>
+                                <span>{item.identificador}</span>
+                                <button
+                                    type="button"
+                                    className="vm-btn-quitar"
+                                    disabled={deshabilitado}
+                                    onClick={() => onEliminarMateriaPrima(orden.id_of, item.id_materia_prima)}
+                                    aria-label={`Quitar ${item.identificador}`}
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
                 <div className="vm-fila-input">
                     <input
                         type="text"
                         className="shadcn-input"
                         placeholder="ID materia prima"
-                        value={idMateriaPrima}
+                        value={nuevoIdentificador}
                         disabled={deshabilitado}
-                        onChange={(e) => setIdMateriaPrima(e.target.value)}
+                        onChange={(e) => setNuevoIdentificador(e.target.value)}
                     />
                     <button
-                        className="vm-btn-aprobar"
-                        disabled={deshabilitado || !idMateriaPrima}
-                        onClick={() => onAprobar(orden.id_of, idMateriaPrima)}
+                        className="vm-btn-secundario"
+                        disabled={deshabilitado || !nuevoIdentificador}
+                        onClick={handleAgregar}
                     >
-                        Aprobar
+                        Agregar
                     </button>
                 </div>
             </div>
@@ -58,6 +83,18 @@ function FilaAcciones({ orden, actualizando, onAprobar, onGuardarOrdenProduccion
                     </button>
                 </div>
             </div>
+            <div className="wm-campo">
+                <label className="vm-checkbox">
+                    <input
+                        type="checkbox"
+                        style={{width:'18px', height:'18px'}}
+                        checked={!!orden.materiales_aprobados}
+                        disabled={deshabilitado || (!orden.materiales_aprobados && identificadores.length === 0)}
+                        onChange={(e) => onToggleAprobacion(orden.id_of, e.target.checked)}
+                    />
+                    Materiales aprobados
+                </label>
+            </div>
         </div>
     );
 }
@@ -68,7 +105,9 @@ export function ValidacionMateriales() {
         ordenes,
         loadingOrdenes,
         actualizandoId,
-        aprobarMateriales,
+        agregarMateriaPrima,
+        eliminarMateriaPrima,
+        toggleAprobacionMateriales,
         guardarOrdenProduccion
     } = useOrdenesMateriales();
 
@@ -109,7 +148,9 @@ export function ValidacionMateriales() {
                 <FilaAcciones
                     orden={row}
                     actualizando={actualizandoId}
-                    onAprobar={aprobarMateriales}
+                    onAgregarMateriaPrima={agregarMateriaPrima}
+                    onEliminarMateriaPrima={eliminarMateriaPrima}
+                    onToggleAprobacion={toggleAprobacionMateriales}
                     onGuardarOrdenProduccion={guardarOrdenProduccion}
                 />
             )

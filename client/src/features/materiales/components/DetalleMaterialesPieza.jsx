@@ -18,7 +18,7 @@ export function DetalleMaterialesPieza({ pieza }) {
     return (
         <>
             <Button variant="secondary" size="icon" onClick={handleAbrir} title="Ver materiales de la pieza">
-                <i className="material-icons" style={{ fontSize: '18px' }}>grid_view</i>
+                <i className="material-icons" style={{ fontSize: '18px'}}>visibility</i>
             </Button>
 
             {abierto && (
