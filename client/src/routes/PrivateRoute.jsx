@@ -1,11 +1,12 @@
 // client/src/components/PrivateRoute.jsx
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { UserAuth } from '../features/auth/context/AuthContext';
 import { Spinner } from '../components/ui/Spinner';
 
 const PrivateRoute = ({ permission = null, children }) => {
   const { user, loading } = UserAuth();
-  
+  const location = useLocation();
+
   // 1. Si todavía está verificando el localStorage, mostramos un "Cargando..."
   // Esto evita que te redirija al login por error mientra carga.
   if (loading) {
@@ -15,7 +16,8 @@ const PrivateRoute = ({ permission = null, children }) => {
   // 2. Si ya terminó de cargar y NO hay usuario, redirigir al Login
   if (!user) {
     // 'replace' evita que el usuario pueda volver atrás con el botón del navegador
-    return <Navigate to="/login" replace />;
+    // Guardamos la ruta que se intentaba acceder para volver a ella tras el login
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (permission!==null && !user?.permisos?.includes(permission)) {

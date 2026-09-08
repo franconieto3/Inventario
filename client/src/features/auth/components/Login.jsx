@@ -1,26 +1,32 @@
 // client/src/components/auth/Login.jsx
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import "./Login.css";
 import { UserAuth } from '../context/AuthContext';
 import Button from '../../../components/ui/Button';
 
 export default function Login() {
-  
+
   const [dni, setDni] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, loading, isAuthenticated} = UserAuth();
-  
+
+  // Ruta que se intentaba acceder antes de ser redirigido al login (si existe)
+  const from = location.state?.from?.pathname
+    ? location.state.from.pathname + (location.state.from.search || '')
+    : '/HomePage';
+
   //Si ya está autenticado, redirigir automáticamente
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/HomePage');
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from]);
 
   const handleSubmit = async (e) => {
       e.preventDefault();
@@ -34,10 +40,10 @@ export default function Login() {
       try {
         // Usamos la función del contexto
         await login(dni, password);
-        
-        // Si no hubo error, redirigimos
-        navigate('/HomePage'); 
-        
+
+        // Si no hubo error, redirigimos a la ruta original o al home
+        navigate(from, { replace: true });
+
       } catch (err) {
         // Si hubo error en el contexto, lo capturamos aquí
         if (err.message === "Failed to fetch") {
