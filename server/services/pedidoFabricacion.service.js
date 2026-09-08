@@ -30,3 +30,18 @@ export const crearPedidoConOrdenes = async (fechaEntrega, idUsuarioCreador, orde
 export const aceptarPedido = async (idPedido) => {
     return await pedidoFabricacionRepo.aceptarPedido(idPedido);
 };
+
+// Req. 15: detalle completo del pedido (para la pantalla de detalle/escaneo y para armar
+// la hoja de impresión). Cualquier usuario autenticado puede consultarlo (sin permiso
+// adicional, ver pedidoFabricacion.routes.js). El "repositorio" de cada pieza (documentos,
+// instrumentos, materiales, procesos) ya no se compone acá: el frontend lo obtiene
+// reutilizando PartDetail, que lo trae completo vía GET /api/productos/pieza/:id.
+export const obtenerDetallePedido = async (idPedido) => {
+    return await pedidoFabricacionRepo.obtenerDetallePedido(idPedido);
+};
+
+// Req. 15: registra la auditoría de impresión (quién y cuándo). La validación de que el
+// pedido esté Aceptado o En Producción vive en fn_registrar_impresion_pedido.
+export const registrarImpresion = async (idPedido, idUsuario) => {
+    return await pedidoFabricacionRepo.registrarImpresion(idPedido, idUsuario);
+};

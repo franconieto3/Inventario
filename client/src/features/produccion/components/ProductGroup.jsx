@@ -1,19 +1,25 @@
 import { useState } from "react";
 import { OrderCard } from "./OrderCard";
+import Button from "../../../components/ui/Button";
+import Can from "../../../components/Can";
+import { ESTADOS_PEDIDO_IMPRIMIBLES } from "../constants/estadosPedido";
 import "./ProductGroup.css";
 
 export function ProductGroup({
     idPedido,
     nombreProducto,
     fechaEntrega,
+    estadoPedido,
     ordenes,
-    seleccionadas,
     actualizandoId,
-    onToggleSeleccion,
     onGuardarOrdenProduccion,
-    onCancelarOrden
+    onCancelarOrden,
+    onImprimir
 }) {
     const [expandido, setExpandido] = useState(false);
+
+    const tienePedido = idPedido && idPedido !== "sin-pedido";
+    const puedeImprimir = tienePedido && ESTADOS_PEDIDO_IMPRIMIBLES.includes(estadoPedido);
 
     return (
         <div className="product-group">
@@ -39,6 +45,21 @@ export function ProductGroup({
                     ) : null}
                 </span>
                 <span className="product-group-count">{ordenes.length}</span>
+
+                {puedeImprimir && (
+                    <Can permission="imprimir_pedido_fabricacion">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="no-print"
+                            title="Imprimir pedido"
+                            aria-label="Imprimir pedido"
+                            onClick={(e) => { e.stopPropagation(); onImprimir(idPedido); }}
+                        >
+                            <i className="material-icons">print</i>
+                        </Button>
+                    </Can>
+                )}
             </div>
 
             {expandido && (
@@ -47,9 +68,7 @@ export function ProductGroup({
                         <OrderCard
                             key={orden.id_of}
                             orden={orden}
-                            seleccionada={seleccionadas.has(orden.id_of)}
                             actualizando={actualizandoId}
-                            onToggleSeleccion={onToggleSeleccion}
                             onGuardarOrdenProduccion={onGuardarOrdenProduccion}
                             onCancelarOrden={onCancelarOrden}
                         />

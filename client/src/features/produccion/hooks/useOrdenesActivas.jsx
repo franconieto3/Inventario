@@ -3,8 +3,6 @@ import { apiCall } from "../../../services/api";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-// Ver server/services/ordenFabricacion.service.js: el id 3 pasa a ser "En Producción"
-// y "Aceptada" es una fila nueva (id 7), sin renumerar los estados existentes.
 export const ESTADO_PENDIENTE_DISENO = 1;
 export const ESTADO_PENDIENTE_MATERIALES = 2;
 export const ESTADO_EN_PRODUCCION = 3;
@@ -15,7 +13,6 @@ export const useOrdenesActivas = () => {
     const [loadingOrdenes, setLoadingOrdenes] = useState(false);
     const [actualizandoId, setActualizandoId] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const [seleccionadas, setSeleccionadas] = useState(new Set());
 
     const refreshOrdenes = useCallback(() => {
         setRefreshTrigger(prev => prev + 1);
@@ -35,17 +32,6 @@ export const useOrdenesActivas = () => {
         };
         fetchOrdenes();
     }, [refreshTrigger]);
-
-    const toggleSeleccion = useCallback((idOf) => {
-        setSeleccionadas(prev => {
-            const next = new Set(prev);
-            if (next.has(idOf)) next.delete(idOf);
-            else next.add(idOf);
-            return next;
-        });
-    }, []);
-
-    const limpiarSeleccion = useCallback(() => setSeleccionadas(new Set()), []);
 
     const guardarOrdenProduccion = useCallback(async (idOf, idOrdenProduccion) => {
         if (!idOrdenProduccion) return false;
@@ -94,17 +80,11 @@ export const useOrdenesActivas = () => {
         ordenes: ordenes.filter(o => o.id_estado_of === col.estado)
     }));
 
-    const ordenesSeleccionadas = ordenes.filter(o => seleccionadas.has(o.id_of));
-
     return {
         ordenes,
         columnas,
         loadingOrdenes,
         actualizandoId,
-        seleccionadas,
-        ordenesSeleccionadas,
-        toggleSeleccion,
-        limpiarSeleccion,
         guardarOrdenProduccion,
         cancelarOrden,
         refreshOrdenes

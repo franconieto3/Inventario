@@ -37,3 +37,30 @@ export const aceptarPedido = async (req, res) => {
         res.status(err.statusCode || 500).json({ error: err.message });
     }
 };
+
+export const obtenerDetalle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await pedidoFabricacionService.obtenerDetallePedido(id);
+        res.status(200).json(data);
+    } catch (err) {
+        console.error("Error en obtenerDetalle:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};
+
+export const imprimirPedido = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const idUsuario = req.usuario.id_usuario;
+        const data = await pedidoFabricacionService.registrarImpresion(id, idUsuario);
+
+        res.status(201).json({
+            message: "Impresión de pedido registrada exitosamente",
+            impresion: data
+        });
+    } catch (err) {
+        console.error("Error en imprimirPedido:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};

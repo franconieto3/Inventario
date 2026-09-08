@@ -1,0 +1,122 @@
+/* Tipografía y Encabezados */
+.of-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 2rem;
+}
+
+.text-muted {
+    color: #64748b; /* Slate 500 */
+    font-size: 0.875rem;
+}
+
+.detalle-pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0; /* Slate 200 */
+}
+
+.detalle-pedido-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+/* Badges estilo Shadcn */
+.badge-group {
+    display: flex;
+    gap: 10px;
+}
+
+.order-card-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    background-color: #f1f5f9; /* Slate 100 */
+    color: #0f172a;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.order-card-badge.outline {
+    background-color: transparent;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+/* Layout del Repositorio */
+.repositorio-pieza-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* Sistema de Cards (Estilo Shadcn) */
+.ui-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+}
+
+.ui-card-header {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.ui-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 0;
+}
+
+.ui-card-description {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.ui-card-content {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.ui-card-content.pt-4 {
+    padding-top: 1.5rem;
+}
+
+/* Grid para el detalle de piezas */
+.detalle-piezas-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: #0f172a;
+}
+
+/* Si hay suficiente espacio en pantalla, muestra las tarjetas en dos columnas */
+@media (min-width: 1024px) {
+    .piezas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
