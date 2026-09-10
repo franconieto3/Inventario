@@ -24,6 +24,7 @@ import GenerarOrdenFabricacion from './features/produccion/pages/GenerarOrdenFab
 import { DashboardProduccion } from './features/produccion/pages/DashboardProduccion';
 import DetallePedidoFabricacion from './features/produccion/pages/DetallePedidoFabricacion';
 import EscaneoPedido from './features/produccion/pages/EscaneoPedido';
+import SelloDocumento from './features/documentos/SelloDocumento';
 
 function App() {
 
@@ -174,6 +175,18 @@ function App() {
                       <EscaneoPedido />
                     </PrivateRoute>
                   }
+              />
+              <Route
+                path='/sello'
+                element={
+                  <SelloDocumento
+                    fecha = "10/09/2026"
+                    impresoPor="Franco Nieto"
+                    idDocumento={10}
+                    rutaDominio="localhost:4000/"
+                  />
+
+                }
               />
             </Routes>
           </BrowserRouter>
