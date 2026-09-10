@@ -8,7 +8,10 @@ import * as pedidoFabricacionRepo from "../repositories/pedidoFabricacion.reposi
 export const crearPedidoConOrdenes = async (fechaEntrega, idUsuarioCreador, ordenes) => {
     const ordenesCreadas = await pedidoFabricacionRepo.crearPedidosConOrdenesAgrupados({
         ordenes,
-        fecha_entrega: fechaEntrega,
+        // validateSchema no reescribe req.body con el valor coercionado por Zod, así que
+        // "" (fecha vacía en el form) todavía puede llegar acá tal cual: normalizarla a
+        // null explícitamente, no alcanza con ?? (no atrapa string vacío).
+        fecha_entrega: fechaEntrega || null,
         id_usuario_creador: idUsuarioCreador
     });
 
@@ -44,4 +47,12 @@ export const obtenerDetallePedido = async (idPedido) => {
 // pedido esté Aceptado o En Producción vive en fn_registrar_impresion_pedido.
 export const registrarImpresion = async (idPedido, idUsuario) => {
     return await pedidoFabricacionRepo.registrarImpresion(idPedido, idUsuario);
+};
+
+// Fecha de entrega editable post-creación (dashboard de supervisión y detalle del
+// pedido), sin restricción de estado: puede editarse en cualquier momento del ciclo
+// de vida del pedido. fechaEntrega llega cruda desde req.body (ver nota en
+// crearPedidoConOrdenes); "" se persiste como null ("sin fecha").
+export const actualizarFechaEntrega = async (idPedido, fechaEntrega) => {
+    return await pedidoFabricacionRepo.actualizarFechaEntrega(idPedido, fechaEntrega || null);
 };

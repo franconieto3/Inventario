@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { OrderCard } from "./OrderCard";
+import { FechaEntregaEditable } from "./FechaEntregaEditable";
 import Button from "../../../components/ui/Button";
 import Can from "../../../components/Can";
 import { ESTADOS_PEDIDO_IMPRIMIBLES } from "../constants/estadosPedido";
@@ -14,7 +15,9 @@ export function ProductGroup({
     actualizandoId,
     onGuardarOrdenProduccion,
     onCancelarOrden,
-    onImprimir
+    onImprimir,
+    actualizandoFechaId,
+    onGuardarFechaEntrega
 }) {
     const [expandido, setExpandido] = useState(false);
 
@@ -33,17 +36,23 @@ export function ProductGroup({
                 }}
             >
                 <span className={`product-group-caret ${expandido ? "product-group-caret-abierto" : ""}`}>▸</span>
-                <span className="product-group-nombre">
-                    {nombreProducto}
-                    {fechaEntrega && (
-                        <span className="order-card-badge" style={{marginLeft:'8px'}}>
-                            Entrega: {new Date(fechaEntrega).toLocaleDateString("es-AR", { timeZone: "UTC" })}
+                <div style={{display:'flex', gap:'5px', flexWrap:'wrap', alignItems:'center'}}>
+                    <span className="product-group-nombre">
+                        {nombreProducto}
+                    </span>
+                    {tienePedido ? (
+                        <span style={{marginLeft:'8px'}}>
+                            <FechaEntregaEditable
+                                idPedido={idPedido}
+                                fechaEntrega={fechaEntrega}
+                                actualizando={actualizandoFechaId === idPedido}
+                                onGuardar={onGuardarFechaEntrega}
+                            />
                         </span>
-                    )}
-                    {!idPedido || idPedido === "sin-pedido" ? (
+                    ) : (
                         <span className="order-card-badge" style={{marginLeft:'8px'}}>Sin pedido (legado)</span>
-                    ) : null}
-                </span>
+                    )}
+                </div>
                 <span className="product-group-count">{ordenes.length}</span>
 
                 {puedeImprimir && (

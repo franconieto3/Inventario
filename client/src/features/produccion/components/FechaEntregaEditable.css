@@ -1,0 +1,32 @@
+.fecha-entrega-badge {
+    gap: 6px;
+}
+
+.fecha-entrega-editar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-left: 2px;
+    cursor: pointer;
+    color: inherit;
+    line-height: 0;
+}
+
+.fecha-entrega-editar-btn .material-icons {
+    font-size: 14px;
+}
+
+.fecha-entrega-editable {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fecha-entrega-editable .shadcn-input {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    height: auto;
+}

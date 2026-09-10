@@ -1,7 +1,9 @@
 import { useParams } from "react-router-dom";
 import NavBar from "../../../components/layout/NavBar";
 import { usePedidoDetalle } from "../hooks/usePedidoDetalle";
+import { useActualizarFechaEntrega } from "../hooks/useActualizarFechaEntrega";
 import { RepositorioPieza } from "../components/RepositorioPieza";
+import { FechaEntregaEditable } from "../components/FechaEntregaEditable";
 import "./DetallePedidoFabricacion.css";
 
 const DESCRIPCION_ESTADO_PEDIDO = {
@@ -14,7 +16,14 @@ const DESCRIPCION_ESTADO_PEDIDO = {
 
 export default function DetallePedidoFabricacion() {
     const { id } = useParams();
-    const { pedido, loading, error } = usePedidoDetalle(id);
+    const { pedido, loading, error, refetch } = usePedidoDetalle(id);
+    const { actualizarFechaEntrega, actualizandoId } = useActualizarFechaEntrega();
+
+    const handleGuardarFechaEntrega = async (idPedido, fechaEntrega) => {
+        const data = await actualizarFechaEntrega(idPedido, fechaEntrega);
+        if (data) await refetch();
+        return Boolean(data);
+    };
 
     return (
         <>
@@ -33,9 +42,12 @@ export default function DetallePedidoFabricacion() {
                                 <span className="order-card-badge">
                                     Estado: {DESCRIPCION_ESTADO_PEDIDO[pedido.id_estado_pedido] || pedido.id_estado_pedido}
                                 </span>
-                                <span className="order-card-badge outline">
-                                    Entrega estimada: {new Date(pedido.fecha_entrega).toLocaleDateString("es-AR", { timeZone: "UTC" })}
-                                </span>
+                                <FechaEntregaEditable
+                                    idPedido={pedido.id_pedido}
+                                    fechaEntrega={pedido.fecha_entrega}
+                                    actualizando={actualizandoId === pedido.id_pedido}
+                                    onGuardar={handleGuardarFechaEntrega}
+                                />
                             </div>
                         </div>
 

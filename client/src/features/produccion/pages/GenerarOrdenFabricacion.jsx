@@ -81,18 +81,19 @@ export default function GenerarOrdenFabricacion() {
                 {!loadingPiezas && producto && (
                     <div className="of-piezas-container">
                         <h2>{producto.nombre}</h2>
-
-                        <label className="of-pieza-field" style={{marginBottom:'20px'}}>
-                            Fecha de entrega del pedido
+                        <div style={{ marginBottom: '20px', display: 'flex',alignItems:'center', gap: '8px' }}>
+                            <label style={{ fontSize: '0.9rem', color: '#0f172a' }}>
+                                Fecha de entrega del pedido (opcional)
+                            </label>
                             <input
                                 type="date"
-                                className="shadcn-input"
+                                className="date-input"
+                                style={{ width: '130px' }}
                                 value={fechaEntrega}
                                 disabled={revisando}
                                 onChange={(e) => setFechaEntrega(e.target.value)}
                             />
-                        </label>
-
+                        </div>
                         {(!producto.pieza || producto.pieza.length === 0) ? (
                             <p className="empty-state">Este producto no tiene piezas activas.</p>
                         ) : (
@@ -165,7 +166,7 @@ export default function GenerarOrdenFabricacion() {
                                     </Button>
                                 </>
                             ) : (
-                                <Button variant="default" disabled={submitting || loadingSugerencias || !fechaEntrega} onClick={handleGenerar}>
+                                <Button variant="default" disabled={submitting || loadingSugerencias} onClick={handleGenerar}>
                                     {loadingSugerencias ? "Calculando..." : (submitting ? "Generando..." : "Generar Órdenes")}
                                 </Button>
                             )}
