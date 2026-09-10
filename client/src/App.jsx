@@ -177,15 +177,9 @@ function App() {
                   }
               />
               <Route
-                path='/sello'
+                path='/validacion-documento/:id'
                 element={
-                  <SelloDocumento
-                    fecha = "10/09/2026"
-                    impresoPor="Franco Nieto"
-                    idDocumento={10}
-                    rutaDominio="localhost:4000/"
-                  />
-
+                  <></>
                 }
               />
             </Routes>

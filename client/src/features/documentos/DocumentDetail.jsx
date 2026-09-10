@@ -6,6 +6,8 @@ import './DocumentDetail.css';
 import Button from '../../components/ui/Button';
 import Can from '../../components/Can';
 import { Spinner } from '../../components/ui/Spinner';
+import SelloDocumento from './SelloDocumento';
+import { UserAuth } from '../auth/context/AuthContext';
 
 // Configuración del worker de PDF.js
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -17,6 +19,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export const DocumentDetail = () => {
   const { id } = useParams();
+  const { user} = UserAuth();
+
   const [blobUrl, setBlobUrl] = useState(null);
   const [permisosLocales, setPermisosLocales] = useState({ descarga: false, impresion: false });
   const [error, setError] = useState(null);
@@ -40,7 +44,8 @@ export const DocumentDetail = () => {
 
   const [estadoSolicitud, setEstadoSolicitud] = useState(null);
 
-  const printIframeRef = useRef(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [pagesRendered, setPagesRendered] = useState(0);
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -201,11 +206,23 @@ export const DocumentDetail = () => {
     setDownloading(false);
   };
 
-  const handlePrint = () => {
-    if (printIframeRef.current && printIframeRef.current.contentWindow) {
-      printIframeRef.current.contentWindow.print();
-    }
-  };  
+  useEffect(() => {
+      if (isPrinting && numPages > 0 && pagesRendered === numPages) {
+        // Un pequeñisimo delay para asegurar que el DOM actualizó todos los Canvas
+        setTimeout(() => {
+          window.print();
+          setIsPrinting(false); // Restaura a la vista normal después de imprimir/cancelar
+          setPagesRendered(0);
+        }, 300);
+      }
+    }, [isPrinting, pagesRendered, numPages]);
+
+    // 5. REEMPLAZAR tu handlePrint actual:
+    const handlePrint = () => {
+      if (fileType !== 'pdf') return;
+      setIsPrinting(true);
+      setPagesRendered(0);
+    };
 
   const solicitarAcceso = async () => {
     try{
@@ -227,11 +244,11 @@ export const DocumentDetail = () => {
 
   const renderPrintButton = () => {
     const btn = (
-      <Button variant="secondary" onClick={handlePrint} disabled={fileType !== 'pdf'} title="Imprimir">
-        <i className='material-icons'>print</i>
+      <Button variant="secondary" onClick={handlePrint} disabled={fileType !== 'pdf' || isPrinting} title="Imprimir">
+        {/* Cambia el ícono de impresora por un reloj de arena mientras carga las páginas */}
+        <i className='material-icons'>{isPrinting ? 'hourglass_empty' : 'print'}</i>
       </Button>
     );
-    // Bypass si hay permiso provisorio; si no, delega al validador de Rol (Can)
     return permisosLocales.impresion ? btn : <Can permission={'imprimir_documentos'}>{btn}</Can>;
   };
 
@@ -294,13 +311,34 @@ export const DocumentDetail = () => {
 
   return (
     <div className="viewer-layout">
-      {fileType === 'pdf' && (
-        <iframe 
-          ref={printIframeRef}
-          src={blobUrl}
-          style={{ display: 'none' }} 
-          title="Iframe de impresión"
-        />
+      {/* NUEVO: Contenedor exclusivo para Impresión (Oculto en pantalla normal) */}
+      {isPrinting && fileType === 'pdf' && (
+        <div className="print-only">
+          <Document file={blobUrl}>
+            {Array.from(new Array(numPages), (el, index) => (
+              <div key={`print_page_${index + 1}`} className="print-page-wrapper">
+                
+                {/* Aquí renderizamos el Sello superpuesto sobre la hoja */}
+                <div className="sello-impresion-container">
+                  <SelloDocumento
+                    fecha={new Date().toLocaleDateString('es-AR')}
+                    impresoPor={user.name}
+                    rutaDominio={window.location.origin}
+                    idDocumento={id}
+                  />
+                </div>
+                
+                <Page 
+                  pageNumber={index + 1} 
+                  renderTextLayer={false} 
+                  renderAnnotationLayer={false} 
+                  scale={2} /* Usamos un scale mayor para asegurar nitidez en la impresora */
+                  onRenderSuccess={() => setPagesRendered((prev) => prev + 1)}
+                />
+              </div>
+            ))}
+          </Document>
+        </div>
       )}
 
       <header className="viewer-toolbar">

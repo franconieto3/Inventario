@@ -233,3 +233,52 @@
   font-size: 0.95rem;
   line-height: 1.5;
 }
+
+/* Por defecto, el layout de impresión está completamente oculto */
+.print-only {
+  display: none;
+}
+
+@media print {
+  /* Ocultamos toda la interfaz del visor interactivo */
+  .viewer-toolbar, 
+  .viewer-main {
+    display: none !important;
+  }
+
+  /* Mostramos únicamente las páginas prerenderizadas */
+  .print-only {
+    display: block !important;
+    width: 100%;
+  }
+
+  /* Cada hoja del documento */
+  .print-page-wrapper {
+    position: relative;
+    page-break-after: always;
+    display: flex;
+    justify-content: center;
+    background-color: white;
+  }
+
+  /* Ajustar la imagen/canvas generado por react-pdf a los límites del papel */
+  .print-page-wrapper canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Capa flotante con el Sello */
+  .sello-impresion-container {
+    position: absolute;
+    top: 5px; 
+    left: 5px; 
+    z-index: 100;
+    transform: scale(0.35); 
+    transform-origin: top left;
+  }
+
+  /* Evitar los márgenes grises por defecto del navegador web */
+  @page {
+    margin: 0;
+  }
+}

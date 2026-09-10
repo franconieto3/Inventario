@@ -46,11 +46,6 @@ export default function NavBar(){
                 <button className='user-button'> {user? `${getInitials(user.name)}`: "?" }</button>
                 <DropdownMenu
                     items={[
-                        /*{
-                            label: "Escanear pedido",
-                            icon: "qr_code_scanner",
-                            onClick:()=>navigate('/escaneo-pedido')
-                        },*/
                         {
                             label: "Actualizar contraseña",
                             icon: "key",
