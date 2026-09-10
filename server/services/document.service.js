@@ -187,7 +187,7 @@ export const eliminarVersion = async (idVersion)=>{
 }
 
 export const obtenerPiezasVersion = async (idVersion) => {
-    
+
     const { data, error } = await supabase
         .from('version_pieza')
         .select('id_pieza')
@@ -196,7 +196,7 @@ export const obtenerPiezasVersion = async (idVersion) => {
     // Verificamos si hubo error
     if (error) {
         const err = new Error("No se pudo recuperar las piezas de la versión");
-        err.statusCode = 500; 
+        err.statusCode = 500;
         throw err;
     }
 
@@ -209,6 +209,77 @@ export const obtenerPiezasVersion = async (idVersion) => {
     const piezas = data.map((item)=>item.id_pieza);
 
     return piezas;
+}
+
+// Validación de vigencia de documento
+
+export const obtenerVersionParaValidacion = async (idVersion) => {
+    const { data, error } = await supabase
+        .from('version')
+        .select('id_version, id_tipo_documento, fecha_vigencia, path')
+        .eq('id_version', idVersion)
+        .single();
+
+    if (error) {
+        if (error.code === 'PGRST116') {
+            const err = new Error("No se encontró la versión indicada");
+            err.statusCode = 404;
+            throw err;
+        }
+        throw new Error(`Error recuperando la versión: ${error.message}`);
+    }
+    return data;
+}
+
+export const obtenerIdsPiezasDeVersion = async (idVersion) => {
+    const { data, error } = await supabase
+        .from('version_pieza')
+        .select('id_pieza')
+        .eq('id_version', idVersion);
+
+    if (error) {
+        const err = new Error("No se pudo recuperar las piezas de la versión");
+        err.statusCode = 500;
+        throw err;
+    }
+    return (data || []).map(item => item.id_pieza);
+}
+
+export const validarVigenciaDocumento = async (idVersion) => {
+    const version = await obtenerVersionParaValidacion(idVersion);
+    const idsPiezas = await obtenerIdsPiezasDeVersion(idVersion);
+
+    if (idsPiezas.length === 0) {
+        return { vigente: false, id_version: Number(idVersion), id_tipo_documento: version.id_tipo_documento, piezas: [] };
+    }
+
+    const resultadosPorPieza = await Promise.all(
+        idsPiezas.map(idPieza => supabase.rpc('obtener_ultima_version_documentos', { p_id_pieza: idPieza }))
+    );
+
+    const idsPiezasVigentes = idsPiezas.filter((idPieza, i) => {
+        const { data, error } = resultadosPorPieza[i];
+        if (error || !data) return false;
+        const ultima = data.find(row => row.id_tipo_documento === version.id_tipo_documento);
+        return ultima?.id_version === Number(idVersion);
+    });
+
+    if (idsPiezasVigentes.length === 0) {
+        return { vigente: false, id_version: Number(idVersion), id_tipo_documento: version.id_tipo_documento, piezas: [] };
+    }
+
+    const { data: piezas, error: errorPiezas } = await supabase
+        .from('pieza')
+        .select('id_pieza, nombre, codigo_produccion, id_producto, producto(nombre, id_rubro)')
+        .in('id_pieza', idsPiezasVigentes);
+
+    if (errorPiezas) {
+        const err = new Error("No se pudo recuperar el detalle de las piezas vigentes");
+        err.statusCode = 500;
+        throw err;
+    }
+
+    return { vigente: true, id_version: Number(idVersion), id_tipo_documento: version.id_tipo_documento, piezas };
 }
 
 export const formatPath = (path)=>{

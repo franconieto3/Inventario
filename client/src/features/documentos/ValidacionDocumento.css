@@ -1,0 +1,67 @@
+.validacion-doc-layout {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: #f8fafc;
+  font-family: system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 3rem 1.25rem;
+}
+
+.validacion-doc-layout * {
+  box-sizing: border-box;
+}
+
+.validacion-doc-card {
+  width: 100%;
+  max-width: 640px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.validacion-doc-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+
+.validacion-doc-badge.vigente {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.validacion-doc-badge.obsoleto {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.validacion-doc-badge.error {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.validacion-doc-descripcion {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.validacion-doc-card .table-container {
+  width: 100%;
+  text-align: left;
+}

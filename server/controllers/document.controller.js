@@ -1,6 +1,6 @@
 import { error } from "node:console";
 import {DocumentoPayloadSchema, SolicitudSubidaSchema, ReestablecerVersionSchema} from "../schemas/document.schemas.js"
-import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension, verificarPathRepetido, duplicarArchivo, formatPath} from "../services/document.service.js";
+import { signedUploadUrl, guardarDocumento, obtenerMetadatos, signedUrl, moverArchivoAPermanente, obtenerConfiguracionTipoDocumento,obtenerTiposDocumento, obtenerHistorialVersiones, eliminarVersion, obtenerPiezasVersion, crearSolicitudCambio, verSolicitudes, actualizarSolicitud, obtenerEstadosSolicitud, getDocumentById, nuevaSolicitudAcceso, verificarAccesoProvisorio, fetchSolicitudes, updateSolicitudAcceso, deleteSupabaseFile, quitarVerificacion, quitarArchivoAuxiliar, obtenerExtension, verificarPathRepetido, duplicarArchivo, formatPath, validarVigenciaDocumento} from "../services/document.service.js";
 import { Readable } from 'node:stream';
 
 export const tiposDocumento = async (req, res)=>{
@@ -261,9 +261,9 @@ export const reestablecerVersion = async(req, res)=>{
 }
 
 export const eliminacionVersion = async (req, res)=>{
-    try{    
+    try{
         const {id} = req.params;
-        
+
         const {path} = req.query;
 
         const data = await eliminarVersion(id);
@@ -273,6 +273,16 @@ export const eliminacionVersion = async (req, res)=>{
         res.status(200).json({message: "Versión eliminada exitosamente"});
     }catch(err){
         res.status(err.statusCode? err.statusCode : 500).json({error: err.message});
+    }
+}
+
+export const validacionDocumento = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await validarVigenciaDocumento(id);
+        res.json(data);
+    } catch (err) {
+        res.status(err.statusCode || 500).json({ error: err.message });
     }
 }
 

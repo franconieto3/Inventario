@@ -1,8 +1,8 @@
 import { Router } from "express";
-import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso, eliminarVerificacionInstrumentos, eliminarArchivoInstrumentos, downloadDocument} from '../controllers/document.controller.js';
+import {subirDocumento, documento, visualizarDocumento, historialDocumentos, tiposDocumento, reestablecerVersion, eliminacionVersion, solicitudCambio, solicitudesCambio, solicitudTerminada, estadoSolicitud, streamDocument, crearSolicitudAcceso, getSolicitudesAcceso, actualizarSolicitudAcceso, eliminarVerificacionInstrumentos, eliminarArchivoInstrumentos, downloadDocument, validacionDocumento} from '../controllers/document.controller.js';
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema } from "../schemas/document.schemas.js";
+import { actualizarSolicitudSchema, DocumentoPayloadSchema, eliminarVersionSchema, HistorialVersionesSchema, ReestablecerVersionSchema, solicitudCambioSchema, SolicitudSubidaSchema, VisualizarDocumentoSchema, validacionDocumentoSchema } from "../schemas/document.schemas.js";
 import { checkStreamPermission, requirePermission } from "../middlewares/checkPermission.js";
 
 const router = Router();
@@ -118,6 +118,11 @@ router.delete('/verificacion/:id',
     verificarToken,
     eliminarVerificacionInstrumentos
 )
+
+// Validación pública de vigencia de documento (accedida vía QR en documentos impresos)
+router.get('/validacion-documento/:id',
+    validateSchema(validacionDocumentoSchema, 'params'),
+    validacionDocumento);
 
 router.delete('/archivo-auxiliar/:id',
     verificarToken,

@@ -25,6 +25,7 @@ import { DashboardProduccion } from './features/produccion/pages/DashboardProduc
 import DetallePedidoFabricacion from './features/produccion/pages/DetallePedidoFabricacion';
 import EscaneoPedido from './features/produccion/pages/EscaneoPedido';
 import SelloDocumento from './features/documentos/SelloDocumento';
+import ValidacionDocumento from './features/documentos/ValidacionDocumento';
 
 function App() {
 
@@ -179,7 +180,7 @@ function App() {
               <Route
                 path='/validacion-documento/:id'
                 element={
-                  <></>
+                  <ValidacionDocumento />
                 }
               />
             </Routes>
