@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { crearPedido, aceptarPedido, obtenerDetalle, imprimirPedido } from "../controllers/pedidoFabricacion.controller.js";
+import { crearPedido, aceptarPedido, obtenerDetalle, actualizarFechaEntrega, imprimirPedido } from "../controllers/pedidoFabricacion.controller.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { requirePermission } from "../middlewares/checkPermission.js";
-import { crearPedidoSchema } from "../schemas/pedidoFabricacion.schemas.js";
+import { crearPedidoSchema, actualizarFechaEntregaSchema } from "../schemas/pedidoFabricacion.schemas.js";
 
 const router = Router();
 
@@ -23,6 +23,12 @@ router.patch('/:id/aceptar',
 router.get('/:id',
     verificarToken,
     obtenerDetalle);
+
+router.patch('/:id/fecha-entrega',
+    verificarToken,
+    requirePermission('editar_pedido_fabricacion'),
+    validateSchema(actualizarFechaEntregaSchema),
+    actualizarFechaEntrega);
 
 router.post('/:id/imprimir',
     verificarToken,

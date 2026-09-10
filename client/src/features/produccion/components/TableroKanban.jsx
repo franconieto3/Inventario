@@ -19,7 +19,7 @@ function agruparOrdenesPorPedido(ordenes) {
     return Array.from(grupos.values());
 }
 
-export function TableroKanban({ columnas, actualizandoId, onGuardarOrdenProduccion, onCancelarOrden, onImprimir }) {
+export function TableroKanban({ columnas, actualizandoId, onGuardarOrdenProduccion, onCancelarOrden, onImprimir, actualizandoFechaId, onGuardarFechaEntrega }) {
     return (
         <div className="kanban-board no-print">
             {columnas.map((col) => (
@@ -45,6 +45,8 @@ export function TableroKanban({ columnas, actualizandoId, onGuardarOrdenProducci
                                     onGuardarOrdenProduccion={onGuardarOrdenProduccion}
                                     onCancelarOrden={onCancelarOrden}
                                     onImprimir={onImprimir}
+                                    actualizandoFechaId={actualizandoFechaId}
+                                    onGuardarFechaEntrega={onGuardarFechaEntrega}
                                 />
                             ))
                         )}

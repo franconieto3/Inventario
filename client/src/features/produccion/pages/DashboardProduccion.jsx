@@ -6,6 +6,7 @@ import { TableroKanban } from "../components/TableroKanban";
 import { ImpresionPedido } from "../components/ImpresionPedido";
 import { useOrdenesActivas } from "../hooks/useOrdenesActivas";
 import { useImprimirPedido } from "../hooks/useImprimirPedido";
+import { useActualizarFechaEntrega } from "../hooks/useActualizarFechaEntrega";
 
 import './DashboardProduccion.css'
 
@@ -18,10 +19,18 @@ export function DashboardProduccion(){
         loadingOrdenes,
         actualizandoId,
         guardarOrdenProduccion,
-        cancelarOrden
+        cancelarOrden,
+        refreshOrdenes
     } = useOrdenesActivas();
 
     const { pedidoImprimir, solicitarImpresion } = useImprimirPedido();
+    const { actualizarFechaEntrega, actualizandoId: actualizandoFechaId } = useActualizarFechaEntrega();
+
+    const handleGuardarFechaEntrega = async (idPedido, fechaEntrega) => {
+        const data = await actualizarFechaEntrega(idPedido, fechaEntrega);
+        if (data) refreshOrdenes();
+        return Boolean(data);
+    };
 
     return (
         <>
@@ -53,6 +62,8 @@ export function DashboardProduccion(){
                         onGuardarOrdenProduccion={guardarOrdenProduccion}
                         onCancelarOrden={cancelarOrden}
                         onImprimir={solicitarImpresion}
+                        actualizandoFechaId={actualizandoFechaId}
+                        onGuardarFechaEntrega={handleGuardarFechaEntrega}
                     />
                 )}
             </div>

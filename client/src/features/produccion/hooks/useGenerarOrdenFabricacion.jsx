@@ -177,11 +177,6 @@ export const useGenerarOrdenFabricacion = () => {
             return 'error';
         }
 
-        if (!fechaEntrega) {
-            setSubmitError("Debés indicar la fecha de entrega del pedido.");
-            return 'error';
-        }
-
         const piezasEnsamble = piezasSeleccionadas.filter((p) => {
             const piezaInfo = producto?.pieza?.find((pp) => pp.id_pieza === p.id_pieza);
             return piezaInfo?.es_ensamble;
@@ -218,7 +213,7 @@ export const useGenerarOrdenFabricacion = () => {
         } finally {
             setLoadingSugerencias(false);
         }
-    }, [piezasState, fechaEntrega, producto]);
+    }, [piezasState, producto]);
 
     const confirmarYGenerar = useCallback(async () => {
         setSubmitError("");

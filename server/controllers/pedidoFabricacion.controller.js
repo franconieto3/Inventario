@@ -49,6 +49,23 @@ export const obtenerDetalle = async (req, res) => {
     }
 };
 
+export const actualizarFechaEntrega = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { fecha_entrega } = req.body;
+
+        const data = await pedidoFabricacionService.actualizarFechaEntrega(id, fecha_entrega);
+
+        res.status(200).json({
+            message: "Fecha de entrega actualizada exitosamente",
+            pedido: data
+        });
+    } catch (err) {
+        console.error("Error en actualizarFechaEntrega:", err);
+        res.status(err.statusCode || 500).json({ error: err.message });
+    }
+};
+
 export const imprimirPedido = async (req, res) => {
     try {
         const { id } = req.params;

@@ -117,6 +117,32 @@ export const registrarImpresion = async (idPedido, idUsuario) => {
     return data;
 };
 
+// Edición directa de fecha_entrega (ahora nullable en la tabla): no hay lógica de
+// negocio asociada más allá de la actualización, así que se hace vía supabase-js en
+// lugar de una RPC, siguiendo obtenerPedidosPorIds más arriba.
+export const actualizarFechaEntrega = async (idPedido, fechaEntrega) => {
+    const { data, error } = await supabase
+        .from('pedido_fabricacion')
+        .update({ fecha_entrega: fechaEntrega })
+        .eq('id_pedido', idPedido)
+        .select()
+        .single();
+
+    if (error) {
+        if (error.code === 'PGRST116') {
+            const err = new Error("No se encontró el pedido de fabricación indicado.");
+            err.statusCode = 404;
+            throw err;
+        }
+        console.error("Error Supabase (actualizarFechaEntrega):", error);
+        const err = new Error("Error al actualizar la fecha de entrega del pedido de fabricación.");
+        err.statusCode = 500;
+        throw err;
+    }
+
+    return data;
+};
+
 export const aceptarPedido = async (idPedido) => {
     const { data, error } = await supabase.rpc('fn_aceptar_pedido_fabricacion', {
         p_id_pedido: idPedido
