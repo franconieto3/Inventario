@@ -240,8 +240,18 @@
 }
 
 @media print {
+  /* Ocultamos todo por defecto y sólo revelamos el contenido prerenderizado */
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+
   /* Ocultamos toda la interfaz del visor interactivo */
-  .viewer-toolbar, 
+  .viewer-toolbar,
   .viewer-main {
     display: none !important;
   }
