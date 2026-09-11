@@ -22,7 +22,7 @@ export function ActualizarSolicitud({ solicitud, onClose, onSuccess }) {
     fecha_vencimiento: formatInputDate(solicitud?.fecha_vencimiento),
     estado: solicitud?.estado || 'PENDIENTE',
     permiso_descarga: solicitud?.permiso_descarga || false,
-    permiso_impresion: solicitud?.permiso_impresion || false,
+    permiso_impresion: solicitud?.permiso_impresion || true,
   });
 
   const [error, setError] = useState('');
