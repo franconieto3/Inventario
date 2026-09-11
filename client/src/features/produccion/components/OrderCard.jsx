@@ -15,9 +15,8 @@ export function OrderCard({ orden, actualizando, onGuardarOrdenProduccion, onCan
             onClick={() => setExpandida(!expandida)}
             style={{ cursor: "pointer" }} // Añade un cursor interactivo
         >
-            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:'15px'}}>
                 <div className="order-card-header">
-                    
                     <label className="order-card-checkbox" onClick={(e) => e.stopPropagation()}>
                         <span>#{orden.id_of}</span>
                     </label>

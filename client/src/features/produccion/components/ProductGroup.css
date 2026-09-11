@@ -22,17 +22,6 @@
     background-color: #f1f5f9;
 }
 
-.product-group-caret {
-    display: inline-block;
-    font-size: 0.75rem;
-    color: #64748b;
-    transition: transform 0.15s ease-in-out;
-}
-
-.product-group-caret-abierto {
-    transform: rotate(90deg);
-}
-
 .product-group-nombre {
     flex: 1;
     font-size: 0.9rem;
@@ -53,6 +42,4 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding-left: 12px;
-    border-left: 2px solid #e2e8f0;
 }
