@@ -33,6 +33,11 @@
     .print-content-wrapper {
         flex-grow: 1;
     }
+
+    /* Preseleccionar A4 como formato de hoja por defecto */
+    @page {
+        size: A4;
+    }
 }
 
 /* =========================================
