@@ -9,7 +9,7 @@ export function ImpresionPedido({ pedido }) {
     const ordenes = pedido.orden_fabricacion || [];
 
     return (
-        <div className="print-only">
+        <div className="print-only-pedido">
             <div className="print-content-wrapper">
 
                 {/* --- ENCABEZADO TIPO EXCEL --- */}

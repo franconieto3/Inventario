@@ -240,8 +240,18 @@
 }
 
 @media print {
+  /* Ocultamos todo por defecto y sólo revelamos el contenido prerenderizado */
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+
   /* Ocultamos toda la interfaz del visor interactivo */
-  .viewer-toolbar, 
+  .viewer-toolbar,
   .viewer-main {
     display: none !important;
   }
@@ -252,18 +262,25 @@
     width: 100%;
   }
 
-  /* Cada hoja del documento */
+  /* Cada hoja del documento: se acota a una página física para que el
+     contenido no se derrame sobre la hoja siguiente en formatos != A4 */
   .print-page-wrapper {
     position: relative;
     page-break-after: always;
     display: flex;
+    align-items: center;
     justify-content: center;
     background-color: white;
+    height: 100vh;
+    overflow: hidden;
   }
 
-  /* Ajustar la imagen/canvas generado por react-pdf a los límites del papel */
+  /* Ajustar la imagen/canvas generado por react-pdf a los límites del papel,
+     escalando por ancho o alto (lo que primero limite) en vez de solo ancho */
   .print-page-wrapper canvas {
     max-width: 100% !important;
+    max-height: 100% !important;
+    width: auto !important;
     height: auto !important;
   }
 
@@ -277,8 +294,9 @@
     transform-origin: top left;
   }
 
-  /* Evitar los márgenes grises por defecto del navegador web */
+  /* Evitar los márgenes grises por defecto del navegador web y preseleccionar A4 */
   @page {
+    size: A4;
     margin: 0;
   }
 }

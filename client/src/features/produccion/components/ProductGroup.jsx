@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { OrderCard } from "./OrderCard";
 import { FechaEntregaEditable } from "./FechaEntregaEditable";
 import Button from "../../../components/ui/Button";
 import Can from "../../../components/Can";
+import { Modal } from "../../../components/ui/Modal";
 import { ESTADOS_PEDIDO_IMPRIMIBLES } from "../constants/estadosPedido";
 import "./ProductGroup.css";
 
@@ -19,10 +21,13 @@ export function ProductGroup({
     actualizandoFechaId,
     onGuardarFechaEntrega
 }) {
-    const [expandido, setExpandido] = useState(false);
+    const [modalAbierto, setModalAbierto] = useState(false);
+    const navigate = useNavigate();
 
     const tienePedido = idPedido && idPedido !== "sin-pedido";
     const puedeImprimir = tienePedido && ESTADOS_PEDIDO_IMPRIMIBLES.includes(estadoPedido);
+
+    const irADetallePedido = () => navigate(`/pedidos-fabricacion/${idPedido}`);
 
     return (
         <div className="product-group">
@@ -30,12 +35,11 @@ export function ProductGroup({
                 role="button"
                 tabIndex={0}
                 className="product-group-header"
-                onClick={() => setExpandido(prev => !prev)}
+                onClick={() => setModalAbierto(true)}
                 onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") setExpandido(prev => !prev);
+                    if (e.key === "Enter" || e.key === " ") setModalAbierto(true);
                 }}
             >
-                <span className={`product-group-caret ${expandido ? "product-group-caret-abierto" : ""}`}>▸</span>
                 <div style={{display:'flex', gap:'5px', flexWrap:'wrap', alignItems:'center'}}>
                     <span className="product-group-nombre">
                         {nombreProducto}
@@ -71,18 +75,35 @@ export function ProductGroup({
                 )}
             </div>
 
-            {expandido && (
-                <div className="product-group-body">
-                    {ordenes.map((orden) => (
-                        <OrderCard
-                            key={orden.id_of}
-                            orden={orden}
-                            actualizando={actualizandoId}
-                            onGuardarOrdenProduccion={onGuardarOrdenProduccion}
-                            onCancelarOrden={onCancelarOrden}
-                        />
-                    ))}
-                </div>
+            {modalAbierto && (
+                <Modal
+                    titulo={nombreProducto}
+                    descripcion={`${ordenes.length} orden${ordenes.length === 1 ? "" : "es"} de fabricación`}
+                    onClose={() => setModalAbierto(false)}
+                >
+                    {tienePedido && (
+                        <div style={{display:'flex', justifyContent:'flex-start', marginBottom:'12px'}}>
+                            <Button
+                                variant="outline"
+                                onClick={irADetallePedido}
+                            >
+                                <i className="material-icons" style={{fontSize:'1.1rem', verticalAlign:'middle', marginRight:'4px'}}>open_in_new</i>
+                                Ver detalle del pedido
+                            </Button>
+                        </div>
+                    )}
+                    <div className="product-group-body" style={{marginBottom:'30px'}}>
+                        {ordenes.map((orden) => (
+                            <OrderCard
+                                key={orden.id_of}
+                                orden={orden}
+                                actualizando={actualizandoId}
+                                onGuardarOrdenProduccion={onGuardarOrdenProduccion}
+                                onCancelarOrden={onCancelarOrden}
+                            />
+                        ))}
+                    </div>
+                </Modal>
             )}
         </div>
     );

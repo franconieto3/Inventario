@@ -1,4 +1,4 @@
-.print-only {
+.print-only-pedido {
     display: none;
 }
 
@@ -11,12 +11,12 @@
         display: none !important;
     }
 
-    .print-only,
-    .print-only * {
+    .print-only-pedido,
+    .print-only-pedido * {
         visibility: visible;
     }
 
-    .print-only {
+    .print-only-pedido {
         display: flex !important;
         flex-direction: column;
         position: absolute;
@@ -25,13 +25,18 @@
         width: 100%;
         min-height: 100vh; /* Ocupa el alto total de la hoja */
         color: #000;
-        padding-right: 15px; 
+        padding: 0 15px;
         box-sizing: border-box;
     }
 
     /* El contenedor principal crece para empujar el footer hacia abajo */
     .print-content-wrapper {
         flex-grow: 1;
+    }
+
+    /* Preseleccionar A4 como formato de hoja por defecto */
+    @page {
+        size: A4;
     }
 }
 
