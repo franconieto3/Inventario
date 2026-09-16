@@ -267,12 +267,18 @@
   .print-page-wrapper {
     position: relative;
     page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: white;
-    height: 100vh;
+    width: 100%;
+    /*height: 296mm;*/
+    max-height: 100%;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   /* Ajustar la imagen/canvas generado por react-pdf a los límites del papel,
@@ -282,6 +288,8 @@
     max-height: 100% !important;
     width: auto !important;
     height: auto !important;
+    object-fit: contain !important;
+    display: block;
   }
 
   /* Capa flotante con el Sello */
